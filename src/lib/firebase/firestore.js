@@ -15,10 +15,10 @@ import {
 import { db } from "./config";
 
 // Products
-export const productsCollection = collection(db, "products");
-
 export const getProducts = async (filters = {}) => {
+  if (!db) return { products: [], error: "Not available server-side" };
   try {
+    const productsCollection = collection(db, "products");
     let q = query(productsCollection, orderBy("featured", "desc"));
 
     if (filters.category) {
@@ -42,7 +42,9 @@ export const getProducts = async (filters = {}) => {
 };
 
 export const getProductBySlug = async (slug) => {
+  if (!db) return { product: null, error: "Not available server-side" };
   try {
+    const productsCollection = collection(db, "products");
     const q = query(productsCollection, where("slug", "==", slug));
     const snapshot = await getDocs(q);
 
@@ -59,11 +61,10 @@ export const getProductBySlug = async (slug) => {
   }
 };
 
-// Orders
-export const ordersCollection = collection(db, "orders");
-
 export const createOrder = async (orderData) => {
+  if (!db) return { id: null, error: "Not available server-side" };
   try {
+    const ordersCollection = collection(db, "orders");
     const order = {
       ...orderData,
       createdAt: Timestamp.now(),
@@ -116,7 +117,9 @@ export const updateOrderStatus = async (orderId, status, note = "") => {
 };
 
 export const getUserOrders = async (userId) => {
+  if (!db) return { orders: [], error: "Not available server-side" };
   try {
+    const ordersCollection = collection(db, "orders");
     const q = query(
       ordersCollection,
       where("userId", "==", userId),
