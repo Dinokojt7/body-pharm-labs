@@ -58,7 +58,7 @@ const Footer = () => {
   return (
     <footer className="w-full bg-gray-50 border-t border-gray-200 relative">
       {/* Main Footer */}
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-16">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {/* Features Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -82,7 +82,7 @@ const Footer = () => {
         </motion.div>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column - Brand (3 columns) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -240,7 +240,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 py-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="text-gray-400 text-xs">
               © {new Date().getFullYear()} {business.name}. All rights reserved.
@@ -262,7 +262,7 @@ const Footer = () => {
               ].map(({ src, alt }) => (
                 <div
                   key={alt}
-                  className="w-11 h-7 rounded border border-gray-200 bg-white flex items-center justify-center overflow-hidden p-1"
+                  className="w-9 h-6 sm:w-11 sm:h-7 rounded border border-gray-200 bg-white flex items-center justify-center overflow-hidden p-1"
                 >
                   <Image
                     src={src}
