@@ -59,25 +59,28 @@ export default function ShopPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+            Thousands of Clients Worldwide
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-black mb-4">
             Research Peptides
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Browse our catalog of 99% pure, third-party tested research
+          <p className="text-gray-500 text-sm max-w-xl mx-auto leading-relaxed">
+            Browse our catalog of &gt;99% pure, third-party tested research
             peptides. All compounds are for laboratory use only.
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 justify-center mb-12">
+        <div className="flex flex-wrap gap-2 justify-center mb-12">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-5 h-8 rounded-lg text-xs font-medium tracking-widest uppercase transition-colors border ${
                 selectedCategory === category
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-black text-white border-black"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
             >
               {category === "all" ? "All Products" : category}
