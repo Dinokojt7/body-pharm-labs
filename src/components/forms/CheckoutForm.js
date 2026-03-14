@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PaystackPop from "@paystack/inline-js";
-
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
@@ -81,7 +79,8 @@ const CheckoutForm = ({
         throw new Error(error);
       }
 
-      // Initialize Paystack payment
+      // Dynamically import Paystack — it uses window and must only run in the browser
+      const { default: PaystackPop } = await import("@paystack/inline-js");
       const paystack = new PaystackPop();
 
       paystack.newTransaction({
