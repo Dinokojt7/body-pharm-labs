@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import faqs from "@/lib/data/faqs.json";
 
 const FAQSection = () => {
@@ -19,19 +19,21 @@ const FAQSection = () => {
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-          {/* Left Column - Image */}
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
+          {/* Left Column - Image - VISIBLE ON DESKTOP */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-64 md:h-125 rounded overflow-hidden"
+            className="relative w-full h-[300px] md:h-[500px] rounded-lg overflow-hidden md:sticky md:top-24"
           >
             <Image
               src="/images/faq-image.jpg"
               alt="FAQ"
               fill
-              className="object-cover"
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
             />
           </motion.div>
 
@@ -53,47 +55,53 @@ const FAQSection = () => {
               </h2>
             </div>
 
-            <div className="space-y-3">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="border border-white/20 rounded overflow-hidden"
-                >
-                  <button
-                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    className="w-full px-5 py-4 flex items-center justify-between text-left bg-white/5 hover:bg-white/10 transition-colors"
-                  >
-                    <span className="text-white text-sm font-medium pr-6 leading-snug">
-                      {faq.question}
-                    </span>
-                    <div className="shrink-0 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
-                      {openIndex === index
-                        ? <Minus className="w-3.5 h-3.5 text-white" />
-                        : <Plus className="w-3.5 h-3.5 text-white" />
-                      }
-                    </div>
-                  </button>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => {
+                const isOpen = openIndex === index;
 
-                  <AnimatePresence>
-                    {openIndex === index && (
+                return (
+                  <div
+                    key={index}
+                    className="border-b border-white/10 pb-2 last:border-0"
+                  >
+                    <button
+                      onClick={() => setOpenIndex(isOpen ? null : index)}
+                      className="w-full py-3 flex items-center justify-between text-left group"
+                    >
+                      <span className="text-white text-sm font-medium pr-6 leading-snug group-hover:text-gray-200 transition-colors">
+                        {faq.question}
+                      </span>
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden"
+                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="shrink-0 w-6 h-6 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors"
                       >
-                        <div className="px-5 py-4 bg-white/5">
-                          <p
-                            className="text-gray-300 text-sm leading-relaxed"
-                            dangerouslySetInnerHTML={{ __html: faq.answer }}
-                          />
-                        </div>
+                        <ChevronDown className="w-4 h-4 text-white/70" />
                       </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          key="content"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pb-4">
+                            <p
+                              className="text-gray-400 text-sm leading-relaxed"
+                              dangerouslySetInnerHTML={{ __html: faq.answer }}
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -107,7 +115,10 @@ const FAQSection = () => {
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-18 block"
         >
-          <path d="M0,40 C360,10 1080,72 1440,30 L1440,72 L0,72 Z" fill="#ffffff" />
+          <path
+            d="M0,40 C360,10 1080,72 1440,30 L1440,72 L0,72 Z"
+            fill="#ffffff"
+          />
         </svg>
       </div>
     </section>

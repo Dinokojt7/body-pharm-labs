@@ -6,19 +6,51 @@ import { Truck, Clock, Globe, Package } from "lucide-react";
 
 const highlights = [
   { icon: Truck, label: "Free Shipping", value: "On orders $250+" },
-  { icon: Clock, label: "Same-Day Dispatch", value: "Orders before 14:00 GMT+2" },
+  {
+    icon: Clock,
+    label: "Same-Day Dispatch",
+    value: "Orders before 14:00 GMT+2",
+  },
   { icon: Globe, label: "Worldwide", value: "40+ countries served" },
   { icon: Package, label: "Discreet Packaging", value: "Always" },
 ];
 
 const regions = [
-  { region: "South Africa", time: "1–3 business days", notes: "Standard & express available" },
-  { region: "Southern Africa (SADC)", time: "3–7 business days", notes: "Courier dependent" },
-  { region: "Europe", time: "5–10 business days", notes: "Subject to customs clearance" },
-  { region: "United States & Canada", time: "7–14 business days", notes: "Subject to customs clearance" },
-  { region: "Australia & Asia", time: "7–14 business days", notes: "Subject to customs clearance" },
-  { region: "Middle East", time: "5–10 business days", notes: "Courier dependent" },
-  { region: "Rest of World", time: "10–21 business days", notes: "Contact us for specifics" },
+  {
+    region: "South Africa",
+    time: "1–3 business days",
+    notes: "Standard & express available",
+  },
+  {
+    region: "Southern Africa (SADC)",
+    time: "3–7 business days",
+    notes: "Courier dependent",
+  },
+  {
+    region: "Europe",
+    time: "5–10 business days",
+    notes: "Subject to customs clearance",
+  },
+  {
+    region: "United States & Canada",
+    time: "7–14 business days",
+    notes: "Subject to customs clearance",
+  },
+  {
+    region: "Australia & Asia",
+    time: "7–14 business days",
+    notes: "Subject to customs clearance",
+  },
+  {
+    region: "Middle East",
+    time: "5–10 business days",
+    notes: "Courier dependent",
+  },
+  {
+    region: "Rest of World",
+    time: "10–21 business days",
+    notes: "Contact us for specifics",
+  },
 ];
 
 const sections = [
@@ -45,9 +77,16 @@ export default function ShippingPolicyPage() {
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-3xl mx-auto px-4 md:px-8 pt-12">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Legal</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Shipping Policy</h1>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+            Legal
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">
+            Shipping Policy
+          </h1>
           <p className="text-gray-400 text-sm mb-12">
             We ship research compounds worldwide with speed and discretion.
           </p>
@@ -58,14 +97,18 @@ export default function ShippingPolicyPage() {
           {highlights.map((h) => (
             <div key={h.label} className="bg-white px-5 py-6 text-center">
               <h.icon className="w-5 h-5 text-black mx-auto mb-2" />
-              <p className="text-xs font-bold text-black tracking-wide">{h.label}</p>
+              <p className="text-xs font-bold text-black tracking-wide">
+                {h.label}
+              </p>
               <p className="text-xs text-gray-400 mt-0.5">{h.value}</p>
             </div>
           ))}
         </div>
 
         {/* Delivery times table */}
-        <h2 className="text-xs font-bold tracking-[0.15em] uppercase text-black mb-4">Estimated Delivery Times</h2>
+        <h2 className="text-xs font-bold tracking-[0.15em] uppercase text-black mb-4">
+          Estimated Delivery Times
+        </h2>
         <div className="border border-gray-100 rounded-2xl overflow-hidden mb-12">
           {regions.map((r, i) => (
             <div
@@ -88,11 +131,15 @@ export default function ShippingPolicyPage() {
           {sections.map((s, i) => (
             <motion.div
               key={s.title}
-              initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
               className="pb-6 border-b border-gray-100 last:border-0"
             >
-              <h2 className="text-sm font-bold text-black mb-2 tracking-wide">{s.title}</h2>
+              <h2 className="text-sm font-bold text-black mb-2 tracking-wide">
+                {s.title}
+              </h2>
               <p className="text-gray-500 text-sm leading-relaxed">{s.body}</p>
             </motion.div>
           ))}

@@ -99,8 +99,7 @@ const ProductDetail = ({ product }) => {
             >
               <option value="">Choose an option</option>
               {product.sizes?.map((size) => {
-                const sizePrice =
-                  product.sizePrices?.[size] ?? product.price;
+                const sizePrice = product.sizePrices?.[size] ?? product.price;
                 return (
                   <option key={size} value={size}>
                     {size} — {formatPrice(sizePrice)}
@@ -151,7 +150,9 @@ const ProductDetail = ({ product }) => {
                 href="/cart"
                 className="flex-1 h-11 flex items-center justify-center gap-2 border border-gray-200 rounded shadow-sm text-xs text-gray-600 font-medium hover:border-gray-300 hover:shadow transition-all px-3"
               >
-                <span className="truncate">{product.name} &times; {cartQty}</span>
+                <span className="truncate">
+                  {product.name} &times; {cartQty}
+                </span>
                 <span className="text-gray-400 shrink-0">· View in cart</span>
               </Link>
             )}

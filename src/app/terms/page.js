@@ -48,11 +48,19 @@ export default function TermsPage() {
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-3xl mx-auto px-4 md:px-8 pt-12">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Legal</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Terms & Conditions</h1>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+            Legal
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">
+            Terms & Conditions
+          </h1>
           <p className="text-gray-400 text-sm mb-12">
-            Please read these terms carefully before using our services or placing an order.
+            Please read these terms carefully before using our services or
+            placing an order.
           </p>
         </motion.div>
 
@@ -66,7 +74,9 @@ export default function TermsPage() {
               transition={{ delay: i * 0.04 }}
               className="pb-8 border-b border-gray-100 last:border-0"
             >
-              <h2 className="text-sm font-bold text-black mb-3 tracking-wide">{s.title}</h2>
+              <h2 className="text-sm font-bold text-black mb-3 tracking-wide">
+                {s.title}
+              </h2>
               <p className="text-gray-500 text-sm leading-relaxed">{s.body}</p>
             </motion.div>
           ))}
@@ -75,7 +85,10 @@ export default function TermsPage() {
         <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <p className="text-xs text-gray-400">
             Questions? Email us at{" "}
-            <a href="mailto:sales@bodypharmlabs.com" className="text-black underline">
+            <a
+              href="mailto:sales@bodypharmlabs.com"
+              className="text-black underline"
+            >
               sales@bodypharmlabs.com
             </a>
           </p>

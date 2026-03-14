@@ -41,19 +41,19 @@ const AboutSection = () => {
         </motion.div>
 
         {/* Two Column Layout */}
-        <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-stretch">
           {/* Left Column - Image */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-64 md:h-125 rounded overflow-hidden"
+            className="relative min-h-72 md:min-h-0 rounded-lg overflow-hidden"
           >
             <Image
               src="/images/about-image.jpg"
               alt="Research Laboratory"
               fill
-              className="object-cover"
+              className="object-cover object-center"
             />
           </motion.div>
 

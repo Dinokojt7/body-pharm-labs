@@ -44,7 +44,7 @@ export default function TrackOrderPage() {
       setResult(found);
     } else {
       setError(
-        "No order found with that reference. Please check the number and try again, or contact us at sales@bodypharmlabs.com."
+        "No order found with that reference. Please check the number and try again, or contact us at sales@bodypharmlabs.com.",
       );
     }
     setLoading(false);
@@ -54,17 +54,28 @@ export default function TrackOrderPage() {
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-2xl mx-auto px-4 md:px-8 pt-12">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Order Status</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Track Your Order</h1>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+            Order Status
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">
+            Track Your Order
+          </h1>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Enter your order reference number and email to check the status of your shipment.
+            Enter your order reference number and email to check the status of
+            your shipment.
           </p>
         </motion.div>
 
         {/* Search form */}
         <motion.form
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
           onSubmit={handleTrack}
           className="border border-gray-100 rounded-2xl p-6 mb-8 space-y-4"
         >
@@ -102,7 +113,13 @@ export default function TrackOrderPage() {
             disabled={loading}
             className="w-full py-3 bg-black text-white rounded-xl text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
           >
-            {loading ? "Searching…" : <><Search className="w-3.5 h-3.5" /> Track Order</>}
+            {loading ? (
+              "Searching…"
+            ) : (
+              <>
+                <Search className="w-3.5 h-3.5" /> Track Order
+              </>
+            )}
           </button>
         </motion.form>
 
@@ -110,7 +127,9 @@ export default function TrackOrderPage() {
         <AnimatePresence>
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
               className="flex items-start gap-3 p-4 border border-gray-100 rounded-2xl mb-8"
             >
               <AlertCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
@@ -123,18 +142,26 @@ export default function TrackOrderPage() {
         <AnimatePresence>
           {result && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
               className="border border-gray-100 rounded-2xl overflow-hidden"
             >
               {/* Status header */}
               <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-400 mb-0.5">Order Reference</p>
-                  <p className="text-sm font-bold text-black">{reference.toUpperCase().trim()}</p>
+                  <p className="text-xs text-gray-400 mb-0.5">
+                    Order Reference
+                  </p>
+                  <p className="text-sm font-bold text-black">
+                    {reference.toUpperCase().trim()}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-black text-white rounded-full">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span className="text-xs font-medium capitalize">{result.status}</span>
+                  <span className="text-xs font-medium capitalize">
+                    {result.status}
+                  </span>
                 </div>
               </div>
 
@@ -142,38 +169,56 @@ export default function TrackOrderPage() {
               <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">Products</p>
-                  <p className="font-medium text-black text-xs">{result.product}</p>
+                  <p className="font-medium text-black text-xs">
+                    {result.product}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">Courier</p>
-                  <p className="font-medium text-black text-xs">{result.courier}</p>
+                  <p className="font-medium text-black text-xs">
+                    {result.courier}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">Order Placed</p>
-                  <p className="font-medium text-black text-xs">{result.placed}</p>
+                  <p className="font-medium text-black text-xs">
+                    {result.placed}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">Last Update</p>
-                  <p className="font-medium text-black text-xs">{result.updated}</p>
+                  <p className="font-medium text-black text-xs">
+                    {result.updated}
+                  </p>
                 </div>
               </div>
 
               {/* Progress steps */}
               <div className="px-6 py-5">
-                <p className="text-xs font-bold tracking-[0.12em] uppercase text-gray-400 mb-5">Shipment Progress</p>
+                <p className="text-xs font-bold tracking-[0.12em] uppercase text-gray-400 mb-5">
+                  Shipment Progress
+                </p>
                 <div className="space-y-4">
                   {result.steps.map((step, i) => (
                     <div key={step.label} className="flex items-start gap-3">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                        step.done ? "bg-black" : "bg-gray-100"
-                      }`}>
-                        {step.done && <CheckCircle className="w-3 h-3 text-white" />}
+                      <div
+                        className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                          step.done ? "bg-black" : "bg-gray-100"
+                        }`}
+                      >
+                        {step.done && (
+                          <CheckCircle className="w-3 h-3 text-white" />
+                        )}
                       </div>
                       <div className="flex-1 flex items-center justify-between">
-                        <p className={`text-sm ${step.done ? "text-black font-medium" : "text-gray-400"}`}>
+                        <p
+                          className={`text-sm ${step.done ? "text-black font-medium" : "text-gray-400"}`}
+                        >
                           {step.label}
                         </p>
-                        {step.date && <p className="text-xs text-gray-400">{step.date}</p>}
+                        {step.date && (
+                          <p className="text-xs text-gray-400">{step.date}</p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -185,7 +230,10 @@ export default function TrackOrderPage() {
 
         <p className="text-center text-xs text-gray-400 mt-10">
           Need help?{" "}
-          <Link href="/contact" className="text-black font-medium underline hover:opacity-60 transition-opacity">
+          <Link
+            href="/contact"
+            className="text-black font-medium underline hover:opacity-60 transition-opacity"
+          >
             Contact our team
           </Link>
         </p>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function RouteLoader() {
   const pathname = usePathname();

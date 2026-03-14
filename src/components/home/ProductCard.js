@@ -113,7 +113,9 @@ const ProductCard = ({ product }) => {
               >
                 {isAdding ? (
                   <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
-                ) : "ADD TO CART"}
+                ) : (
+                  "ADD TO CART"
+                )}
               </button>
             )}
           </div>

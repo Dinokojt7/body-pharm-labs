@@ -11,7 +11,9 @@
       "Bash(mv \"unnamed \\(3\\).png\" \"rezepatide.png\")",
       "Bash(mv \"unnamed \\(4\\).png\" \"recover.png\")",
       "Bash(mv \"unnamed \\(5\\).png\" \"repair.png\")",
-      "Bash(mv \"unnamed \\(6\\).png\" \"rezempic.png\")"
+      "Bash(mv \"unnamed \\(6\\).png\" \"rezempic.png\")",
+      "Bash(xargs wc:*)",
+      "Bash(sort -k6,7)"
     ]
   }
 }

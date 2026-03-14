@@ -61,16 +61,27 @@ export default function TestimonialsPage() {
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-5xl mx-auto px-4 md:px-8 pt-12 text-center mb-16">
-        <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-          className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3"
+        >
           What Researchers Say
         </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-          className="text-3xl md:text-4xl font-bold text-black mb-4">
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="text-3xl md:text-4xl font-bold text-black mb-4"
+        >
           Trusted by Scientists Worldwide
         </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="text-gray-400 text-sm max-w-xl mx-auto leading-relaxed">
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-gray-400 text-sm max-w-xl mx-auto leading-relaxed"
+        >
           Over 10,000 orders fulfilled across 40+ countries.
         </motion.p>
       </div>
@@ -79,8 +90,12 @@ export default function TestimonialsPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden">
           {stats.map((s) => (
             <div key={s.label} className="bg-white px-6 py-8 text-center">
-              <p className="text-2xl md:text-3xl font-black text-black mb-1">{s.value}</p>
-              <p className="text-xs text-gray-400 tracking-wider uppercase">{s.label}</p>
+              <p className="text-2xl md:text-3xl font-black text-black mb-1">
+                {s.value}
+              </p>
+              <p className="text-xs text-gray-400 tracking-wider uppercase">
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
@@ -89,15 +104,24 @@ export default function TestimonialsPage() {
       <div className="max-w-5xl mx-auto px-4 md:px-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {testimonials.map((t, i) => (
-            <motion.div key={t.name}
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col gap-4">
+            <motion.div
+              key={t.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col gap-4"
+            >
               <Quote className="w-5 h-5 text-gray-200 shrink-0" />
-              <p className="text-gray-600 text-sm leading-relaxed flex-1">{t.text}</p>
+              <p className="text-gray-600 text-sm leading-relaxed flex-1">
+                {t.text}
+              </p>
               <div className="flex gap-0.5">
                 {Array.from({ length: t.rating }).map((_, si) => (
-                  <Star key={si} className="w-3.5 h-3.5 fill-black text-black" />
+                  <Star
+                    key={si}
+                    className="w-3.5 h-3.5 fill-black text-black"
+                  />
                 ))}
               </div>
               <div className="pt-4 border-t border-gray-100">

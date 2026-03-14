@@ -84,18 +84,21 @@ const Footer = () => {
         {/* Main Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column - Brand (3 columns) */}
+          {/* Left Column - Brand - LOGO NOW LEFT ALIGNED */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="lg:col-span-3 space-y-5"
           >
-            <div className="relative h-16 w-48">
+            {/* Logo - LEFT ALIGNED and BIGGER */}
+            <div className="relative h-20 w-64 md:h-24 md:w-80 ml-0">
               <Image
                 src="/images/logo.png"
                 alt={business.name}
                 fill
-                className="object-contain"
+                className="object-contain object-left"
+                priority
               />
             </div>
 

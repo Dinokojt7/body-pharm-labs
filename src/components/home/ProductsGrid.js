@@ -98,7 +98,7 @@ const ProductsGrid = () => {
       </div>
 
       {/* Diagonal divider → FAQ (dark) */}
-      <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none pointer-events-none">
+      {/* <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none pointer-events-none">
         <svg
           viewBox="0 0 1440 72"
           preserveAspectRatio="none"
@@ -107,10 +107,10 @@ const ProductsGrid = () => {
         >
           <path
             d="M0,24 C480,72 960,0 1440,40 L1440,72 L0,72 Z"
-            fill="#111827"
+            fill="#101012"
           />
         </svg>
-      </div>
+      </div> */}
     </section>
   );
 };

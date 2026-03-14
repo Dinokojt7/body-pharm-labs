@@ -95,9 +95,6 @@ export default function AuthModal() {
     }, 300);
   };
 
-  // ── Google ──────────────────────────────────────────────────
-  // signInWithGoogle triggers a full-page redirect — no return value expected.
-  // The loading state intentionally stays true as the browser navigates away.
   const handleGoogle = async () => {
     setLoading(true);
     setError("");
@@ -108,7 +105,6 @@ export default function AuthModal() {
     }
   };
 
-  // ── Send OTP ────────────────────────────────────────────────
   const handleSendOTP = async (e) => {
     e.preventDefault();
     const fullPhone = `${countryCode.code}${phoneNumber.replace(/^0/, "")}`;
@@ -133,7 +129,6 @@ export default function AuthModal() {
     setStep("otp");
   };
 
-  // ── OTP input ────────────────────────────────────────────────
   const handleOtpChange = (index, value) => {
     if (!/^\d?$/.test(value)) return;
     const next = [...otp];
@@ -158,7 +153,6 @@ export default function AuthModal() {
     }
   };
 
-  // ── Verify OTP ───────────────────────────────────────────────
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     const code = otp.join("");
@@ -193,18 +187,18 @@ export default function AuthModal() {
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-60"
           />
 
-          {/* Modal */}
+          {/* Modal - FULLY MOBILE RESPONSIVE */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 16 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             ref={modalRef}
-            className="fixed inset-0 z-61 flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-61 flex items-center justify-center p-2 sm:p-4 pointer-events-none"
           >
-            <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row pointer-events-auto">
-              {/* ── Left panel ── */}
-              <div className="relative md:w-5/12 min-h-55 md:min-h-0 bg-black overflow-hidden flex flex-col justify-between p-8 md:p-10">
+            <div className="w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl flex flex-col md:flex-row pointer-events-auto max-h-[90vh] md:max-h-none">
+              {/* ── Left panel - Hidden on mobile, visible on desktop ── */}
+              <div className="hidden md:block md:w-5/12 relative min-h-[500px] bg-black overflow-hidden">
                 {/* Background image */}
                 <div className="absolute inset-0">
                   <Image
@@ -213,39 +207,37 @@ export default function AuthModal() {
                     fill
                     className="object-cover opacity-40"
                   />
-                  {/* gradient strip overlay (inspired by FullScreenSignup) */}
                   <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/30 to-black/80" />
                 </div>
 
                 {/* Logo */}
-                <div className="relative z-10">
-                  <div className="relative h-10 w-36">
+                <div className="relative z-10 flex items-center justify-center h-full">
+                  <div className="relative w-64 h-24 lg:w-80 lg:h-32">
                     <Image
                       src="/images/logo.png"
                       alt="Body Pharm Labz"
                       fill
                       className="object-contain brightness-0 invert"
+                      priority
                     />
                   </div>
                 </div>
 
-                {/* Tagline */}
-                <div className="relative z-10 mt-auto">
-                  <p className="text-white text-xl md:text-2xl font-bold leading-tight tracking-tight">
+                {/* Tagline - Hidden on mobile */}
+                <div className="absolute bottom-8 left-8 right-8 z-10">
+                  <p className="text-white text-xl font-bold leading-tight">
                     Research-Grade
                     <br />
                     Peptides.
                   </p>
-                  <p className="text-white/50 text-xs mt-2 leading-relaxed">
+                  <p className="text-white/50 text-xs mt-2">
                     Trusted by scientists worldwide.
-                    <br />
-                    Free same-day shipping on $250+.
                   </p>
                 </div>
               </div>
 
-              {/* ── Right panel ── */}
-              <div className="md:w-7/12 bg-white relative flex flex-col">
+              {/* ── Right panel - Takes full width on mobile ── */}
+              <div className="w-full md:w-7/12 bg-white relative flex flex-col max-h-[90vh] md:max-h-[500px] overflow-y-auto">
                 {/* Close button */}
                 <button
                   onClick={handleClose}
@@ -255,7 +247,6 @@ export default function AuthModal() {
                 </button>
 
                 <AnimatePresence mode="wait">
-                  {/* ── Main: choose method ── */}
                   {step === "main" && (
                     <motion.div
                       key="main"
@@ -263,13 +254,26 @@ export default function AuthModal() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -12 }}
                       transition={{ duration: 0.2 }}
-                      className="p-8 md:p-10 flex flex-col justify-center flex-1"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
                     >
+                      {/* Mobile Logo - Only visible on mobile */}
+                      <div className="md:hidden flex justify-center mb-6">
+                        <div className="relative w-48 h-16">
+                          <Image
+                            src="/images/logo.png"
+                            alt="Body Pharm Labz"
+                            fill
+                            className="object-contain"
+                            priority
+                          />
+                        </div>
+                      </div>
+
                       <h2 className="text-2xl font-bold tracking-tight text-black mb-1">
                         Sign in
                       </h2>
-                      <p className="text-sm text-gray-400 mb-8">
-                        Access your account to manage orders and research.
+                      <p className="text-sm text-gray-400 mb-6 md:mb-8">
+                        Access your account to manage orders.
                       </p>
 
                       <button
@@ -278,9 +282,7 @@ export default function AuthModal() {
                         className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl text-sm font-medium text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
                       >
                         <GoogleIcon />
-                        {loading
-                          ? "Redirecting to Google…"
-                          : "Continue with Google"}
+                        {loading ? "Redirecting…" : "Continue with Google"}
                       </button>
 
                       <div className="flex items-center gap-3 my-5">
@@ -307,21 +309,15 @@ export default function AuthModal() {
                         </div>
                       )}
 
-                      <p className="mt-8 text-xs text-gray-400 text-center">
+                      <p className="mt-6 md:mt-8 text-xs text-gray-400 text-center">
                         By continuing you agree to our{" "}
                         <span className="text-black underline cursor-pointer">
                           Terms
                         </span>
-                        {" & "}
-                        <span className="text-black underline cursor-pointer">
-                          Privacy Policy
-                        </span>
-                        .
                       </p>
                     </motion.div>
                   )}
 
-                  {/* ── Phone input ── */}
                   {step === "phone-input" && (
                     <motion.div
                       key="phone-input"
@@ -329,7 +325,7 @@ export default function AuthModal() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -12 }}
                       transition={{ duration: 0.2 }}
-                      className="p-8 md:p-10 flex flex-col justify-center flex-1"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
                     >
                       <button
                         onClick={() => {
@@ -345,8 +341,8 @@ export default function AuthModal() {
                       <h2 className="text-2xl font-bold tracking-tight text-black mb-1">
                         Enter your number
                       </h2>
-                      <p className="text-sm text-gray-400 mb-8">
-                        We'll send a one-time code to verify your identity.
+                      <p className="text-sm text-gray-400 mb-6 md:mb-8">
+                        We'll send a one-time code.
                       </p>
 
                       <form onSubmit={handleSendOTP} className="space-y-4">
@@ -416,7 +412,6 @@ export default function AuthModal() {
                     </motion.div>
                   )}
 
-                  {/* ── OTP ── */}
                   {step === "otp" && (
                     <motion.div
                       key="otp"
@@ -424,7 +419,7 @@ export default function AuthModal() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -12 }}
                       transition={{ duration: 0.2 }}
-                      className="p-8 md:p-10 flex flex-col justify-center flex-1"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
                     >
                       <button
                         onClick={() => {
@@ -441,7 +436,7 @@ export default function AuthModal() {
                       <h2 className="text-2xl font-bold tracking-tight text-black mb-1">
                         Enter the code
                       </h2>
-                      <p className="text-sm text-gray-400 mb-8">
+                      <p className="text-sm text-gray-400 mb-6 md:mb-8">
                         Sent to {countryCode.code} {phoneNumber}
                       </p>
 
@@ -462,7 +457,7 @@ export default function AuthModal() {
                                 handleOtpChange(i, e.target.value)
                               }
                               onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                              className="w-11 h-12 text-center text-lg font-bold border border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                              className="w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold border border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
                             />
                           ))}
                         </div>

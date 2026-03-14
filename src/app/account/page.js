@@ -128,7 +128,9 @@ export default function AccountPage() {
                 <Package className="w-5 h-5 text-gray-400" />
               </div>
               <div>
-                <p className="font-semibold text-black text-sm">No orders yet</p>
+                <p className="font-semibold text-black text-sm">
+                  No orders yet
+                </p>
                 <p className="text-gray-400 text-xs mt-1 max-w-xs">
                   When you place your first order it will appear here.
                 </p>

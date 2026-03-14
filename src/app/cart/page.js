@@ -29,7 +29,6 @@ export default function CartPage() {
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-5xl mx-auto px-4 md:px-8 pt-12">
-
         {/* Page header */}
         <div className="flex items-center justify-between mb-10">
           <div>

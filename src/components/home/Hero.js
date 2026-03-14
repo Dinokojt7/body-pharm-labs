@@ -59,9 +59,10 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-sm text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            All products are intended strictly for research and laboratory use only.
-            Not for human consumption, medical use, or diagnostic purposes. Supplied
-            exclusively to qualified professionals and institutions engaged in scientific research.
+            All products are intended strictly for research and laboratory use
+            only. Not for human consumption, medical use, or diagnostic
+            purposes. Supplied exclusively to qualified professionals and
+            institutions engaged in scientific research.
           </motion.p>
 
           <motion.div
@@ -92,7 +93,6 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
-
     </section>
   );
 };

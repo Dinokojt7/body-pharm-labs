@@ -23,7 +23,10 @@ const ProductImageZoom = ({ product }) => {
       ref={containerRef}
       className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-zoom-in select-none"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => { setIsHovered(false); setOrigin({ x: 50, y: 50 }); }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setOrigin({ x: 50, y: 50 });
+      }}
       onMouseMove={handleMouseMove}
     >
       {/* Sale Pill */}
