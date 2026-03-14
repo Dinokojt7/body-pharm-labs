@@ -1,45 +1,61 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useCartStore } from "@/lib/stores/cart-store";
-import { useAuthStore } from "@/lib/stores/auth-store";
-import { useCurrency } from "@/lib/hooks/useCurrency";
-import { processOrder } from "@/lib/services/order-service";
-import siteData from "@/lib/data/site-data.json";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 
-const CheckoutForm = ({
-  subtotal,
-  tax,
-  shippingCost,
-  total,
+// Dynamically import Paystack to avoid server issues
+const PaystackPop = dynamic(() => import('@paystack/inline-js'), { ssr: false });
+
+import { useCartStore } from '@/lib/stores/cart-store';
+import { useAuthStore } from '@/lib/stores/auth-store';
+import { useCurrency } from '@/lib/hooks/useCurrency';
+import { processOrder } from '@/lib/services/order-service';
+import siteData from '@/lib/data/site-data.json';
+
+const CheckoutForm = ({ 
+  subtotal, 
+  tax, 
+  shippingCost, 
+  total, 
   onShippingChange,
   loading,
-  setLoading,
+  setLoading 
 }) => {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const { user } = useAuthStore();
   const { selectedCurrency } = useCurrency();
-
+  
+  const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState({
-    email: user?.email || "",
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: "South Africa",
-    phone: "",
-    notes: "",
+    email: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: 'South Africa',
+    phone: '',
+    notes: '',
   });
+
+  // Set mounted state and initialize user email after mount
+  useEffect(() => {
+    setIsMounted(true);
+    if (user?.email) {
+      setFormData(prev => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePaystackPayment = async () => {
+    if (!isMounted) return;
+    
     setLoading(true);
 
     try {
@@ -57,7 +73,7 @@ const CheckoutForm = ({
           postalCode: formData.postalCode,
           country: formData.country,
         },
-        items: items.map((item) => ({
+        items: items.map(item => ({
           productId: item.id,
           name: item.name,
           quantity: item.quantity,
@@ -74,51 +90,39 @@ const CheckoutForm = ({
       };
 
       const { orderId, error } = await processOrder(orderData);
-
+      
       if (error) {
         throw new Error(error);
       }
 
-      // Dynamically import Paystack — it uses window and must only run in the browser
-      const { default: PaystackPop } = await import("@paystack/inline-js");
-      const paystack = new PaystackPop();
-
+      // Dynamically import Paystack only when needed
+      const Paystack = (await import('@paystack/inline-js')).default;
+      const paystack = new Paystack();
+      
       paystack.newTransaction({
         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
         email: formData.email,
-        amount: total * 100, // Convert to kobo/cents
+        amount: total * 100,
         currency: selectedCurrency,
         reference: `ORD-${orderId}-${Date.now()}`,
         metadata: {
           orderId,
           customerName: `${formData.firstName} ${formData.lastName}`,
-          custom_fields: [
-            {
-              display_name: "Order ID",
-              variable_name: "order_id",
-              value: orderId,
-            },
-          ],
         },
         onSuccess: (transaction) => {
-          // Redirect to success page
-          router.push(
-            `/checkout/success?reference=${transaction.reference}&orderId=${orderId}`,
-          );
+          router.push(`/checkout/success?reference=${transaction.reference}&orderId=${orderId}`);
           clearCart();
         },
         onCancel: () => {
           setLoading(false);
-          // Handle cancellation
         },
         onError: (error) => {
-          console.error("Payment error:", error);
+          console.error('Payment error:', error);
           setLoading(false);
-          // Handle error
         },
       });
     } catch (error) {
-      console.error("Checkout error:", error);
+      console.error('Checkout error:', error);
       setLoading(false);
     }
   };
@@ -128,12 +132,21 @@ const CheckoutForm = ({
     handlePaystackPayment();
   };
 
+  // Don't render form until mounted on client
+  if (!isMounted) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="text-gray-400">Loading checkout...</div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Contact Information */}
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Contact Information</h3>
-
+        
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
@@ -149,9 +162,7 @@ const CheckoutForm = ({
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                First Name
-              </label>
+              <label className="block text-sm font-medium mb-1">First Name</label>
               <input
                 type="text"
                 name="firstName"
@@ -162,9 +173,7 @@ const CheckoutForm = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Last Name
-              </label>
+              <label className="block text-sm font-medium mb-1">Last Name</label>
               <input
                 type="text"
                 name="lastName"
@@ -193,7 +202,7 @@ const CheckoutForm = ({
       {/* Shipping Address */}
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Shipping Address</h3>
-
+        
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Address</label>
@@ -220,9 +229,7 @@ const CheckoutForm = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Postal Code
-              </label>
+              <label className="block text-sm font-medium mb-1">Postal Code</label>
               <input
                 type="text"
                 name="postalCode"
@@ -259,7 +266,7 @@ const CheckoutForm = ({
       {/* Order Notes */}
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Order Notes (Optional)</h3>
-
+        
         <textarea
           name="notes"
           value={formData.notes}
@@ -276,7 +283,7 @@ const CheckoutForm = ({
         disabled={loading}
         className="w-full bg-black text-white py-4 rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "PROCESSING..." : `PAY ${total.toFixed(2)}`}
+        {loading ? 'PROCESSING...' : `PAY ${formatPrice(total)}`}
       </button>
     </form>
   );
