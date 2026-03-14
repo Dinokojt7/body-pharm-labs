@@ -1,0 +1,44 @@
+{
+  "business": {
+    "name": "Body Pharm Labs",
+    "shortName": "Body Pharm",
+    "tagline": "Leader In The Peptide Industry",
+    "description": "We are a premier supplier of research-use-only peptides, dedicated to advancing scientific discovery through uncompromising quality and purity. Every compound in our catalog undergoes rigorous third-party testing to ensure >99% purity, giving researchers the confidence they need in their work.",
+    "mission": "To empower scientific breakthroughs by providing the research community with consistently pure, reliably tested peptides delivered with unprecedented speed. We believe that behind every order is critical research that could change lives, and we treat that responsibility with the utmost seriousness.",
+    "phone": "0624623288",
+    "email": "sales@bodypharmlabs.com",
+    "address": "47 Zinia Rd, Midrand 1684, Gauteng, South Africa",
+    "contactPerson": "Tumi Seeco",
+    "social": {
+      "instagram": "https://instagram.com/bodypharmlabs",
+      "facebook": "https://facebook.com/bodypharmlabs",
+      "twitter": "https://twitter.com/bodypharmlabs",
+      "linkedin": "https://linkedin.com/company/bodypharmlabs"
+    }
+  },
+  "seo": {
+    "title": "Body Pharm Labs - Premium Research Peptides You Can Trust",
+    "description": "Leading supplier of research-use-only peptides. 3rd-party tested for >99% purity. Fast worldwide shipping to qualified researchers. Trusted by laboratories nationwide.",
+    "keywords": "research peptides, peptide synthesis, research chemicals, laboratory supplies, bioactive peptides"
+  },
+  "shipping": {
+    "freeShippingThreshold": 250,
+    "sameDayCutoff": "14:00",
+    "international": true
+  },
+  "footer": {
+    "quickLinks": [
+      { "label": "About Us", "href": "/about" },
+      { "label": "Shop", "href": "/shop" },
+      { "label": "Testimonials", "href": "/testimonials" },
+      { "label": "Contact", "href": "/contact" }
+    ],
+    "legal": [
+      { "label": "Track Your Order", "href": "/track-order" },
+      { "label": "Refund & Return", "href": "/refund-policy" },
+      { "label": "Shipping Policy", "href": "/shipping-policy" },
+      { "label": "Privacy Policy", "href": "/privacy-policy" },
+      { "label": "Terms & Conditions", "href": "/terms" }
+    ]
+  }
+}

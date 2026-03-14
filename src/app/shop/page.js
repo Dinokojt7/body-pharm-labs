@@ -1,0 +1,110 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import ProductCard from "@/components/home/ProductCard";
+import { fetchProducts } from "@/lib/services/product-service";
+import LogoSpinner from "@/components/ui/LogoSpinner";
+
+export default function ShopPage() {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true);
+      const { products } = await fetchProducts();
+      setProducts(products);
+      setFilteredProducts(products);
+
+      // Extract unique categories
+      const uniqueCategories = [
+        "all",
+        ...new Set(products.map((p) => p.category)),
+      ];
+      setCategories(uniqueCategories);
+
+      setLoading(false);
+    };
+
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory === "all") {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(
+        products.filter((p) => p.category === selectedCategory),
+      );
+    }
+  }, [selectedCategory, products]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LogoSpinner size="w-16 h-16" />
+      </div>
+    );
+  }
+
+  return (
+    <main className="pt-32">
+      <Breadcrumb />
+
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
+            Research Peptides
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Browse our catalog of 99% pure, third-party tested research
+            peptides. All compounds are for laboratory use only.
+          </p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3 justify-center mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category
+                  ? "bg-black text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {category === "all" ? "All Products" : category}
+            </button>
+          ))}
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ProductCard product={product} />
+            </motion.div>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-20">
+            <p className="text-gray-500">No products found in this category.</p>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
