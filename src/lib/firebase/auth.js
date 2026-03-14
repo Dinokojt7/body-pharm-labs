@@ -1,5 +1,6 @@
 import {
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
@@ -10,10 +11,24 @@ import { auth } from "./config";
 
 const googleProvider = new GoogleAuthProvider();
 
+// Triggers a full-page redirect to Google OAuth.
+// The result is retrieved by getGoogleRedirectResult() on the next page load.
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    return { user: result.user, error: null };
+    await signInWithRedirect(auth, googleProvider);
+    return { error: null };
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+// Call this once on app mount to resolve any pending Google redirect result.
+// Returns { user, error } — user is null if no redirect was in progress.
+export const getGoogleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result?.user) return { user: result.user, error: null };
+    return { user: null, error: null };
   } catch (error) {
     return { user: null, error: error.message };
   }

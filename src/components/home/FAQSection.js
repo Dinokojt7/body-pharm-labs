@@ -14,7 +14,7 @@ const FAQSection = () => {
   };
 
   return (
-    <section className="relative w-full py-20 px-4 md:px-8 lg:px-12">
+    <section className="relative w-full py-20 pb-32 px-4 md:px-8 lg:px-12">
       {/* Background with overlay */}
       <div className="absolute inset-0">
         <div
@@ -32,7 +32,7 @@ const FAQSection = () => {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-[500px] rounded-lg overflow-hidden"
+            className="relative h-125 rounded-lg overflow-hidden"
           >
             <Image
               src="/images/faq-image.jpg"
@@ -73,7 +73,7 @@ const FAQSection = () => {
                     <span className="text-white font-medium pr-8">
                       {faq.question}
                     </span>
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                    <div className="shrink-0 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
                       {openIndex === index ? (
                         <Minus className="w-4 h-4 text-white" />
                       ) : (
@@ -105,6 +105,21 @@ const FAQSection = () => {
             </div>
           </motion.div>
         </div>
+      </div>
+
+      {/* Wave divider → PromoSection (white) */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none pointer-events-none">
+        <svg
+          viewBox="0 0 1440 72"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-18 block"
+        >
+          <path
+            d="M0,40 C360,10 1080,72 1440,30 L1440,72 L0,72 Z"
+            fill="#ffffff"
+          />
+        </svg>
       </div>
     </section>
   );

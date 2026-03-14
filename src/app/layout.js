@@ -22,12 +22,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={poppins.className}>
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <CurrencyProvider>
             <PreHeader />
             <Header />
-            <main className="min-h-screen pt-26">{children}</main>
+            <main className="min-h-screen pt-29">{children}</main>
             <Footer />
           </CurrencyProvider>
         </AuthProvider>

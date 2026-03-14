@@ -1,20 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Atom } from "lucide-react";
 
-const LogoSpinner = ({ size = "w-5 h-5", color = "text-black" }) => {
+const LogoSpinner = ({ size = "w-8 h-8" }) => {
   return (
     <motion.div
       animate={{ rotate: 360 }}
-      transition={{
-        duration: 1,
-        repeat: Infinity,
-        ease: "linear",
-      }}
-      className={`${size} ${color}`}
+      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      className={`${size} relative shrink-0`}
     >
-      <Atom className="w-full h-full" />
+      <img
+        src="/favicon.ico"
+        alt="Loading..."
+        className="w-full h-full object-contain"
+      />
     </motion.div>
   );
 };

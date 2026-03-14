@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { X, Trash2, ShoppingBag } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
@@ -20,7 +20,6 @@ const CartSidebar = () => {
     closeCart,
     updateQuantity,
     removeItem,
-    updateItemSize,
   } = useCartStore();
 
   const { formatPrice } = useCurrency();
@@ -28,31 +27,20 @@ const CartSidebar = () => {
 
   usePreventScroll(isOpen);
 
-  // Close on escape key
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") closeCart();
     };
-
-    if (isOpen) {
-      window.addEventListener("keydown", handleEscape);
-    }
-
+    if (isOpen) window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isOpen, closeCart]);
 
-  // Handle click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target))
         closeCart();
-      }
     };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, closeCart]);
 
@@ -69,7 +57,7 @@ const CartSidebar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm"
           />
 
           {/* Sidebar */}
@@ -79,69 +67,71 @@ const CartSidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-xl flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-sm bg-white z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold">CART ({totalItems})</h2>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+              <div>
+                <h2 className="text-sm font-bold tracking-[0.15em] uppercase">
+                  Your Cart
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {totalItems} {totalItems === 1 ? "item" : "items"}
+                </p>
+              </div>
               <button
                 onClick={closeCart}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Free Shipping Progress */}
-            <div className="p-6 border-b border-gray-200 bg-gray-50">
-              <p className="text-sm mb-2">
+            <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
+              <p className="text-xs mb-2 text-gray-600">
                 {subtotal >= shippingThreshold ? (
-                  <span className="text-green-600 font-medium">
-                    You've qualified for FREE shipping! 🎉
+                  <span className="font-semibold text-black">
+                    You've unlocked FREE shipping!
                   </span>
                 ) : (
                   <>
-                    Add{" "}
-                    <span className="font-bold">
+                    <span className="font-semibold text-black">
                       {formatPrice(remainingForFree)}
                     </span>{" "}
-                    more for
-                    <span className="font-bold"> FREE shipping</span>
+                    away from free shipping
                   </>
                 )}
               </p>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  className="h-full bg-black"
+                  className="h-full bg-black rounded-full"
                 />
               </div>
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto px-6 py-4">
               {items.length === 0 ? (
-                <div className="text-center py-12">
-                  <ShoppingBag className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">Your cart is empty</p>
+                <div className="flex col items-center justify-center h-full text-center gap-4">
+                  <ShoppingBag className="w-12 h-12 text-gray-200" />
+                  <p className="text-gray-400 text-sm">Your cart is empty</p>
                   <Link
                     href="/shop"
                     onClick={closeCart}
-                    className="inline-block mt-4 px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                    className="text-xs font-semibold tracking-widest uppercase border-b border-black pb-0.5 hover:opacity-60 transition-opacity"
                   >
-                    Continue Shopping
+                    Shop Now
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {items.map((item) => (
-                    <div
-                      key={item.cartId}
-                      className="flex space-x-4 border-b border-gray-100 pb-4"
-                    >
-                      {/* Product Image */}
-                      <div className="relative w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                    <div key={item.cartId} className="flex gap-4">
+                      {/* Image */}
+                      <div className="relative w-18 h-18 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100">
                         <Image
                           src={item.image || "/images/placeholder.jpg"}
                           alt={item.name}
@@ -150,27 +140,26 @@ const CartSidebar = () => {
                         />
                       </div>
 
-                      {/* Product Details */}
+                      {/* Details */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium text-gray-900 truncate">
+                        <div className="flex justify-between items-start gap-2">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-sm text-black truncate">
                               {item.name}
                             </h3>
-                            <p className="text-sm text-gray-500">{item.type}</p>
-                            <p className="text-sm text-gray-500">
-                              Size: {item.selectedSize}
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {item.selectedSize}
                             </p>
                           </div>
                           <button
                             onClick={() => removeItem(item.cartId)}
-                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                            className="p-1 hover:bg-gray-100 rounded-full transition-colors shrink-0"
                           >
-                            <Trash2 className="w-4 h-4 text-gray-400" />
+                            <Trash2 className="w-3.5 h-3.5 text-gray-400" />
                           </button>
                         </div>
 
-                        <div className="flex justify-between items-center mt-2">
+                        <div className="flex items-center justify-between mt-3">
                           <QuantitySelector
                             quantity={item.quantity}
                             onIncrement={() =>
@@ -181,14 +170,9 @@ const CartSidebar = () => {
                             }
                             size="sm"
                           />
-                          <div className="text-right">
-                            <p className="font-medium">
-                              {formatPrice(item.price * item.quantity)}
-                            </p>
-                            <p className="text-xs text-gray-500 line-through">
-                              {formatPrice(item.originalPrice * item.quantity)}
-                            </p>
-                          </div>
+                          <p className="font-semibold text-sm">
+                            {formatPrice(item.price * item.quantity)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -199,33 +183,30 @@ const CartSidebar = () => {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-gray-200 p-6 space-y-4">
-                {/* Subtotal */}
-                <div className="flex justify-between text-lg">
-                  <span className="font-medium">Subtotal:</span>
-                  <span className="font-bold">{formatPrice(subtotal)}</span>
+              <div className="border-t border-gray-100 px-6 py-5 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Subtotal</span>
+                  <span className="font-bold text-base">
+                    {formatPrice(subtotal)}
+                  </span>
                 </div>
-
-                {/* Tax & Shipping Note */}
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-400">
                   Shipping and taxes calculated at checkout
                 </p>
-
-                {/* Action Buttons */}
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <Link
                     href="/cart"
                     onClick={closeCart}
-                    className="block w-full py-3 text-center border-2 border-black text-black font-medium rounded-md hover:bg-black hover:text-white transition-colors"
+                    className="block w-full py-3 text-center border border-black text-black text-sm font-semibold tracking-wider uppercase rounded-lg hover:bg-black hover:text-white transition-colors"
                   >
-                    VIEW CART
+                    View Cart
                   </Link>
                   <Link
                     href="/checkout"
                     onClick={closeCart}
-                    className="block w-full py-3 text-center bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                    className="block w-full py-3 text-center bg-black text-white text-sm font-semibold tracking-wider uppercase rounded-lg hover:bg-gray-900 transition-colors"
                   >
-                    CHECKOUT
+                    Checkout
                   </Link>
                 </div>
               </div>

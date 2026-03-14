@@ -2,19 +2,24 @@
 
 import { createContext, useEffect } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
-import { onAuthChange } from "@/lib/firebase/auth";
+import { onAuthChange, getGoogleRedirectResult } from "@/lib/firebase/auth";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const { setUser, setAuthLoading } = useAuthStore();
+  const { setUser, setAuthLoading, setAuthError } = useAuthStore();
 
   useEffect(() => {
     setAuthLoading(true);
 
+    // Resolve any pending Google redirect sign-in from a previous page load.
+    // onAuthStateChanged will also fire after this, so we only handle errors here.
+    getGoogleRedirectResult().then(({ error }) => {
+      if (error) setAuthError(error);
+    });
+
     const unsubscribe = onAuthChange((user) => {
       if (user) {
-        // Transform Firebase user to our user model
         const transformedUser = {
           uid: user.uid,
           email: user.email,
@@ -32,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, [setUser, setAuthLoading]);
+  }, [setUser, setAuthLoading, setAuthError]);
 
   return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 };

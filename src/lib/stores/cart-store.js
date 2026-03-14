@@ -57,7 +57,6 @@ export const useCartStore = create(
           items: updatedItems,
           totalItems,
           subtotal,
-          isOpen: true, // Open sidebar when adding items
         });
       },
 

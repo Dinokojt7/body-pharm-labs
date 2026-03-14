@@ -3,135 +3,274 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Instagram,
+  Facebook,
+  Twitter,
+  Linkedin,
+  ChevronRight,
+  Sparkles,
+  Shield,
+  Truck,
+  Award,
+} from "lucide-react";
 import siteData from "@/lib/data/site-data.json";
 
 const Footer = () => {
   const { business, footer } = siteData;
 
+  const socialLinks = [
+    {
+      icon: Instagram,
+      href: business.social.instagram,
+      label: "Instagram",
+      color: "hover:text-[#E4405F]",
+    },
+    {
+      icon: Facebook,
+      href: business.social.facebook,
+      label: "Facebook",
+      color: "hover:text-[#1877F2]",
+    },
+    {
+      icon: Twitter,
+      href: business.social.twitter,
+      label: "Twitter",
+      color: "hover:text-[#1DA1F2]",
+    },
+    {
+      icon: Linkedin,
+      href: business.social.linkedin,
+      label: "LinkedIn",
+      color: "hover:text-[#0A66C2]",
+    },
+  ];
+
+  const features = [
+    { icon: Shield, text: ">99% Purity Guaranteed" },
+    { icon: Truck, text: "Free Shipping $250+" },
+    { icon: Award, text: "3rd-Party Tested" },
+  ];
+
   return (
-    <footer className="w-full">
+    <footer className="w-full bg-gray-50 border-t border-gray-200 relative">
       {/* Main Footer */}
-      <div className="bg-black/90 py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Column 1 - Logo & About */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="space-y-4"
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-16">
+        {/* Features Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12 mb-12 border-b border-gray-200"
+        >
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-center md:justify-start gap-3"
             >
-              <div className="relative h-16 w-32">
-                <Image
-                  src="/images/logo.png"
-                  alt={business.name}
-                  fill
-                  className="object-contain brightness-0 invert"
-                />
+              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center">
+                <feature.icon className="w-5 h-5 text-gray-600" />
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                {business.description.substring(0, 120)}...
+              <span className="text-sm font-medium text-gray-700">
+                {feature.text}
+              </span>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Main Grid */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Left Column - Brand (3 columns) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-3 space-y-5"
+          >
+            <div className="relative h-14 w-36">
+              <Image
+                src="/images/logo.png"
+                alt={business.name}
+                fill
+                className="object-contain"
+              />
+            </div>
+
+            <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+              {business.description}
+            </p>
+
+            <div className="flex items-center gap-2 pt-2">
+              <Sparkles className="w-4 h-4 text-gray-400" />
+              <span className="text-xs text-gray-400 tracking-wider uppercase">
+                ISO 9001:2024 Certified
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              {socialLinks.map(({ icon: Icon, href, label, color }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className={`w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-white ${color} hover:border-transparent transition-all duration-300 shadow-sm hover:shadow`}
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Quick Links Column (2.5 columns) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="lg:col-span-2"
+          >
+            <h4 className="text-black text-xs font-bold tracking-[0.15em] uppercase mb-5">
+              Quick Links
+            </h4>
+            <ul className="space-y-3">
+              {footer.quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="group flex items-center gap-2 text-gray-500 hover:text-black transition-colors text-sm"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-black transition-colors" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Legal Column (3 columns) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-3"
+          >
+            <h4 className="text-black text-xs font-bold tracking-[0.15em] uppercase mb-5">
+              Legal
+            </h4>
+            <ul className="space-y-3">
+              {footer.legal.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="group flex items-center gap-2 text-gray-500 hover:text-black transition-colors text-sm"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-black transition-colors" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <p className="text-xs text-gray-400 mt-6 pt-4 border-t border-gray-200">
+              All products for research use only.
+              <br />
+              Not for human consumption.
+            </p>
+          </motion.div>
+
+          {/* Contact Column (3.5 columns) - Clean and simple like others */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="lg:col-span-4"
+          >
+            <h4 className="text-black text-xs font-bold tracking-[0.15em] uppercase mb-5">
+              Contact
+            </h4>
+
+            <div className="space-y-4">
+              {/* Phone */}
+              <a
+                href={`tel:${business.phone}`}
+                className="flex items-center gap-3 text-gray-600 hover:text-black transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:border-black transition-colors">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <span className="text-sm">{business.phone}</span>
+              </a>
+
+              {/* Email */}
+              <a
+                href={`mailto:${business.email}`}
+                className="flex items-center gap-3 text-gray-600 hover:text-black transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:border-black transition-colors">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <span className="text-sm break-all">{business.email}</span>
+              </a>
+
+              {/* Address */}
+              <div className="flex items-start gap-3 text-gray-600">
+                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <span className="text-sm leading-relaxed">
+                  {business.address}
+                </span>
+              </div>
+
+              {/* Hours - Simple text line */}
+              <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-gray-200">
+                Mon - Fri: 9:00 AM - 6:00 PM GMT+2
               </p>
-            </motion.div>
-
-            {/* Column 2 - Quick Links */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="space-y-4"
-            >
-              <h4 className="text-white text-lg font-bold">Quick Links</h4>
-              <ul className="space-y-2">
-                {footer.quickLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors text-sm"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Column 3 - Legal */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="space-y-4"
-            >
-              <h4 className="text-white text-lg font-bold">Legal</h4>
-              <ul className="space-y-2">
-                {footer.legal.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors text-sm"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Column 4 - Get in Touch */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="space-y-4"
-            >
-              <h4 className="text-white text-lg font-bold">Get in Touch</h4>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <Phone className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <a
-                    href={`tel:${business.phone}`}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    {business.phone}
-                  </a>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <Mail className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <a
-                    href={`mailto:${business.email}`}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    {business.email}
-                  </a>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-400 text-sm">
-                    {business.address}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Credits Section */}
-      <div className="bg-black py-4">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-gray-600 text-xs text-center sm:text-left">
-              Copyright © {new Date().getFullYear()} {business.name}. All rights
-              reserved.
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 py-5">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-gray-400 text-xs">
+              © {new Date().getFullYear()} {business.name}. All rights reserved.
             </p>
-            <p className="text-gray-600 text-xs">
-              Research Use Only. Not for human consumption.
-            </p>
+
+            <div className="flex items-center gap-4">
+              <p className="text-gray-400 text-xs">Research Use Only</p>
+              <span className="text-gray-300 text-xs">|</span>
+              <p className="text-gray-400 text-xs">Not for human consumption</p>
+            </div>
+
+            {/* Payment Methods */}
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-6 rounded bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-500 text-[10px] font-bold">
+                  VISA
+                </span>
+              </div>
+              <div className="w-10 h-6 rounded bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-500 text-[10px] font-bold">MC</span>
+              </div>
+              <div className="w-10 h-6 rounded bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-500 text-[10px] font-bold">PP</span>
+              </div>
+              <div className="w-10 h-6 rounded bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-500 text-[10px] font-bold">
+                  AMEX
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)",
+      "WebFetch(domain:kecks.co.za)",
+      "Bash(mv \"unnamed.jpg\" \"rebuild.jpg\")",
+      "Bash(mv \"unnamed.png\" \"reshape.png\")",
+      "Bash(mv \"unnamed \\(1\\).png\" \"retaliate.png\")",
+      "Bash(mv \"unnamed \\(2\\).png\" \"retatrutide.png\")",
+      "Bash(mv \"unnamed \\(3\\).png\" \"rezepatide.png\")",
+      "Bash(mv \"unnamed \\(4\\).png\" \"recover.png\")",
+      "Bash(mv \"unnamed \\(5\\).png\" \"repair.png\")",
+      "Bash(mv \"unnamed \\(6\\).png\" \"rezempic.png\")"
+    ]
+  }
+}

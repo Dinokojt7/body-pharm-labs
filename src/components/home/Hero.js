@@ -7,78 +7,65 @@ import Button from "../ui/Button";
 
 const Hero = () => {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen w-full overflow-hidden -mt-29">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/images/hero-bg.jpg)" }}
+          style={{ backgroundImage: "url(/images/hero-bg.png)" }}
         />
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Content */}
-      <div className="relative h-full flex items-center justify-center px-4">
-        <div className="text-center text-white max-w-4xl">
+      <div className="relative h-full flex items-center px-8 md:px-16 lg:px-24">
+        <div className="text-white max-w-2xl">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-300 mb-5"
+          >
+            Research-Grade Peptides
+          </motion.p>
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-black mb-6"
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.05]"
           >
-            BODY PHARM LABZ
+            Where Science
+            <br />
+            Meets Results.
           </motion.h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl md:text-4xl font-bold mb-2">
-              FREE SHIPPING $250+
-            </h2>
-            <p className="text-xl md:text-2xl">
-              High Quality, Lab Tested, Research Peptides.
-            </p>
-          </motion.div>
-
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-sm md:text-base text-gray-200 mb-10 max-w-2xl mx-auto"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-base md:text-lg text-gray-300 mb-10 max-w-lg leading-relaxed"
           >
-            All products offered by Body Pharm Labs are intended strictly for
-            research and laboratory use only. They are not for human
-            consumption, medical use, or diagnostic purposes. These compounds
-            are supplied exclusively to qualified professionals, institutions,
-            and laboratories engaged in scientific research.
+            High quality, lab tested research peptides trusted by scientists
+            worldwide. Free same-day worldwide shipping on orders over $250.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="flex flex-row items-center gap-4"
           >
             <Button
-              href="/about"
-              variant="secondary"
-              size="lg"
-              icon={<ArrowRight className="w-5 h-5" />}
-              iconPosition="right"
-            >
-              LEARN MORE
-            </Button>
-            <Button
               href="/shop"
-              variant="outline"
-              size="lg"
-              icon={<ArrowRight className="w-5 h-5" />}
-              iconPosition="right"
+              variant="secondary"
+              size="md"
+              className="border-white! hover:bg-white/90!"
             >
-              SHOP NOW!
+              Shop Now
+            </Button>
+            <Button href="/about" variant="outline" size="md">
+              Learn More
             </Button>
           </motion.div>
         </div>

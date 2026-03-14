@@ -31,7 +31,9 @@ const QuantitySelector = ({
         <Minus className="w-4 h-4" />
       </button>
 
-      <span className={`px-4 font-medium ${sizeClasses[size]}`}>
+      <span
+        className={`px-4 font-medium flex items-center justify-center ${sizeClasses[size]}`}
+      >
         {quantity}
       </span>
 

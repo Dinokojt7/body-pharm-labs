@@ -11,7 +11,7 @@ const AboutSection = () => {
   const { business } = siteData;
 
   return (
-    <section className="relative w-full py-20 px-4 md:px-8 lg:px-12">
+    <section className="relative w-full py-20 pb-32 px-4 md:px-8 lg:px-12">
       {/* Background with overlay */}
       <div className="absolute inset-0">
         <div
@@ -47,7 +47,7 @@ const AboutSection = () => {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-[600px] rounded-lg overflow-hidden"
+            className="relative h-150 rounded-lg overflow-hidden"
           >
             <Image
               src="/images/about-image.jpg"
@@ -91,6 +91,21 @@ const AboutSection = () => {
             </Button>
           </motion.div>
         </div>
+      </div>
+
+      {/* Wave divider → Products (gray-50) */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none pointer-events-none">
+        <svg
+          viewBox="0 0 1440 72"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-18 block"
+        >
+          <path
+            d="M0,48 C360,80 1080,10 1440,48 L1440,72 L0,72 Z"
+            fill="#f9fafb"
+          />
+        </svg>
       </div>
     </section>
   );

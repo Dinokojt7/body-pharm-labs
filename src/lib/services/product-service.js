@@ -41,7 +41,8 @@ export const fetchProductBySlug = async (slug) => {
 
     // Fallback to local data
     const localProduct = localProducts.find(
-      (p) => p.name.toLowerCase().replace(/\s+/g, "-") === slug,
+      (p) =>
+        (p.slug || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")) === slug,
     );
 
     if (localProduct) {

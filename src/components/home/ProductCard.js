@@ -4,60 +4,63 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Atom } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import LogoSpinner from "../ui/LogoSpinner";
+import QuantitySelector from "../shop/QuantitySelector";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const { addItem, isInCart, getItemQuantity } = useCartStore();
+
+  const { items, addItem, updateQuantity, isInCart, getItemQuantity } =
+    useCartStore();
   const { formatPrice } = useCurrency();
 
   const inCart = isInCart(product.id, product.size);
   const quantity = getItemQuantity(product.id, product.size);
 
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const cartItem = items.find(
+    (i) => i.id === product.id && i.selectedSize === product.size,
+  );
 
+  const handleAdd = () => {
     setIsAdding(true);
     addItem(product, 1, product.size);
-
-    // Visual feedback for 1 second
-    setTimeout(() => setIsAdding(false), 1000);
+    setTimeout(() => setIsAdding(false), 600);
   };
 
-  const pillColor = product.customColor || "bg-black";
+  const handleDecrement = () => {
+    if (cartItem) updateQuantity(cartItem.cartId, quantity - 1);
+  };
 
   return (
-    <Link href={`/shop/${product.name.toLowerCase().replace(/\s+/g, "-")}`}>
+    <Link
+      href={`/shop/${product.slug || product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+    >
       <div
         className="group cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image Container */}
-        <div className="relative aspect-square bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
-          {/* Sale Pill */}
+        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
           <div
-            className={`absolute top-4 left-4 z-10 flex items-center space-x-1 ${pillColor} text-white px-3 py-1 rounded-md`}
+            className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
+            style={{ backgroundColor: product.customColor || "#000" }}
           >
-            <Atom className="w-4 h-4" />
-            <span className="text-xs font-medium">SALE!</span>
+            SALE
           </div>
 
-          {/* Product Image */}
           <Image
             src={product.imageString || "/images/placeholder.jpg"}
             alt={product.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
-          {/* Hover Overlay */}
           <AnimatePresence>
             {isHovered && (
               <motion.div
@@ -67,14 +70,14 @@ const ProductCard = ({ product }) => {
                 className="absolute inset-0 bg-white/90 flex items-center justify-center"
               >
                 <div className="text-center">
-                  <p className="text-gray-500 line-through text-sm">
+                  <p className="text-gray-400 line-through text-sm">
                     {formatPrice(product.compareAtPrice || product.price * 1.3)}
                   </p>
-                  <p className="text-black font-bold text-xl mb-2">
+                  <p className="text-black font-bold text-xl mb-1">
                     {formatPrice(product.price)}
                   </p>
-                  <p className="text-black text-xs font-bold">
-                    BODY PHARM LABZ
+                  <p className="text-black text-xs font-bold tracking-widest uppercase">
+                    Body Pharm Labz
                   </p>
                 </div>
               </motion.div>
@@ -83,26 +86,36 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Product Info */}
-        <div className="mt-4 text-center">
-          <h3 className="font-bold text-black uppercase tracking-wide mb-2 line-clamp-2">
+        <div className="mt-3 text-center">
+          <h3 className="font-bold text-black text-sm uppercase tracking-wide mb-1 truncate">
             {product.name}
           </h3>
+          {product.subtitle && (
+            <p className="text-xs text-gray-400 mb-3">{product.subtitle}</p>
+          )}
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAdding}
-            className="px-6 py-2 border-2 border-black text-black font-medium rounded-md hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center space-x-2"
+          {/* Cart Controls — stop propagation so Link doesn't fire */}
+          <div
+            className="flex items-center justify-center mt-2"
+            onClick={(e) => e.preventDefault()}
           >
-            {isAdding ? (
-              <>
-                <LogoSpinner size="w-4 h-4" color="text-black" />
-                <span>ADDING...</span>
-              </>
+            {inCart ? (
+              <QuantitySelector
+                quantity={quantity}
+                onIncrement={handleAdd}
+                onDecrement={handleDecrement}
+                size="sm"
+              />
             ) : (
-              <span>{inCart ? `ADD MORE (${quantity})` : "ADD TO CART"}</span>
+              <button
+                onClick={handleAdd}
+                disabled={isAdding}
+                className="inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded-lg bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                {isAdding ? <LogoSpinner size="w-3 h-3" /> : "ADD TO CART"}
+              </button>
             )}
-          </button>
+          </div>
         </div>
       </div>
     </Link>
