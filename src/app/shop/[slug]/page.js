@@ -7,7 +7,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import ProductDetail from "@/components/shop/ProductDetail";
 import RelatedProducts from "@/components/shop/RelatedProducts";
 import { fetchProductBySlug } from "@/lib/services/product-service";
-import LogoSpinner from "@/components/ui/LogoSpinner";
+import ProductDetailSkeleton from "@/components/ui/ProductDetailSkeleton";
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -37,9 +37,12 @@ export default function ProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LogoSpinner size="w-16 h-16" />
-      </div>
+      <main>
+        <Breadcrumb />
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
+          <ProductDetailSkeleton />
+        </div>
+      </main>
     );
   }
 

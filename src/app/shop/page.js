@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ProductCard from "@/components/home/ProductCard";
 import { fetchProducts } from "@/lib/services/product-service";
-import LogoSpinner from "@/components/ui/LogoSpinner";
+import ProductCardSkeleton from "@/components/ui/ProductCardSkeleton";
 
 export default function ShopPage() {
   const [products, setProducts] = useState([]);
@@ -46,9 +46,16 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LogoSpinner size="w-16 h-16" />
-      </div>
+      <main>
+        <Breadcrumb />
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </main>
     );
   }
 

@@ -8,7 +8,6 @@ import { Plus, Minus } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
-import LogoSpinner from "../ui/LogoSpinner";
 import QuantitySelector from "../shop/QuantitySelector";
 
 const ProductCard = ({ product }) => {
@@ -112,7 +111,9 @@ const ProductCard = ({ product }) => {
                 disabled={isAdding}
                 className="inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
-                {isAdding ? <LogoSpinner size="w-3 h-3" /> : "ADD TO CART"}
+                {isAdding ? (
+                  <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
+                ) : "ADD TO CART"}
               </button>
             )}
           </div>
