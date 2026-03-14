@@ -16,7 +16,7 @@ const Button = ({
   ...props
 }) => {
   const baseClasses =
-    "inline-flex items-center justify-center font-medium transition-colors rounded-md";
+    "inline-flex items-center justify-center font-medium transition-colors rounded";
 
   const variants = {
     primary: "bg-black text-white hover:bg-gray-800 disabled:bg-gray-300",
