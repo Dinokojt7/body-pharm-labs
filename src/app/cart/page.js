@@ -10,6 +10,7 @@ import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import QuantitySelector from "@/components/shop/QuantitySelector";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CartPage() {
   const router = useRouter();
@@ -25,16 +26,21 @@ export default function CartPage() {
   const total = subtotal + tax + shippingCost;
 
   return (
-    <main className="min-h-screen bg-white pt-32 pb-20">
-      <div className="max-w-5xl mx-auto px-4 md:px-8">
-        <h1 className="text-2xl font-bold tracking-tight text-black mb-10">
-          Your Cart{" "}
-          {totalItems > 0 && (
-            <span className="text-gray-400 font-normal text-base ml-2">
-              ({totalItems} {totalItems === 1 ? "item" : "items"})
-            </span>
-          )}
-        </h1>
+    <main className="min-h-screen bg-white pb-20">
+      <Breadcrumb />
+      <div className="max-w-5xl mx-auto px-4 md:px-8 pt-12">
+
+        {/* Page header */}
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2">
+              Shopping
+            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-black">
+              Your Cart
+            </h1>
+          </div>
+        </div>
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 gap-5 text-center">
@@ -42,7 +48,7 @@ export default function CartPage() {
             <p className="text-gray-400 text-sm">Your cart is empty</p>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 rounded-lg text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 rounded text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
             >
               Shop Now
               <ArrowRight className="w-3.5 h-3.5" />
@@ -56,7 +62,7 @@ export default function CartPage() {
               <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs mb-2 text-gray-600">
                   {subtotal >= shippingThreshold ? (
-                    <span className="font-semibold text-black">
+                    <span className="font-semibold text-[#8B6914]">
                       You've unlocked FREE shipping!
                     </span>
                   ) : (
@@ -72,7 +78,7 @@ export default function CartPage() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    className="h-full bg-black rounded-full"
+                    className="h-full bg-[#CD7F32] rounded-full"
                   />
                 </div>
               </div>

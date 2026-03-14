@@ -41,13 +41,13 @@ const AboutSection = () => {
         </motion.div>
 
         {/* Two Column Layout */}
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left Column - Image */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative h-150 rounded-lg overflow-hidden"
+            className="relative h-64 md:h-125 rounded overflow-hidden"
           >
             <Image
               src="/images/about-image.jpg"
@@ -62,7 +62,7 @@ const AboutSection = () => {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="text-white space-y-6 py-12"
+            className="text-white space-y-6 py-4 md:py-12"
           >
             <h3 className="text-gray-300 text-sm tracking-wider">ABOUT US</h3>
             <h2 className="text-3xl md:text-4xl font-bold">

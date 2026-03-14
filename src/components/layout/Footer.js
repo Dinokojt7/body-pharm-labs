@@ -90,7 +90,7 @@ const Footer = () => {
             viewport={{ once: true }}
             className="lg:col-span-3 space-y-5"
           >
-            <div className="relative h-14 w-36">
+            <div className="relative h-16 w-48">
               <Image
                 src="/images/logo.png"
                 alt={business.name}
@@ -254,39 +254,25 @@ const Footer = () => {
 
             {/* Payment Methods */}
             <div className="flex items-center gap-2">
-              {/* Visa */}
-              <div className="w-11 h-7 rounded border border-gray-200 bg-white flex items-center justify-center px-1.5">
-                <svg viewBox="0 0 780 500" className="w-full h-full" aria-label="Visa">
-                  <rect width="780" height="500" fill="white" />
-                  <path d="M293.2 348.7L322.7 150.3H369.3L339.7 348.7H293.2Z" fill="#1A1F71"/>
-                  <path d="M524.3 155.1C514.9 151.5 500 147.6 481.7 147.6C435.7 147.6 403.1 171.4 402.9 205.6C402.7 231 427.3 245.2 445.9 253.7C465 262.4 471.4 268 471.3 275.9C471.2 287.9 456.5 293.3 442.9 293.3C423.8 293.3 413.6 290.5 397.8 283.5L391.3 280.4L384.3 323.7C395.6 328.8 416.5 333.3 438.2 333.5C487.2 333.5 519.2 309.9 519.5 273.4C519.7 253.4 507.3 238.2 480.6 225.6C463.3 217.3 452.9 211.8 453 203.4C453 195.9 462.1 187.8 481.8 187.8C498.1 187.5 510.1 191.1 519.5 194.7L524.1 196.9L531.1 155.8L524.3 155.1Z" fill="#1A1F71"/>
-                  <path d="M638.7 150.3H603.2C592.4 150.3 584.3 153.4 579.6 164.5L511.3 348.7H560.2L569.9 322.3H629.1L634.5 348.7H678L638.7 150.3ZM583.3 285.5C587.1 275.2 602.1 234.6 602.1 234.6C601.8 235.2 605.8 224.4 608.2 217.7L611.4 233C611.4 233 620.7 278 622.7 285.5H583.3Z" fill="#1A1F71"/>
-                  <path d="M236.3 150.3L190.8 282.4L185.9 258C177.2 229.1 150.3 197.8 120.3 182.3L162.2 348.5H211.5L284.4 150.3H236.3Z" fill="#1A1F71"/>
-                  <path d="M146.4 150.3H71.2L70.6 154C128.6 169.2 167.7 203.2 185.9 258L167.3 165.1C164.1 154.3 156.2 150.7 146.4 150.3Z" fill="#F7B600"/>
-                </svg>
-              </div>
-
-              {/* Mastercard */}
-              <div className="w-11 h-7 rounded border border-gray-200 bg-white flex items-center justify-center px-1.5">
-                <svg viewBox="0 0 131.39 86.9" className="w-full h-auto" aria-label="Mastercard">
-                  <rect x="48.37" width="34.65" height="86.9" fill="#ff5f00"/>
-                  <path d="M51.94,43.45a55.2,55.2,0,0,1,13.12-36.18A55.26,55.26,0,0,0,0,43.45a55.26,55.26,0,0,0,65.06,54.73A55.2,55.2,0,0,1,51.94,43.45Z" fill="#eb001b"/>
-                  <path d="M131.39,43.45A55.26,55.26,0,0,1,65.06,98.9,55.26,55.26,0,0,0,131.39,43.45,55.26,55.26,0,0,0,65.06-12,55.26,55.26,0,0,1,131.39,43.45Z" fill="#f79e1b"/>
-                </svg>
-              </div>
-
-              {/* Amex */}
-              <div className="w-11 h-7 rounded border border-gray-200 bg-[#2557D6] flex items-center justify-center px-1.5">
-                <span className="text-white text-[9px] font-black tracking-tight">AMEX</span>
-              </div>
-
-              {/* Paystack */}
-              <div className="w-11 h-7 rounded border border-gray-200 bg-white flex items-center justify-center px-1.5">
-                <svg viewBox="0 0 200 60" className="w-full h-auto" aria-label="Paystack">
-                  <text x="10" y="44" fontFamily="Arial" fontWeight="900" fontSize="42" fill="#00C3F7">P</text>
-                  <text x="38" y="44" fontFamily="Arial" fontWeight="700" fontSize="28" fill="#011B33">aystack</text>
-                </svg>
-              </div>
+              {[
+                { src: "/images/payments/visa.png", alt: "Visa" },
+                { src: "/images/payments/mastercard.png", alt: "Mastercard" },
+                { src: "/images/payments/amex.png", alt: "American Express" },
+                { src: "/images/payments/paystack.png", alt: "Paystack" },
+              ].map(({ src, alt }) => (
+                <div
+                  key={alt}
+                  className="w-11 h-7 rounded border border-gray-200 bg-white flex items-center justify-center overflow-hidden p-1"
+                >
+                  <Image
+                    src={src}
+                    alt={alt}
+                    width={36}
+                    height={20}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>

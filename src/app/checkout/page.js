@@ -37,13 +37,13 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="pt-32">
+    <main className="">
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-8">Checkout</h1>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-12">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <CheckoutForm
@@ -59,7 +59,7 @@ export default function CheckoutPage() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-lg p-6 sticky top-32">
+            <div className="bg-gray-50 rounded p-6 sticky top-24 lg:top-32">
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
               {/* Items */}

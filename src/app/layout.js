@@ -3,6 +3,7 @@ import "./globals.css";
 import PreHeader from "@/components/layout/PreHeader";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import RouteLoader from "@/components/ui/RouteLoader";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import siteData from "@/lib/data/site-data.json";
@@ -25,9 +26,10 @@ export default function RootLayout({ children }) {
       <body suppressHydrationWarning>
         <AuthProvider>
           <CurrencyProvider>
+            <RouteLoader />
             <PreHeader />
             <Header />
-            <main className="min-h-screen pt-29">{children}</main>
+            <main className="min-h-screen pt-20">{children}</main>
             <Footer />
           </CurrencyProvider>
         </AuthProvider>

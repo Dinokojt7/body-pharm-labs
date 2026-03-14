@@ -71,13 +71,10 @@ const CartSidebar = () => {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-              <div>
+              <div className="flex items-center gap-3">
                 <h2 className="text-sm font-bold tracking-[0.15em] uppercase">
                   Your Cart
                 </h2>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {totalItems} {totalItems === 1 ? "item" : "items"}
-                </p>
               </div>
               <button
                 onClick={closeCart}
@@ -91,7 +88,7 @@ const CartSidebar = () => {
             <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
               <p className="text-xs mb-2 text-gray-600">
                 {subtotal >= shippingThreshold ? (
-                  <span className="font-semibold text-black">
+                  <span className="font-semibold text-[#8B6914]">
                     You've unlocked FREE shipping!
                   </span>
                 ) : (
@@ -107,7 +104,7 @@ const CartSidebar = () => {
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  className="h-full bg-black rounded-full"
+                  className="h-full bg-[#CD7F32] rounded-full"
                 />
               </div>
             </div>
@@ -197,14 +194,14 @@ const CartSidebar = () => {
                   <Link
                     href="/cart"
                     onClick={closeCart}
-                    className="block w-full py-3 text-center border border-black text-black text-sm font-semibold tracking-wider uppercase rounded-lg hover:bg-black hover:text-white transition-colors"
+                    className="block w-full py-3 text-center border border-black text-black text-sm font-semibold tracking-wider uppercase rounded hover:bg-black hover:text-white transition-colors"
                   >
                     View Cart
                   </Link>
                   <Link
                     href="/checkout"
                     onClick={closeCart}
-                    className="block w-full py-3 text-center bg-black text-white text-sm font-semibold tracking-wider uppercase rounded-lg hover:bg-gray-900 transition-colors"
+                    className="block w-full py-3 text-center bg-black text-white text-sm font-semibold tracking-wider uppercase rounded hover:bg-gray-900 transition-colors"
                   >
                     Checkout
                   </Link>

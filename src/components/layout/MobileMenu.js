@@ -52,7 +52,7 @@ const MobileMenu = () => {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="fixed left-0 top-0 h-full w-72 bg-black z-50 flex flex-col"
+            className="fixed left-0 top-0 h-full w-4/5 max-w-xs bg-black z-50 flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">

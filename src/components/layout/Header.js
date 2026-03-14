@@ -95,15 +95,13 @@ const Header = () => {
             {/* Center - Logo (absolutely centered) */}
             <Link
               href="/"
-              className="absolute left-1/2 -translate-x-1/2"
-              style={{ width: 200, height: 64 }}
+              className="absolute left-1/2 -translate-x-1/2 w-36 h-14 md:w-52 md:h-16"
             >
               <Image
                 src="/images/logo.png"
                 alt="Body Pharm Labz"
-                width={200}
-                height={120}
-                className={`object-contain transition-all w-full h-full ${
+                fill
+                className={`object-contain transition-all ${
                   isTransparent ? "brightness-0 invert" : ""
                 }`}
               />

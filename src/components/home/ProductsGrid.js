@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 
 import ProductCard from "./ProductCard";
 import { fetchProducts } from "@/lib/services/product-service";
-import LogoSpinner from "../ui/LogoSpinner";
+import ProductCardSkeleton from "../ui/ProductCardSkeleton";
 
 const ProductsGrid = () => {
   const [products, setProducts] = useState([]);
@@ -27,9 +27,20 @@ const ProductsGrid = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <LogoSpinner size="w-12 h-12" />
-      </div>
+      <section className="relative w-full py-20 px-4 md:px-8 lg:px-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="h-3 bg-gray-200 rounded w-48 mx-auto mb-3 animate-pulse" />
+            <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4 animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded w-40 mx-auto animate-pulse" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 
@@ -78,7 +89,7 @@ const ProductsGrid = () => {
         <div className="text-center">
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 rounded-lg bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
           >
             VIEW ALL PRODUCTS
             <ArrowRight className="w-3.5 h-3.5" />

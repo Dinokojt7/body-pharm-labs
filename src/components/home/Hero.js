@@ -7,7 +7,7 @@ import Button from "../ui/Button";
 
 const Hero = () => {
   return (
-    <section className="relative h-screen w-full overflow-hidden -mt-29">
+    <section className="relative h-screen w-full overflow-hidden -mt-20">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <div
@@ -18,8 +18,8 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative h-full flex items-center px-8 md:px-16 lg:px-24">
-        <div className="text-white max-w-2xl">
+      <div className="relative h-full flex items-center px-4 md:px-12 lg:px-24">
+        <div className="text-white max-w-2xl w-full">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -33,7 +33,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.05]"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-5 leading-[1.05]"
           >
             Where Science
             <br />
@@ -54,7 +54,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="flex flex-row items-center gap-4"
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-3"
           >
             <Button
               href="/shop"
