@@ -16,8 +16,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      {/* Content — centered */}
-      <div className="relative h-full flex items-center justify-center px-4 text-center">
+      {/* Content — centered, nudged down */}
+      <div className="relative h-full flex items-center justify-center px-4 text-center pt-20">
         <div className="text-white max-w-4xl w-full">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -32,7 +32,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 leading-[1.0] tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-[1.05] tracking-tight"
           >
             Where Science
             <br />
@@ -93,21 +93,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-1 h-3 bg-white rounded-full mt-2"
-          />
-        </div>
-      </motion.div>
     </section>
   );
 };
