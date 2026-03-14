@@ -18,11 +18,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Guard: do not initialize Firebase during SSR/prerendering when env vars are
-// unavailable. All Firebase Auth and Firestore calls are client-only anyway.
-const canInit = typeof window !== "undefined" || !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+// Firebase Auth uses browser-only APIs (localStorage, window, etc.).
+// Never initialize on the server — all auth/firestore calls in this app
+// are behind "use client" components so null is safe during SSR/prerendering.
+const isClient = typeof window !== "undefined";
 
-const app = canInit
+const app = isClient
   ? getApps().length === 0
     ? initializeApp(firebaseConfig)
     : getApps()[0]
