@@ -1,4 +1,5 @@
 "use client";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -35,8 +36,9 @@ const sections = [
 
 export default function RefundPolicyPage() {
   return (
-    <main className="min-h-screen bg-white pt-32 pb-20">
-      <div className="max-w-3xl mx-auto px-4 md:px-8">
+    <main className="min-h-screen bg-white pb-20">
+      <Breadcrumb />
+      <div className="max-w-3xl mx-auto px-4 md:px-8 pt-12">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
           <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Legal</p>
           <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Refund & Return Policy</h1>

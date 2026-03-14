@@ -110,7 +110,7 @@ const ProductCard = ({ product }) => {
               <button
                 onClick={handleAdd}
                 disabled={isAdding}
-                className="inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded-lg bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 {isAdding ? <LogoSpinner size="w-3 h-3" /> : "ADD TO CART"}
               </button>

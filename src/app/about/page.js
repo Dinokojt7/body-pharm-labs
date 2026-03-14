@@ -28,7 +28,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="pt-32">
+    <main className="">
       <Breadcrumb />
 
       {/* Hero Section */}

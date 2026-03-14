@@ -53,7 +53,7 @@ export default function ShopPage() {
   }
 
   return (
-    <main className="pt-32">
+    <main>
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
@@ -77,7 +77,7 @@ export default function ShopPage() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-5 h-8 rounded-lg text-xs font-medium tracking-widest uppercase transition-colors border ${
+              className={`px-5 h-8 rounded text-xs font-medium tracking-widest uppercase transition-colors border ${
                 selectedCategory === category
                   ? "bg-black text-white border-black"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"

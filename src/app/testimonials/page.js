@@ -1,4 +1,5 @@
 "use client";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
@@ -57,8 +58,9 @@ const stats = [
 
 export default function TestimonialsPage() {
   return (
-    <main className="min-h-screen bg-white pt-32 pb-20">
-      <div className="max-w-5xl mx-auto px-4 md:px-8 text-center mb-16">
+    <main className="min-h-screen bg-white pb-20">
+      <Breadcrumb />
+      <div className="max-w-5xl mx-auto px-4 md:px-8 pt-12 text-center mb-16">
         <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
           className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
           What Researchers Say

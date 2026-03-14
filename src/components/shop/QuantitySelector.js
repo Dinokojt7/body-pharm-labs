@@ -22,7 +22,7 @@ const QuantitySelector = ({
 
   return (
     <div
-      className={`inline-flex items-center border border-gray-200 rounded-lg ${sizeClasses[size]}`}
+      className={`inline-flex items-center border border-gray-200 rounded ${sizeClasses[size]}`}
     >
       <button
         onClick={onDecrement}

@@ -38,7 +38,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="pt-32">
+    <main className="">
       <Breadcrumb />
 
       {/* Hero */}
@@ -73,7 +73,7 @@ export default function ContactPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow"
+              className="bg-white p-6 rounded shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 bg-black text-white rounded-full mb-4">
                 {info.icon}
@@ -116,7 +116,7 @@ export default function ContactPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold mb-6">Our Location</h2>
-            <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+            <div className="aspect-video bg-gray-200 rounded overflow-hidden">
               <iframe
                 src={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(business.address)}`}
                 width="100%"

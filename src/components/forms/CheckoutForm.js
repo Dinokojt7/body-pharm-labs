@@ -144,7 +144,7 @@ const CheckoutForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Contact Information */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="bg-white rounded p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Contact Information</h3>
         
         <div className="space-y-4">
@@ -156,7 +156,7 @@ const CheckoutForm = ({
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
             />
           </div>
 
@@ -169,7 +169,7 @@ const CheckoutForm = ({
                 value={formData.firstName}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
               />
             </div>
             <div>
@@ -180,7 +180,7 @@ const CheckoutForm = ({
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
               />
             </div>
           </div>
@@ -193,14 +193,14 @@ const CheckoutForm = ({
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* Shipping Address */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="bg-white rounded p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Shipping Address</h3>
         
         <div className="space-y-4">
@@ -212,7 +212,7 @@ const CheckoutForm = ({
               value={formData.address}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
             />
           </div>
 
@@ -225,7 +225,7 @@ const CheckoutForm = ({
                 value={formData.city}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
               />
             </div>
             <div>
@@ -236,7 +236,7 @@ const CheckoutForm = ({
                 value={formData.postalCode}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
               />
             </div>
           </div>
@@ -248,7 +248,7 @@ const CheckoutForm = ({
               value={formData.country}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
             >
               <option value="South Africa">South Africa</option>
               <option value="United States">United States</option>
@@ -264,7 +264,7 @@ const CheckoutForm = ({
       </div>
 
       {/* Order Notes */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="bg-white rounded p-6 border border-gray-200">
         <h3 className="text-lg font-bold mb-4">Order Notes (Optional)</h3>
         
         <textarea
@@ -273,7 +273,7 @@ const CheckoutForm = ({
           onChange={handleInputChange}
           rows="4"
           placeholder="Any special instructions for your order?"
-          className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-black focus:outline-none"
+          className="w-full px-4 py-2 border border-gray-200 rounded focus:border-black focus:outline-none"
         />
       </div>
 
@@ -281,7 +281,7 @@ const CheckoutForm = ({
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-black text-white py-4 rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-black text-white py-4 rounded font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? 'PROCESSING...' : `PAY ${formatPrice(total)}`}
       </button>
