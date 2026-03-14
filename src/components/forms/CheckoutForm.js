@@ -25,7 +25,7 @@ const CheckoutForm = ({
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const { user } = useAuthStore();
-  const { selectedCurrency } = useCurrency();
+  const { selectedCurrency, formatPrice } = useCurrency();
   
   const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState({
