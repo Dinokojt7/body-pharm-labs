@@ -108,11 +108,13 @@ const Header = () => {
             </Link>
 
             {/* Right - Icons */}
-            <div className="flex items-center space-x-4">
-              <CurrencySelector isTransparent={isTransparent} />
+            <div className="flex items-center gap-1 sm:gap-3">
+              <div className="hidden sm:block">
+                <CurrencySelector isTransparent={isTransparent} />
+              </div>
 
               <button
-                className={`p-2 rounded-full transition-colors ${
+                className={`hidden sm:flex p-2 rounded-full transition-colors ${
                   isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
                 }`}
               >
@@ -131,15 +133,7 @@ const Header = () => {
                         : "bg-black text-white hover:bg-gray-800"
                     }`}
                   >
-                    {user?.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt={initials}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      initials
-                    )}
+                    {initials}
                   </button>
 
                   <AnimatePresence>
@@ -149,7 +143,7 @@ const Header = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden z-50"
+                        className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded shadow-lg overflow-hidden z-50"
                       >
                         <div className="px-4 py-3 border-b border-gray-100">
                           <p className="text-xs font-semibold text-black truncate">
