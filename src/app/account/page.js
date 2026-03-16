@@ -12,14 +12,24 @@ import {
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { logout } from "@/lib/firebase/auth";
-import { getUserOrders, getUserProfile, saveUserProfile, deleteOrder } from "@/lib/firebase/firestore";
+import {
+  subscribeToUserOrders,
+  getUserProfile,
+  saveUserProfile,
+  deleteOrder,
+} from "@/lib/firebase/firestore";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import productsData from "@/lib/data/products.json";
 
-// Map productId → local product so order items have images/prices even after checkout
-const productMap = Object.fromEntries(
-  productsData.map((p) => [p.id, p])
-);
+// Fallback image/price lookup from local catalogue
+const productMap = Object.fromEntries(productsData.map((p) => [p.id, p]));
+
+const enrichItems = (items = []) =>
+  items.map((item) => ({
+    ...item,
+    image: item.image || productMap[item.productId]?.imageString || null,
+    price: item.price ?? productMap[item.productId]?.price ?? 0,
+  }));
 
 const STATUS_COLORS = {
   pending_payment: { dot: "bg-amber-400",  text: "text-amber-600",  label: "Pending Payment" },
@@ -74,7 +84,9 @@ function AccountPageInner() {
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push("/");
@@ -97,24 +109,20 @@ function AccountPageInner() {
     });
   }, [user?.uid, user?.displayName, user?.phoneNumber]);
 
-  // Load orders and enrich items with local product images
+  // Realtime orders subscription — updates whenever Firestore changes
   useEffect(() => {
     if (!user?.uid) return;
-    getUserOrders(user.uid).then(({ orders: o }) => {
-      const enriched = (o || []).map((order) => ({
-        ...order,
-        items: (order.items || []).map((item) => {
-          const local = productMap[item.productId];
-          return {
-            ...item,
-            image: item.image || local?.imageString || null,
-            price: item.price ?? local?.price ?? 0,
-          };
-        }),
-      }));
-      setOrders(enriched);
+    const unsubscribe = subscribeToUserOrders(user.uid, ({ orders: o, error: err }) => {
+      if (err) {
+        setOrdersError("Could not load orders. Please refresh.");
+        setOrdersLoading(false);
+        return;
+      }
+      setOrders((o || []).map((order) => ({ ...order, items: enrichItems(order.items) })));
+      setOrdersError("");
       setOrdersLoading(false);
     });
+    return unsubscribe;
   }, [user?.uid]);
 
   const handleSave = async () => {
@@ -136,8 +144,12 @@ function AccountPageInner() {
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm("Delete this order? This cannot be undone.")) return;
     setDeletingId(orderId);
-    await deleteOrder(orderId);
-    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    setDeleteError("");
+    const { success, error: err } = await deleteOrder(orderId);
+    if (err || !success) {
+      setDeleteError("Could not delete order. Please try again.");
+    }
+    // On success the realtime listener removes it from the list automatically
     setDeletingId(null);
   };
 
@@ -403,6 +415,23 @@ function AccountPageInner() {
               <div className="px-5 py-4 border-b border-gray-100">
                 <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Order History</h2>
               </div>
+
+              {/* Orders error */}
+              {ordersError && (
+                <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                  <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  {ordersError}
+                </div>
+              )}
+
+              {/* Delete error */}
+              {deleteError && (
+                <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                  <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  {deleteError}
+                  <button onClick={() => setDeleteError("")} className="ml-auto shrink-0"><X className="w-3 h-3" /></button>
+                </div>
+              )}
 
               {ordersLoading ? (
                 <div className="p-5 space-y-3">

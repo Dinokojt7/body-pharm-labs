@@ -8,8 +8,13 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import { processOrder, generateOrderNumber } from "@/lib/services/order-service";
-import { updateOrderPayment } from "@/lib/firebase/firestore";
-import { getUserProfile } from "@/lib/firebase/firestore";
+import { updateOrderPayment, getUserProfile } from "@/lib/firebase/firestore";
+import productsData from "@/lib/data/products.json";
+
+// Lookup map so we can always resolve images even if missing from the cart item
+const productImageMap = Object.fromEntries(
+  productsData.map((p) => [p.id, p.imageString || null])
+);
 
 const REQUIRED_FIELDS = ["email", "firstName", "lastName", "phone", "address", "city", "postalCode", "country"];
 
@@ -124,7 +129,8 @@ const CheckoutForm = ({
         quantity: item.quantity,
         price: item.price,
         size: item.selectedSize || null,
-        image: item.image || null,
+        // Always persist the image string so order detail pages can render without products.json
+        image: item.image || productImageMap[item.id] || null,
       })),
       subtotal,
       tax,

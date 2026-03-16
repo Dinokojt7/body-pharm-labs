@@ -5,6 +5,7 @@ import {
   getDoc,
   addDoc,
   updateDoc,
+  onSnapshot,
   query,
   where,
   orderBy,
@@ -237,4 +238,50 @@ export const getUserOrders = async (userId) => {
   } catch (error) {
     return { orders: [], error: error.message };
   }
+};
+
+// ─── Realtime subscriptions ────────────────────────────────────────────────
+
+// Subscribe to all orders for a user. Returns an unsubscribe function.
+// callback receives { orders, error }
+export const subscribeToUserOrders = (userId, callback) => {
+  if (!db) {
+    callback({ orders: [], error: "Firestore not available" });
+    return () => {};
+  }
+  const q = query(collection(db, "orders"), where("userId", "==", userId));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const orders = snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const aMs = a.createdAt?.toMillis?.() ?? new Date(a.createdAt ?? 0).getTime();
+          const bMs = b.createdAt?.toMillis?.() ?? new Date(b.createdAt ?? 0).getTime();
+          return bMs - aMs;
+        });
+      callback({ orders, error: null });
+    },
+    (error) => callback({ orders: [], error: error.message })
+  );
+};
+
+// Subscribe to a single order document by Firestore doc ID.
+// callback receives { order, error }
+export const subscribeToOrder = (orderId, callback) => {
+  if (!db) {
+    callback({ order: null, error: "Firestore not available" });
+    return () => {};
+  }
+  return onSnapshot(
+    doc(db, "orders", orderId),
+    (snap) => {
+      if (snap.exists()) {
+        callback({ order: { id: snap.id, ...snap.data() }, error: null });
+      } else {
+        callback({ order: null, error: null });
+      }
+    },
+    (error) => callback({ order: null, error: error.message })
+  );
 };
