@@ -1,21 +1,24 @@
 "use client";
 
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { onAuthChange, getGoogleRedirectResult } from "@/lib/firebase/auth";
-import { createUserDoc } from "@/lib/firebase/firestore";
+import { createUserDoc, getUserProfile } from "@/lib/firebase/firestore";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const { setUser, setAuthLoading, setAuthError } = useAuthStore();
   const { openAuthModal, setIsAuthResolving } = useUIStore();
+  const router = useRouter();
+  const pathname = usePathname();
+  const profileChecked = useRef(false);
 
   useEffect(() => {
     setAuthLoading(true);
 
-    // If the user was redirected to Google, re-open the modal in resolving state
     const redirectPending =
       typeof window !== "undefined" &&
       localStorage.getItem("auth_redirect_pending") === "1";
@@ -38,7 +41,6 @@ export const AuthProvider = ({ children }) => {
 
       if (result?.user) {
         const { user, additionalUserInfo } = result;
-        // Create Firestore user doc on first Google sign-in
         if (additionalUserInfo?.isNewUser) {
           await createUserDoc(user.uid, {
             email: user.email || "",
@@ -47,16 +49,14 @@ export const AuthProvider = ({ children }) => {
             photoURL: user.photoURL || "",
             provider: "google",
           });
+          profileChecked.current = true;
         }
-        // isAuthResolving stays true — onAuthChange will fire and the modal
-        // will transition to "success" once isAuthenticated becomes true.
       } else {
-        // No redirect result — clear resolving state so modal doesn't hang
         setIsAuthResolving(false);
       }
     });
 
-    const unsubscribe = onAuthChange((user) => {
+    const unsubscribe = onAuthChange(async (user) => {
       if (user) {
         const transformedUser = {
           uid: user.uid,
@@ -72,14 +72,26 @@ export const AuthProvider = ({ children }) => {
           },
         };
         setUser(transformedUser);
+
+        // Once per session: check if Firestore user doc exists.
+        // If missing (doc creation failed or user signed in before we added this),
+        // send them to account to complete their profile.
+        if (!profileChecked.current) {
+          profileChecked.current = true;
+          const { profile } = await getUserProfile(user.uid);
+          if (!profile && pathname !== "/account") {
+            router.push("/account?welcome=1");
+          }
+        }
       } else {
         setUser(null);
+        profileChecked.current = false;
       }
       setAuthLoading(false);
     });
 
     return () => unsubscribe();
-  }, [setUser, setAuthLoading, setAuthError, openAuthModal, setIsAuthResolving]);
+  }, [setUser, setAuthLoading, setAuthError, openAuthModal, setIsAuthResolving, router, pathname]);
 
   return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 };

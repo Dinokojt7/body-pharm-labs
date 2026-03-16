@@ -1,24 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search,
-  User,
-  ShoppingBag,
-  Menu,
-  X,
-  LogOut,
-  Package,
-} from "lucide-react";
+import { User, ShoppingBag, Menu, X } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
-import { logout } from "@/lib/firebase/auth";
 import { useScrollDirection } from "@/lib/hooks/useScrollDirection";
 import CurrencySelector from "../ui/CurrencySelector";
 import CartSidebar from "./CartSidebar";
@@ -27,36 +18,17 @@ import AuthModal from "./AuthModal";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const userMenuRef = useRef(null);
   const pathname = usePathname();
-  const router = useRouter();
   const { scrollDirection, scrollY } = useScrollDirection();
   const { totalItems, toggleCart } = useCartStore();
   const { toggleMobileMenu, isMobileMenuOpen, openAuthModal } = useUIStore();
-  const { isAuthenticated, user, getDisplayName } = useAuthStore();
+  const { isAuthenticated, getDisplayName } = useAuthStore();
 
   useEffect(() => {
     setIsScrolled(scrollY > 50);
   }, [scrollY]);
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
-        setUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleLogout = async () => {
-    setUserMenuOpen(false);
-    await logout();
-    router.push("/");
-  };
-
-  const initials = getDisplayName()?.charAt(0)?.toUpperCase() || "U";
+  const initials = getDisplayName()?.slice(0, 2)?.toUpperCase() || "U";
 
   const isTransparent = !isScrolled && pathname === "/";
 
@@ -126,57 +98,17 @@ const Header = () => {
               </button> */}
 
               {isAuthenticated ? (
-                <div ref={userMenuRef} className="relative">
-                  <button
-                    onClick={() => setUserMenuOpen((v) => !v)}
-                    className={`w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-sm md:text-base font-bold transition-colors ${
-                      isTransparent
-                        ? "bg-white/20 text-white hover:bg-white/30"
-                        : "bg-black text-white hover:bg-gray-800"
-                    }`}
-                    aria-label="User menu"
-                  >
-                    {initials}
-                  </button>
-
-                  <AnimatePresence>
-                    {userMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 6, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 shadow-lg overflow-hidden z-50"
-                      >
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-xs font-semibold text-black truncate">
-                            {getDisplayName()}
-                          </p>
-                          {user?.email && (
-                            <p className="text-xs text-gray-400 truncate mt-0.5">
-                              {user.email}
-                            </p>
-                          )}
-                        </div>
-                        <Link
-                          href="/account"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <Package className="w-4 h-4" />
-                          My Orders
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          Sign Out
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <Link
+                  href="/account"
+                  className={`w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-sm md:text-base font-semibold transition-colors ${
+                    isTransparent
+                      ? "bg-white/20 text-white hover:bg-white/30"
+                      : "bg-black text-white hover:bg-gray-800"
+                  }`}
+                  aria-label="My account"
+                >
+                  {initials}
+                </Link>
               ) : (
                 <button
                   onClick={openAuthModal}
