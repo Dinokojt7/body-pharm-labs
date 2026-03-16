@@ -87,6 +87,10 @@ function AccountPageInner() {
   const [ordersError, setOrdersError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [deleteError, setDeleteError] = useState("");
+  const [ordersPage, setOrdersPage] = useState(1);
+
+  const PAGE_SIZE = 5;
+  const THREE_MONTHS_MS = 3 * 30 * 24 * 60 * 60 * 1000;
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push("/");
@@ -121,6 +125,7 @@ function AccountPageInner() {
       setOrders((o || []).map((order) => ({ ...order, items: enrichItems(order.items) })));
       setOrdersError("");
       setOrdersLoading(false);
+      setOrdersPage(1);
     });
     return unsubscribe;
   }, [user?.uid]);
@@ -179,6 +184,14 @@ function AccountPageInner() {
   if (authLoading || !isAuthenticated) return null;
 
   const displayName = profile.displayName || getDisplayName();
+
+  const cutoff = Date.now() - THREE_MONTHS_MS;
+  const recentOrders = orders.filter((o) => {
+    const ms = o.createdAt?.toMillis?.() ?? new Date(o.createdAt ?? 0).getTime();
+    return ms >= cutoff;
+  });
+  const totalPages = Math.max(1, Math.ceil(recentOrders.length / PAGE_SIZE));
+  const pagedOrders = recentOrders.slice((ordersPage - 1) * PAGE_SIZE, ordersPage * PAGE_SIZE);
   const initials = displayName?.slice(0, 2).toUpperCase() || "U";
   const memberSince = user?.metadata?.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", { month: "long", year: "numeric" })
@@ -439,15 +452,15 @@ function AccountPageInner() {
                     <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />
                   ))}
                 </div>
-              ) : orders.length === 0 ? (
+              ) : recentOrders.length === 0 ? (
                 <div className="py-14 flex flex-col items-center justify-center text-center gap-4 px-5">
                   <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
                     <Package className="w-5 h-5 text-gray-300" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-black">No orders yet</p>
+                    <p className="text-sm font-semibold text-black">No recent orders</p>
                     <p className="text-xs text-gray-400 mt-1 max-w-xs">
-                      When you place your first order it will appear here.
+                      Orders from the last 3 months will appear here.
                     </p>
                   </div>
                   <Link
@@ -458,76 +471,89 @@ function AccountPageInner() {
                   </Link>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
-                  {orders.map((order) => {
-                    const s = STATUS_COLORS[order.status] || STATUS_COLORS.paid;
-                    const isPending = order.status === "payment_failed" || order.status === "pending_payment";
-                    const orderRef = order.orderNumber || order.id;
-                    return (
-                      <div key={order.id}>
-                        {/* Clickable row */}
-                        <button
-                          onClick={() =>
-                            isPending
-                              ? handleResumePayment(order)
-                              : router.push(`/orders/${orderRef}`)
-                          }
-                          className="w-full px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left group"
-                        >
-                          {/* Status dot */}
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
-
-                          {/* Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-xs font-semibold text-black font-mono">
-                                {orderRef}
-                              </span>
-                              <span className={`text-[10px] font-semibold ${s.text}`}>
-                                {s.label}
-                              </span>
+                <>
+                  <div className="divide-y divide-gray-100">
+                    {pagedOrders.map((order) => {
+                      const s = STATUS_COLORS[order.status] || STATUS_COLORS.paid;
+                      const isPending = order.status === "payment_failed" || order.status === "pending_payment";
+                      const orderRef = order.orderNumber || order.id;
+                      return (
+                        <div key={order.id}>
+                          {/* Clickable row */}
+                          <button
+                            onClick={() =>
+                              isPending
+                                ? handleResumePayment(order)
+                                : router.push(`/orders/${orderRef}`)
+                            }
+                            className="w-full px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left group"
+                          >
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <span className="text-xs font-semibold text-black font-mono">{orderRef}</span>
+                                <span className={`text-[10px] font-semibold ${s.text}`}>{s.label}</span>
+                              </div>
+                              <p className="text-xs text-gray-400">
+                                {formatDate(order.createdAt)} &middot;{" "}
+                                {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                                {isPending && (
+                                  <span className="ml-2 text-amber-500 font-medium">— tap to complete payment</span>
+                                )}
+                              </p>
                             </div>
-                            <p className="text-xs text-gray-400">
-                              {formatDate(order.createdAt)} &middot;{" "}
-                              {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
-                              {isPending && (
-                                <span className="ml-2 text-amber-500 font-medium">
-                                  — tap to complete payment
-                                </span>
-                              )}
-                            </p>
-                          </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-sm font-semibold text-black">
+                                {formatPrice(order.total ?? order.totals?.total)}
+                              </span>
+                              <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
+                            </div>
+                          </button>
 
-                          {/* Total + chevron */}
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-sm font-semibold text-black">
-                              {formatPrice(order.total ?? order.totals?.total)}
-                            </span>
-                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
-                          </div>
-                        </button>
+                          {isPending && (
+                            <div className="px-5 pb-3 flex justify-end">
+                              <button
+                                onClick={() => handleDeleteOrder(order.id)}
+                                disabled={deletingId === order.id}
+                                className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
+                              >
+                                {deletingId === order.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-3 h-3" />
+                                )}
+                                Delete order
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                        {/* Delete for failed/pending — separate from the clickable row */}
-                        {isPending && (
-                          <div className="px-5 pb-3 flex justify-end">
-                            <button
-                              onClick={() => handleDeleteOrder(order.id)}
-                              disabled={deletingId === order.id}
-                              className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
-                            >
-                              {deletingId === order.id ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : (
-                                <Trash2 className="w-3 h-3" />
-                              )}
-                              Delete order
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-1">
+                      <span className="text-[10px] text-gray-400 mr-2">
+                        {ordersPage} / {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setOrdersPage((p) => Math.max(1, p - 1))}
+                        disabled={ordersPage === 1}
+                        className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight className="w-3 h-3 rotate-180" />
+                      </button>
+                      <button
+                        onClick={() => setOrdersPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={ordersPage === totalPages}
+                        className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 

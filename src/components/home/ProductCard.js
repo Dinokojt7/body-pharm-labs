@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image Container */}
-        <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+        <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
           <div
             className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
             style={{ backgroundColor: product.customColor || "#000" }}

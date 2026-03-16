@@ -95,7 +95,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-gray-50 rounded-2xl p-12 text-center"
+          className="bg-gray-50 rounded-lg p-12 text-center"
         >
           <h2 className="text-3xl font-bold mb-6">Our Quality Commitment</h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">

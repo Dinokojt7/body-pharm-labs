@@ -93,7 +93,7 @@ export default function ShippingPolicyPage() {
         </motion.div>
 
         {/* Highlights */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-lg overflow-hidden mb-12">
           {highlights.map((h) => (
             <div key={h.label} className="bg-white px-5 py-6 text-center">
               <h.icon className="w-5 h-5 text-black mx-auto mb-2" />
@@ -109,7 +109,7 @@ export default function ShippingPolicyPage() {
         <h2 className="text-xs font-bold tracking-[0.15em] uppercase text-black mb-4">
           Estimated Delivery Times
         </h2>
-        <div className="border border-gray-100 rounded-2xl overflow-hidden mb-12">
+        <div className="border border-gray-100 rounded-lg overflow-hidden mb-12">
           {regions.map((r, i) => (
             <div
               key={r.region}

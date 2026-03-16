@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { amount, email, metadata } = body;
+    const { amount, email, metadata, currency, reference } = body;
 
     const response = await fetch(
       "https://api.paystack.co/transaction/initialize",
@@ -14,9 +14,11 @@ export async function POST(request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: amount * 100, // Paystack expects amount in kobo
+          amount: Math.round(amount * 100), // kobo / cents — must be integer
           email,
           metadata,
+          currency: currency || "ZAR",
+          ...(reference && { reference }),
           callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/verify`,
         }),
       },

@@ -86,7 +86,7 @@ function SuccessPageInner() {
             <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
           </div>
         ) : order ? (
-          <div className="border border-gray-100 rounded-2xl overflow-hidden mb-8">
+          <div className="border border-gray-100 rounded-lg overflow-hidden mb-8">
             {/* Items */}
             <div className="px-6 py-5 border-b border-gray-100">
               <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-4">

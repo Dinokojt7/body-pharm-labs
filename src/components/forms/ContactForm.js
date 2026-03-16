@@ -119,7 +119,7 @@ const ContactForm = () => {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full py-3 bg-black text-white rounded-xl text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40"
+        className="w-full py-3 bg-black text-white rounded-lg text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40"
       >
         {status === "sending" ? "Sending…" : "Send Message"}
       </button>

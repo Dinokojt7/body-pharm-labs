@@ -58,7 +58,7 @@ export default function CartPage() {
             {/* Items list */}
             <div className="lg:col-span-2 space-y-6">
               {/* Free shipping progress */}
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
                 <p className="text-xs mb-2 text-gray-600">
                   {subtotal >= shippingThreshold ? (
                     <span className="font-semibold text-[#8B6914]">
@@ -95,7 +95,7 @@ export default function CartPage() {
                     {/* Image */}
                     <Link
                       href={`/shop/${item.slug || item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                      className="relative w-24 h-24 bg-gray-50 rounded-xl overflow-hidden shrink-0 border border-gray-100"
+                      className="relative w-24 h-24 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100"
                     >
                       <Image
                         src={item.image || "/images/placeholder.jpg"}
@@ -160,7 +160,7 @@ export default function CartPage() {
 
             {/* Order summary */}
             <div className="lg:col-span-1">
-              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 sticky top-32">
+              <div className="bg-gray-50 rounded-lg border border-gray-100 p-6 sticky top-32">
                 <h2 className="text-sm font-bold tracking-[0.12em] uppercase text-black mb-5">
                   Order Summary
                 </h2>
@@ -188,7 +188,7 @@ export default function CartPage() {
 
                 <Link
                   href="/checkout"
-                  className="mt-6 block w-full py-3 text-center bg-black text-white text-sm font-semibold tracking-wider uppercase rounded-xl hover:bg-gray-900 transition-colors"
+                  className="mt-6 block w-full py-3 text-center bg-black text-white text-sm font-semibold tracking-wider uppercase rounded-lg hover:bg-gray-900 transition-colors"
                 >
                   Proceed to Checkout
                 </Link>

@@ -61,7 +61,7 @@ export default function RefundPolicyPage() {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="border border-gray-100 rounded-2xl p-6"
+            className="border border-gray-100 rounded-lg p-6"
           >
             <div className="flex items-center gap-2 mb-5">
               <CheckCircle className="w-4 h-4 text-black" />
@@ -87,7 +87,7 @@ export default function RefundPolicyPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.05 }}
-            className="border border-gray-100 rounded-2xl p-6"
+            className="border border-gray-100 rounded-lg p-6"
           >
             <div className="flex items-center gap-2 mb-5">
               <XCircle className="w-4 h-4 text-gray-400" />
@@ -128,7 +128,7 @@ export default function RefundPolicyPage() {
           ))}
         </div>
 
-        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-6 flex items-start gap-3">
+        <div className="bg-gray-50 border border-gray-100 rounded-lg p-6 flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
           <p className="text-xs text-gray-500 leading-relaxed">
             To initiate a claim, email{" "}

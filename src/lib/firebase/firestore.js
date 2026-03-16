@@ -206,6 +206,17 @@ export const getOrderByNumber = async (orderNumber, email) => {
   }
 };
 
+export const getOrderById = async (orderId) => {
+  if (!db) return { order: null, error: "Not available server-side" };
+  try {
+    const snap = await getDoc(doc(db, "orders", orderId));
+    if (!snap.exists()) return { order: null, error: null };
+    return { order: { id: snap.id, ...snap.data() }, error: null };
+  } catch (error) {
+    return { order: null, error: error.message };
+  }
+};
+
 export const deleteOrder = async (orderId) => {
   if (!db) return { success: false, error: "Not available server-side" };
   try {

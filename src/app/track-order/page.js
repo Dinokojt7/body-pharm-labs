@@ -116,7 +116,7 @@ function TrackOrderInner() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
           onSubmit={handleTrack}
-          className="border border-gray-100 rounded-2xl p-6 mb-8 space-y-4"
+          className="border border-gray-100 rounded-lg p-6 mb-8 space-y-4"
         >
           <div>
             <label className="block text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">
@@ -128,7 +128,7 @@ function TrackOrderInner() {
               onChange={(e) => setReference(e.target.value)}
               placeholder="e.g. BX4821"
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
             />
             <p className="text-xs text-gray-400 mt-1.5">
               Found in your order confirmation email
@@ -144,13 +144,13 @@ function TrackOrderInner() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-black text-white rounded-xl text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-black text-white rounded-lg text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
           >
             {loading ? (
               "Searching…"
@@ -169,7 +169,7 @@ function TrackOrderInner() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-start gap-3 p-4 border border-gray-100 rounded-2xl mb-8"
+              className="flex items-start gap-3 p-4 border border-gray-100 rounded-lg mb-8"
             >
               <AlertCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
               <p className="text-sm text-gray-500">{error}</p>
@@ -184,7 +184,7 @@ function TrackOrderInner() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="border border-gray-100 rounded-2xl overflow-hidden"
+              className="border border-gray-100 rounded-lg overflow-hidden"
             >
               {/* Status header */}
               <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between gap-4">
@@ -254,7 +254,7 @@ function TrackOrderInner() {
                 </div>
               ) : (
                 <div className="px-6 py-5">
-                  <div className="flex items-start gap-3 p-4 bg-red-50 rounded-xl">
+                  <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
                     <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-semibold text-red-700">Payment not completed</p>

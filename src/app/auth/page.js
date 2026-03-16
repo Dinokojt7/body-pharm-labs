@@ -184,7 +184,7 @@ export default function AuthPage() {
       </Link>
 
       {/* Card */}
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="w-full max-w-sm bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <AnimatePresence mode="wait">
           {/* ── Main: choose method ── */}
           {step === "main" && (
@@ -207,7 +207,7 @@ export default function AuthPage() {
               <button
                 onClick={handleGoogle}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl text-sm font-medium text-black hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <GoogleIcon />
                 Continue with Google
@@ -226,7 +226,7 @@ export default function AuthPage() {
               <button
                 onClick={() => setStep("phone-input")}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Phone className="w-4 h-4" />
                 Continue with Phone
@@ -278,7 +278,7 @@ export default function AuthPage() {
                           COUNTRY_CODES.find((c) => c.code === e.target.value),
                         )
                       }
-                      className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-black transition-colors cursor-pointer"
+                      className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:border-black transition-colors cursor-pointer"
                     >
                       {COUNTRY_CODES.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -313,7 +313,7 @@ export default function AuthPage() {
                     placeholder="81 234 5678"
                     required
                     autoFocus
-                    className="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+                    className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
                   />
                 </div>
 
@@ -327,7 +327,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading || phoneNumber.length < 7}
-                  className="w-full py-3 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full py-3 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {loading ? "Sending…" : "Send Code"}
                 </button>
@@ -380,7 +380,7 @@ export default function AuthPage() {
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="w-11 h-12 text-center text-lg font-bold border border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                      className="w-11 h-12 text-center text-lg font-bold border border-gray-200 rounded-lg focus:outline-none focus:border-black transition-colors"
                     />
                   ))}
                 </div>
@@ -395,7 +395,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading || otp.join("").length < 6}
-                  className="w-full py-3 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full py-3 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {loading ? "Verifying…" : "Verify & Sign In"}
                 </button>

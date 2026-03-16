@@ -8,7 +8,7 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import { processOrder, generateOrderNumber } from "@/lib/services/order-service";
-import { updateOrderPayment, getUserProfile } from "@/lib/firebase/firestore";
+import { getUserProfile } from "@/lib/firebase/firestore";
 import productsData from "@/lib/data/products.json";
 
 // Lookup map so we can always resolve images even if missing from the cart item
@@ -108,6 +108,7 @@ const CheckoutForm = ({
     setValidationError("");
 
     const orderNumber = generateOrderNumber();
+    const reference = `${orderNumber}-${Date.now()}`;
 
     const orderData = {
       orderNumber,
@@ -129,7 +130,6 @@ const CheckoutForm = ({
         quantity: item.quantity,
         price: item.price,
         size: item.selectedSize || null,
-        // Always persist the image string so order detail pages can render without products.json
         image: item.image || productImageMap[item.id] || null,
       })),
       subtotal,
@@ -144,87 +144,34 @@ const CheckoutForm = ({
       paidAt: null,
     };
 
-    let orderId = null;
-
     try {
       const result = await processOrder(orderData);
       if (!result.success) throw new Error(result.error);
-      orderId = result.orderId;
+      const orderId = result.orderId;
 
-      const Paystack = (await import("@paystack/inline-js")).default;
-      const paystack = new Paystack();
-
-      paystack.newTransaction({
-        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-        email: formData.email.toLowerCase().trim(),
-        amount: Math.round(total * 100), // kobo / cents — must be integer
-        currency: selectedCurrency,
-        reference: `${orderNumber}-${Date.now()}`,
-        metadata: {
-          orderId,
-          orderNumber,
-          customerName: `${formData.firstName} ${formData.lastName}`,
-        },
-
-        onSuccess: async (transaction) => {
-          try {
-            // Verify server-side
-            const verifyRes = await fetch(`/api/paystack?reference=${transaction.reference}`);
-            const verifyData = await verifyRes.json();
-
-            if (verifyData.success) {
-              await updateOrderPayment(orderId, {
-                status: "paid",
-                paystackReference: transaction.reference,
-                paidAt: new Date().toISOString(),
-              });
-
-              // Send confirmation email (fire-and-forget)
-              fetch("/api/send-order-email", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  orderNumber,
-                  email: formData.email,
-                  firstName: formData.firstName,
-                  items: orderData.items,
-                  total,
-                  currency: selectedCurrency,
-                }),
-              }).catch(() => {});
-
-              clearCart();
-              router.push(`/checkout/success?order=${orderNumber}`);
-            } else {
-              // Payment verified but something off — still treat as failed
-              await updateOrderPayment(orderId, { status: "payment_failed" });
-              setLoading(false);
-            }
-          } catch {
-            setLoading(false);
-          }
-        },
-
-        onCancel: async () => {
-          if (orderId) {
-            await updateOrderPayment(orderId, { status: "payment_failed" });
-          }
-          setLoading(false);
-        },
-
-        onError: async (err) => {
-          console.error("Paystack error:", err);
-          if (orderId) {
-            await updateOrderPayment(orderId, { status: "payment_failed" });
-          }
-          setLoading(false);
-        },
+      const res = await fetch("/api/paystack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: total,
+          email: formData.email.toLowerCase().trim(),
+          currency: selectedCurrency,
+          reference,
+          metadata: {
+            orderId,
+            orderNumber,
+            customerName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+          },
+        }),
       });
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Payment initialization failed");
+
+      // Redirect to Paystack hosted checkout — callback_url handles the rest
+      window.location.href = data.authorization_url;
     } catch (err) {
       console.error("Checkout error:", err);
-      if (orderId) {
-        await updateOrderPayment(orderId, { status: "payment_failed" });
-      }
       setValidationError("Something went wrong. Please try again.");
       setLoading(false);
     }

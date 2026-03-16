@@ -27,14 +27,14 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-xl text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-lg text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors"
             >
               <Home className="w-3.5 h-3.5" />
               Back Home
             </Link>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 bg-white text-black rounded-xl text-xs font-medium tracking-widest uppercase hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 bg-white text-black rounded-lg text-xs font-medium tracking-widest uppercase hover:bg-gray-50 transition-colors"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               Browse Products

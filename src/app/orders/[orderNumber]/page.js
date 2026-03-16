@@ -100,7 +100,7 @@ export default function OrderDetailPage() {
 
         {/* Fetch error */}
         {fetchError && (
-          <div className="mb-6 flex items-start gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
+          <div className="mb-6 flex items-start gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             {fetchError}
           </div>
@@ -149,7 +149,7 @@ export default function OrderDetailPage() {
 
             {/* Progress */}
             {showProgress && (
-              <div className="border border-gray-100 rounded-xl p-6">
+              <div className="border border-gray-100 rounded-lg p-6">
                 <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-6">Shipment Progress</p>
                 <div className="space-y-4">
                   {STEPS.map((step, i) => {
@@ -175,7 +175,7 @@ export default function OrderDetailPage() {
             )}
 
             {/* Items */}
-            <div className="border border-gray-100 rounded-xl overflow-hidden">
+            <div className="border border-gray-100 rounded-lg overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100">
                 <p className="text-xs font-bold tracking-widest uppercase text-gray-400">Items Ordered</p>
               </div>
@@ -232,7 +232,7 @@ export default function OrderDetailPage() {
 
             {/* Shipping + Contact */}
             <div className="grid sm:grid-cols-2 gap-4">
-              <div className="border border-gray-100 rounded-xl p-5">
+              <div className="border border-gray-100 rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <MapPin className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-xs font-bold tracking-widest uppercase text-gray-400">Ship To</p>
@@ -247,7 +247,7 @@ export default function OrderDetailPage() {
                 <p className="text-xs text-gray-500">{order.shippingAddress?.country}</p>
               </div>
 
-              <div className="border border-gray-100 rounded-xl p-5">
+              <div className="border border-gray-100 rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Mail className="w-3.5 h-3.5 text-gray-400" />
                   <p className="text-xs font-bold tracking-widest uppercase text-gray-400">Contact</p>
@@ -267,7 +267,7 @@ export default function OrderDetailPage() {
 
             {/* Notes */}
             {order.notes && (
-              <div className="border border-gray-100 rounded-xl p-5">
+              <div className="border border-gray-100 rounded-lg p-5">
                 <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-2">Order Notes</p>
                 <p className="text-sm text-gray-600">{order.notes}</p>
               </div>

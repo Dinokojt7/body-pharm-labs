@@ -201,7 +201,7 @@ export default function AuthModal() {
             ref={modalRef}
             className="fixed inset-0 z-61 flex items-center justify-center p-2 sm:p-4 pointer-events-none"
           >
-            <div className="w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl flex flex-col md:flex-row pointer-events-auto max-h-[92vh] md:max-h-none">
+            <div className="w-full max-w-3xl overflow-hidden rounded-lg shadow-2xl flex flex-col md:flex-row pointer-events-auto max-h-[92vh] md:max-h-none">
 
               {/* Left panel — desktop only */}
               <div className="hidden md:block md:w-5/12 relative min-h-[500px] bg-black overflow-hidden">
@@ -250,7 +250,7 @@ export default function AuthModal() {
                       <p className="text-sm text-gray-400 mb-6 md:mb-8">Access your account to manage orders.</p>
 
                       <button onClick={handleGoogle} disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl text-sm font-medium text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
                       >
                         <GoogleIcon />
                         {loading ? "Redirecting to Google…" : "Continue with Google"}
@@ -263,7 +263,7 @@ export default function AuthModal() {
                       </div>
 
                       <button onClick={() => setStep("phone-input")} disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50"
                       >
                         <Phone className="w-4 h-4" />
                         Continue with Phone
@@ -302,7 +302,7 @@ export default function AuthModal() {
                           <div className="relative">
                             <select value={countryCode.code}
                               onChange={(e) => setCountryCode(COUNTRY_CODES.find((c) => c.code === e.target.value))}
-                              className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-black transition-colors cursor-pointer"
+                              className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:border-black transition-colors cursor-pointer"
                             >
                               {COUNTRY_CODES.map((c) => (
                                 <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
@@ -317,7 +317,7 @@ export default function AuthModal() {
                           <input type="tel" value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
                             placeholder="81 234 5678" required autoFocus
-                            className="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+                            className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
                           />
                         </div>
 
@@ -328,7 +328,7 @@ export default function AuthModal() {
                         )}
 
                         <button type="submit" disabled={loading || phoneNumber.length < 7}
-                          className="w-full py-3 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40"
+                          className="w-full py-3 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40"
                         >
                           {loading ? "Sending…" : "Send Code"}
                         </button>
@@ -359,7 +359,7 @@ export default function AuthModal() {
                               type="text" inputMode="numeric" maxLength={1} value={digit}
                               onChange={(e) => handleOtpChange(i, e.target.value)}
                               onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                              className="w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold border border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                              className="w-10 h-12 sm:w-11 sm:h-12 text-center text-lg font-bold border border-gray-200 rounded-lg focus:outline-none focus:border-black transition-colors"
                             />
                           ))}
                         </div>
@@ -371,7 +371,7 @@ export default function AuthModal() {
                         )}
 
                         <button type="submit" disabled={loading || otp.join("").length < 6}
-                          className="w-full py-3 bg-black text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40"
+                          className="w-full py-3 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-40"
                         >
                           {loading ? "Verifying…" : "Verify & Sign In"}
                         </button>

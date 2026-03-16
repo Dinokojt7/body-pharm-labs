@@ -87,7 +87,7 @@ export default function TestimonialsPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 md:px-8 mb-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-lg overflow-hidden">
           {stats.map((s) => (
             <div key={s.label} className="bg-white px-6 py-8 text-center">
               <p className="text-2xl md:text-3xl font-black text-black mb-1">
@@ -110,7 +110,7 @@ export default function TestimonialsPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col gap-4"
+              className="bg-white border border-gray-100 rounded-lg p-6 flex flex-col gap-4"
             >
               <Quote className="w-5 h-5 text-gray-200 shrink-0" />
               <p className="text-gray-600 text-sm leading-relaxed flex-1">
