@@ -201,7 +201,7 @@ export default function AuthModal() {
             ref={modalRef}
             className="fixed inset-0 z-61 flex items-center justify-center p-2 sm:p-4 pointer-events-none"
           >
-            <div className="w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl flex flex-col md:flex-row pointer-events-auto max-h-[90vh] md:max-h-none">
+            <div className="w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl flex flex-col md:flex-row pointer-events-auto max-h-[92vh] md:max-h-none">
 
               {/* Left panel — desktop only */}
               <div className="hidden md:block md:w-5/12 relative min-h-[500px] bg-black overflow-hidden">
@@ -221,7 +221,7 @@ export default function AuthModal() {
               </div>
 
               {/* Right panel */}
-              <div className="w-full md:w-7/12 bg-white relative flex flex-col max-h-[90vh] md:max-h-[500px] overflow-y-auto">
+              <div className="w-full md:w-7/12 bg-white relative flex flex-col overflow-y-auto">
 
                 {/* Close button — hidden during resolving */}
                 {!isLocked && (
@@ -238,7 +238,7 @@ export default function AuthModal() {
                   {/* ── Main step ── */}
                   {step === "main" && (
                     <motion.div key="main" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}
-                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center md:min-h-115"
                     >
                       <div className="md:hidden flex justify-center mb-6">
                         <div className="relative w-48 h-16">
@@ -286,7 +286,7 @@ export default function AuthModal() {
                   {/* ── Phone input step ── */}
                   {step === "phone-input" && (
                     <motion.div key="phone-input" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}
-                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center md:min-h-115"
                     >
                       <button onClick={() => { setStep("main"); setError(""); }}
                         className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-black transition-colors mb-6 self-start"
@@ -339,7 +339,7 @@ export default function AuthModal() {
                   {/* ── OTP step ── */}
                   {step === "otp" && (
                     <motion.div key="otp" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.2 }}
-                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center min-h-[500px] md:min-h-0"
+                      className="p-6 sm:p-8 md:p-10 flex flex-col justify-center md:min-h-115"
                     >
                       <button onClick={() => { setStep("phone-input"); setOtp(["","","","","",""]); setError(""); }}
                         className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-black transition-colors mb-6 self-start"
@@ -391,7 +391,7 @@ export default function AuthModal() {
                   {/* ── Resolving step — spinner while waiting for Firebase ── */}
                   {step === "resolving" && (
                     <motion.div key="resolving" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-                      className="flex flex-col items-center justify-center min-h-[500px] md:min-h-0 md:h-[500px] p-10 gap-5"
+                      className="flex flex-col items-center justify-center p-10 gap-5 md:min-h-115"
                     >
                       <div className="w-14 h-14 rounded-full border-2 border-gray-100 border-t-black animate-spin" />
                       <div className="text-center">

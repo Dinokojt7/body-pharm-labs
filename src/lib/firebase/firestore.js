@@ -220,17 +220,18 @@ export const getUserOrders = async (userId) => {
   if (!db) return { orders: [], error: "Not available server-side" };
   try {
     const ordersCollection = collection(db, "orders");
-    const q = query(
-      ordersCollection,
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc"),
-    );
+    // No orderBy here — avoids requiring a composite Firestore index.
+    // Sort client-side instead.
+    const q = query(ordersCollection, where("userId", "==", userId));
 
     const snapshot = await getDocs(q);
-    const orders = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const orders = snapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => {
+        const aMs = a.createdAt?.toMillis?.() ?? new Date(a.createdAt ?? 0).getTime();
+        const bMs = b.createdAt?.toMillis?.() ?? new Date(b.createdAt ?? 0).getTime();
+        return bMs - aMs;
+      });
 
     return { orders, error: null };
   } catch (error) {

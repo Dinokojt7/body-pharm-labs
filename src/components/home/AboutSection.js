@@ -33,7 +33,7 @@ const AboutSection = () => {
           <h3 className="text-gray-300 text-sm tracking-wider mb-2">
             FULL CUSTOMER SUPPORT & QUALITY SERVICE
           </h3>
-          <h2 className="text-white text-3xl md:text-4xl font-bold">
+          <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold">
             BIGGEST SUPPLIER OF RESEARCH PEPTIDES
             <br />
             WITH WORLDWIDE SHIPPING!
@@ -65,7 +65,7 @@ const AboutSection = () => {
             className="text-white space-y-6 py-4 md:py-12"
           >
             <h3 className="text-gray-300 text-sm tracking-wider">ABOUT US</h3>
-            <h2 className="text-3xl md:text-4xl font-bold">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
               Premium Research Peptides
               <br />
               You Can Trust, 3rd-Party Tested

@@ -66,7 +66,7 @@ const Header = () => {
 
             {/* Center - Logo - PERFECTLY CENTERED */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-40">
-              <div className="relative w-72 h-20 md:w-96 md:h-24 lg:w-[28rem] lg:h-28">
+              <div className="relative w-48 h-14 sm:w-64 sm:h-18 md:w-96 md:h-24 lg:w-md lg:h-28">
                 <Image
                   src="/images/logo.png"
                   alt="Body Pharm Labz"

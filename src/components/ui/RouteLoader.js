@@ -16,8 +16,10 @@ export default function RouteLoader() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-none flex items-center justify-center">
-      <div className="w-7 h-7 rounded-full border-2 border-gray-200 border-t-black animate-spin" />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/20 backdrop-blur-[1px]">
+      <div className="w-16 h-16 rounded-2xl bg-white shadow-md flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-black animate-spin" />
+      </div>
     </div>
   );
 }

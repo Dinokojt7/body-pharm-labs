@@ -20,7 +20,7 @@ const PromoSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-6xl font-bold text-black leading-tight mb-6"
+          className="text-2xl sm:text-4xl md:text-6xl font-bold text-black leading-tight mb-6"
         >
           WE WANT YOU
           <br />
@@ -34,7 +34,7 @@ const PromoSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="text-gray-600 text-lg max-w-2xl mx-auto"
+          className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto"
         >
           99%+ Purity is always guaranteed. We will offer credit for testing our
           products. If any batch fails to meet our published specifications,

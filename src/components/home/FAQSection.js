@@ -25,7 +25,7 @@ const FAQSection = () => {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative w-full h-[300px] md:h-[500px] rounded-lg overflow-hidden md:sticky md:top-24"
+            className="relative w-full h-48 md:h-125 rounded-lg overflow-hidden md:sticky md:top-24"
           >
             <Image
               src="/images/faq-image.jpg"

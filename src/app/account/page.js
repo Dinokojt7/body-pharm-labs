@@ -14,6 +14,12 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { logout } from "@/lib/firebase/auth";
 import { getUserOrders, getUserProfile, saveUserProfile, deleteOrder } from "@/lib/firebase/firestore";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import productsData from "@/lib/data/products.json";
+
+// Map productId → local product so order items have images/prices even after checkout
+const productMap = Object.fromEntries(
+  productsData.map((p) => [p.id, p])
+);
 
 const STATUS_COLORS = {
   pending_payment: { dot: "bg-amber-400",  text: "text-amber-600",  label: "Pending Payment" },
@@ -91,11 +97,22 @@ function AccountPageInner() {
     });
   }, [user?.uid, user?.displayName, user?.phoneNumber]);
 
-  // Load orders
+  // Load orders and enrich items with local product images
   useEffect(() => {
     if (!user?.uid) return;
     getUserOrders(user.uid).then(({ orders: o }) => {
-      setOrders(o || []);
+      const enriched = (o || []).map((order) => ({
+        ...order,
+        items: (order.items || []).map((item) => {
+          const local = productMap[item.productId];
+          return {
+            ...item,
+            image: item.image || local?.imageString || null,
+            price: item.price ?? local?.price ?? 0,
+          };
+        }),
+      }));
+      setOrders(enriched);
       setOrdersLoading(false);
     });
   }, [user?.uid]);
@@ -125,8 +142,7 @@ function AccountPageInner() {
   };
 
   const handleResumePayment = (order) => {
-    const { clearCart: emptyCart } = useCartStore.getState();
-    emptyCart();
+    useCartStore.getState().clearCart();
     order.items?.forEach((item) => {
       addItem(
         {
