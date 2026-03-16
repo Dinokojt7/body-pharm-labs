@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Package, Mail, User, LogOut, Clock, ChevronRight,
-  Check, X, Pencil, ShoppingBag, Loader2, AlertCircle, RefreshCw, Trash2,
+  Check, X, Pencil, ShoppingBag, Loader2, Trash2,
 } from "lucide-react";
 
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -125,15 +125,20 @@ function AccountPageInner() {
   };
 
   const handleResumePayment = (order) => {
-    // Re-add items to cart and navigate to checkout
+    const { clearCart: emptyCart } = useCartStore.getState();
+    emptyCart();
     order.items?.forEach((item) => {
-      addItem({
-        id: item.productId,
-        name: item.name,
-        price: item.price,
-        image: item.image || null,
-        selectedSize: item.size || null,
-      }, item.quantity);
+      addItem(
+        {
+          id: item.productId,
+          name: item.name,
+          price: item.price,
+          imageString: item.image || null,
+          size: item.size || null,
+        },
+        item.quantity,
+        item.size || null,
+      );
     });
     router.push("/checkout");
   };
@@ -411,64 +416,66 @@ function AccountPageInner() {
                 <div className="divide-y divide-gray-100">
                   {orders.map((order) => {
                     const s = STATUS_COLORS[order.status] || STATUS_COLORS.paid;
-                    const isFailed = order.status === "payment_failed" || order.status === "pending_payment";
+                    const isPending = order.status === "payment_failed" || order.status === "pending_payment";
+                    const orderRef = order.orderNumber || order.id;
                     return (
-                      <div key={order.id} className="px-5 py-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                      <div key={order.id}>
+                        {/* Clickable row */}
+                        <button
+                          onClick={() =>
+                            isPending
+                              ? handleResumePayment(order)
+                              : router.push(`/orders/${orderRef}`)
+                          }
+                          className="w-full px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left group"
+                        >
+                          {/* Status dot */}
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
+
+                          {/* Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-semibold text-black font-mono truncate">
-                                {order.orderNumber || `#${order.id.slice(0, 8).toUpperCase()}`}
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-xs font-semibold text-black font-mono">
+                                {orderRef}
                               </span>
-                              <span className={`flex items-center gap-1 text-[10px] font-semibold ${s.text}`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                              <span className={`text-[10px] font-semibold ${s.text}`}>
                                 {s.label}
                               </span>
                             </div>
                             <p className="text-xs text-gray-400">
-                              {formatDate(order.createdAt)} &middot; {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                              {formatDate(order.createdAt)} &middot;{" "}
+                              {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                              {isPending && (
+                                <span className="ml-2 text-amber-500 font-medium">
+                                  — tap to complete payment
+                                </span>
+                              )}
                             </p>
                           </div>
-                          <div className="flex items-center gap-4 shrink-0">
+
+                          {/* Total + chevron */}
+                          <div className="flex items-center gap-2 shrink-0">
                             <span className="text-sm font-semibold text-black">
                               {formatPrice(order.total ?? order.totals?.total)}
                             </span>
-                            {!isFailed && order.orderNumber && (
-                              <Link
-                                href={`/track-order?ref=${order.orderNumber}`}
-                                className="text-xs text-gray-400 hover:text-black transition-colors flex items-center gap-1"
-                              >
-                                Track <ChevronRight className="w-3.5 h-3.5" />
-                              </Link>
-                            )}
+                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
                           </div>
-                        </div>
+                        </button>
 
-                        {/* Failed/pending payment actions */}
-                        {isFailed && (
-                          <div className="mt-3 flex items-center gap-3 pt-3 border-t border-gray-50">
-                            <div className="flex items-center gap-1.5 text-xs text-amber-600 flex-1">
-                              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                              Payment was not completed for this order.
-                            </div>
-                            <button
-                              onClick={() => handleResumePayment(order)}
-                              className="flex items-center gap-1.5 h-7 px-3 rounded bg-black text-white text-xs font-semibold hover:bg-gray-800 transition-colors"
-                            >
-                              <RefreshCw className="w-3 h-3" />
-                              Resume
-                            </button>
+                        {/* Delete for failed/pending — separate from the clickable row */}
+                        {isPending && (
+                          <div className="px-5 pb-3 flex justify-end">
                             <button
                               onClick={() => handleDeleteOrder(order.id)}
                               disabled={deletingId === order.id}
-                              className="flex items-center gap-1.5 h-7 px-3 rounded border border-gray-200 text-xs text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
+                              className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
                             >
                               {deletingId === order.id ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
                               ) : (
                                 <Trash2 className="w-3 h-3" />
                               )}
-                              Delete
+                              Delete order
                             </button>
                           </div>
                         )}

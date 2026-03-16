@@ -17,7 +17,7 @@
     "size": "5mg",
     "sizes": ["5mg", "10mg"],
     "sizePrices": { "5mg": 89.99, "10mg": 159.99 },
-    "price": 89.99,
+    "price": 2.5,
     "compareAtPrice": 119.99,
     "imageString": "/images/products/recover.png",
     "customColor": "#6ab04c",
