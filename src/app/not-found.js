@@ -6,7 +6,7 @@ import { ArrowRight, Home, ShoppingBag } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-white flex flex-col items-center justify-center px-4 text-center">
+    <div className="min-h-[calc(100vh-96px)] md:min-h-[calc(100vh-112px)] lg:min-h-[calc(100vh-128px)] bg-white flex flex-col items-center justify-center px-4 text-center">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
             <RouteLoader />
             <PreHeader />
             <Header />
-            <main className="min-h-screen pt-20">{children}</main>
+            <main className="min-h-screen pt-24 md:pt-28 lg:pt-32">{children}</main>
             <Footer />
           </CurrencyProvider>
         </AuthProvider>

@@ -23,8 +23,8 @@ const Breadcrumb = () => {
   });
 
   return (
-    <nav className="py-4 px-4 md:px-8 lg:px-12 bg-gray-50 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto">
+    <nav className="h-11 flex items-center px-4 md:px-8 lg:px-12 bg-gray-50 border-b border-gray-200">
+      <div className="max-w-7xl w-full mx-auto">
         <ol className="flex items-center space-x-2 text-sm">
           <li>
             <Link

@@ -6,9 +6,11 @@ export const useUIStore = create((set, get) => ({
   isCurrencyDropdownOpen: false,
   isCheckoutLoading: false,
   isAuthModalOpen: false,
+  isAuthResolving: false,
 
   openAuthModal: () => set({ isAuthModalOpen: true }),
-  closeAuthModal: () => set({ isAuthModalOpen: false }),
+  closeAuthModal: () => set({ isAuthModalOpen: false, isAuthResolving: false }),
+  setIsAuthResolving: (v) => set({ isAuthResolving: v }),
 
   // Loading states for async operations
   loadingStates: {},

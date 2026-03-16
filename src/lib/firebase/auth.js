@@ -15,9 +15,14 @@ const googleProvider = new GoogleAuthProvider();
 // The result is retrieved by getGoogleRedirectResult() on the next page load.
 export const signInWithGoogle = async () => {
   try {
+    // Flag persists across the redirect so AuthContext can re-open the modal on return
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_redirect_pending", "1");
+    }
     await signInWithRedirect(auth, googleProvider);
     return { error: null };
   } catch (error) {
+    if (typeof window !== "undefined") localStorage.removeItem("auth_redirect_pending");
     return { error: error.message };
   }
 };
@@ -62,7 +67,7 @@ export const signInWithPhone = async (phoneNumber, appVerifier) => {
 export const verifyPhoneOTP = async (confirmationResult, otp) => {
   try {
     const result = await confirmationResult.confirm(otp);
-    return { user: result.user, error: null };
+    return { user: result.user, isNewUser: result.additionalUserInfo?.isNewUser ?? false, error: null };
   } catch (error) {
     return { user: null, error: error.message };
   }

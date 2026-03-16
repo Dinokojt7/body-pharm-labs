@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 
 const Hero = () => {
   return (
-    <section className="relative h-screen w-full overflow-hidden -mt-20">
+    <section className="relative h-screen w-full overflow-hidden -mt-24 md:-mt-28 lg:-mt-32">
       {/* Background */}
       <div className="absolute inset-0">
         <div

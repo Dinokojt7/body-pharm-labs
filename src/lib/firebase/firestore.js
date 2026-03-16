@@ -5,11 +5,9 @@ import {
   getDoc,
   addDoc,
   updateDoc,
-  deleteDoc,
   query,
   where,
   orderBy,
-  limit,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "./config";
@@ -110,6 +108,26 @@ export const updateOrderStatus = async (orderId, status, note = "") => {
       updatedAt: Timestamp.now(),
     });
 
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Create user document on first sign-in (uses uid as doc ID)
+export const createUserDoc = async (uid, data) => {
+  if (!db) return { success: false, error: "Not available server-side" };
+  try {
+    const { setDoc } = await import("firebase/firestore");
+    const userRef = doc(db, "users", uid);
+    const snap = await getDoc(userRef);
+    if (snap.exists()) return { success: true, error: null }; // already created
+    await setDoc(userRef, {
+      uid,
+      ...data,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
     return { success: true, error: null };
   } catch (error) {
     return { success: false, error: error.message };
