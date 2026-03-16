@@ -162,6 +162,60 @@ export const saveUserProfile = async (uid, data) => {
   }
 };
 
+export const updateOrderPayment = async (orderId, { status, paystackReference, paidAt }) => {
+  if (!db) return { success: false, error: "Not available server-side" };
+  try {
+    const orderRef = doc(db, "orders", orderId);
+    const orderSnap = await getDoc(orderRef);
+    if (!orderSnap.exists()) return { success: false, error: "Order not found" };
+
+    const current = orderSnap.data();
+    const statusHistory = [
+      ...(current.statusHistory || []),
+      { status, timestamp: Timestamp.now(), note: status === "paid" ? "Payment confirmed" : "Payment failed" },
+    ];
+
+    await updateDoc(orderRef, {
+      status,
+      statusHistory,
+      ...(paystackReference && { paystackReference }),
+      ...(paidAt && { paidAt }),
+      updatedAt: Timestamp.now(),
+    });
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const getOrderByNumber = async (orderNumber, email) => {
+  if (!db) return { order: null, error: "Not available server-side" };
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("orderNumber", "==", orderNumber.toUpperCase().trim()),
+      where("customer.email", "==", email.toLowerCase().trim()),
+    );
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return { order: null, error: null };
+    const d = snapshot.docs[0];
+    return { order: { id: d.id, ...d.data() }, error: null };
+  } catch (error) {
+    return { order: null, error: error.message };
+  }
+};
+
+export const deleteOrder = async (orderId) => {
+  if (!db) return { success: false, error: "Not available server-side" };
+  try {
+    const { deleteDoc } = await import("firebase/firestore");
+    await deleteDoc(doc(db, "orders", orderId));
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 export const getUserOrders = async (userId) => {
   if (!db) return { orders: [], error: "Not available server-side" };
   try {

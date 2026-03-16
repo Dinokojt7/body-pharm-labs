@@ -6,20 +6,23 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Package, Mail, User, LogOut, Clock, ChevronRight,
-  Check, X, Pencil, ShoppingBag, Loader2,
+  Check, X, Pencil, ShoppingBag, Loader2, AlertCircle, RefreshCw, Trash2,
 } from "lucide-react";
 
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useCartStore } from "@/lib/stores/cart-store";
 import { logout } from "@/lib/firebase/auth";
-import { getUserOrders, getUserProfile, saveUserProfile } from "@/lib/firebase/firestore";
+import { getUserOrders, getUserProfile, saveUserProfile, deleteOrder } from "@/lib/firebase/firestore";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const STATUS_COLORS = {
-  pending:   { dot: "bg-amber-400",  text: "text-amber-600",  label: "Pending"   },
-  confirmed: { dot: "bg-blue-400",   text: "text-blue-600",   label: "Confirmed" },
-  shipped:   { dot: "bg-indigo-400", text: "text-indigo-600", label: "Shipped"   },
-  delivered: { dot: "bg-green-500",  text: "text-green-600",  label: "Delivered" },
-  cancelled: { dot: "bg-red-400",    text: "text-red-500",    label: "Cancelled" },
+  pending_payment: { dot: "bg-amber-400",  text: "text-amber-600",  label: "Pending Payment" },
+  payment_failed:  { dot: "bg-red-400",    text: "text-red-500",    label: "Payment Failed"  },
+  paid:            { dot: "bg-blue-400",   text: "text-blue-600",   label: "Paid"            },
+  confirmed:       { dot: "bg-blue-400",   text: "text-blue-600",   label: "Confirmed"       },
+  shipped:         { dot: "bg-indigo-400", text: "text-indigo-600", label: "Shipped"         },
+  delivered:       { dot: "bg-green-500",  text: "text-green-600",  label: "Delivered"       },
+  cancelled:       { dot: "bg-red-400",    text: "text-red-500",    label: "Cancelled"       },
 };
 
 const formatDate = (ts) => {
@@ -53,6 +56,7 @@ function AccountPageInner() {
   const isWelcome = searchParams.get("welcome") === "1";
 
   const { user, isAuthenticated, authLoading, getDisplayName } = useAuthStore();
+  const { addItem } = useCartStore();
 
   const [profile, setProfile] = useState({
     displayName: "", phone: "",
@@ -64,6 +68,7 @@ function AccountPageInner() {
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push("/");
@@ -109,6 +114,28 @@ function AccountPageInner() {
   const handleCancel = () => {
     setEditing(false);
     if (isWelcome) router.replace("/account");
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Delete this order? This cannot be undone.")) return;
+    setDeletingId(orderId);
+    await deleteOrder(orderId);
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    setDeletingId(null);
+  };
+
+  const handleResumePayment = (order) => {
+    // Re-add items to cart and navigate to checkout
+    order.items?.forEach((item) => {
+      addItem({
+        id: item.productId,
+        name: item.name,
+        price: item.price,
+        image: item.image || null,
+        selectedSize: item.size || null,
+      }, item.quantity);
+    });
+    router.push("/checkout");
   };
 
   const handleLogout = async () => {
@@ -383,34 +410,68 @@ function AccountPageInner() {
               ) : (
                 <div className="divide-y divide-gray-100">
                   {orders.map((order) => {
-                    const s = STATUS_COLORS[order.status] || STATUS_COLORS.pending;
+                    const s = STATUS_COLORS[order.status] || STATUS_COLORS.paid;
+                    const isFailed = order.status === "payment_failed" || order.status === "pending_payment";
                     return (
-                      <div key={order.id} className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-semibold text-black font-mono truncate">
-                              #{order.id.slice(0, 12).toUpperCase()}
-                            </span>
-                            <span className={`flex items-center gap-1 text-[10px] font-semibold ${s.text}`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
-                              {s.label}
-                            </span>
+                      <div key={order.id} className="px-5 py-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold text-black font-mono truncate">
+                                {order.orderNumber || `#${order.id.slice(0, 8).toUpperCase()}`}
+                              </span>
+                              <span className={`flex items-center gap-1 text-[10px] font-semibold ${s.text}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                                {s.label}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-400">
+                              {formatDate(order.createdAt)} &middot; {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                            </p>
                           </div>
-                          <p className="text-xs text-gray-400">
-                            {formatDate(order.createdAt)} &middot; {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
-                          </p>
+                          <div className="flex items-center gap-4 shrink-0">
+                            <span className="text-sm font-semibold text-black">
+                              {formatPrice(order.total ?? order.totals?.total)}
+                            </span>
+                            {!isFailed && order.orderNumber && (
+                              <Link
+                                href={`/track-order?ref=${order.orderNumber}`}
+                                className="text-xs text-gray-400 hover:text-black transition-colors flex items-center gap-1"
+                              >
+                                Track <ChevronRight className="w-3.5 h-3.5" />
+                              </Link>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-4 shrink-0">
-                          <span className="text-sm font-semibold text-black">
-                            {formatPrice(order.total ?? order.totals?.total)}
-                          </span>
-                          <Link
-                            href={`/track-order?id=${order.id}`}
-                            className="text-xs text-gray-400 hover:text-black transition-colors flex items-center gap-1"
-                          >
-                            Track <ChevronRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
+
+                        {/* Failed/pending payment actions */}
+                        {isFailed && (
+                          <div className="mt-3 flex items-center gap-3 pt-3 border-t border-gray-50">
+                            <div className="flex items-center gap-1.5 text-xs text-amber-600 flex-1">
+                              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                              Payment was not completed for this order.
+                            </div>
+                            <button
+                              onClick={() => handleResumePayment(order)}
+                              className="flex items-center gap-1.5 h-7 px-3 rounded bg-black text-white text-xs font-semibold hover:bg-gray-800 transition-colors"
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                              Resume
+                            </button>
+                            <button
+                              onClick={() => handleDeleteOrder(order.id)}
+                              disabled={deletingId === order.id}
+                              className="flex items-center gap-1.5 h-7 px-3 rounded border border-gray-200 text-xs text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
+                            >
+                              {deletingId === order.id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-3 h-3" />
+                              )}
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

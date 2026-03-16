@@ -5,18 +5,20 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft, Lock, User } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useUIStore } from "@/lib/stores/ui-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import CheckoutForm from "@/components/forms/CheckoutForm";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, clearCart } = useCartStore();
-  const { user, isAuthenticated } = useAuthStore();
+  const { items, subtotal } = useCartStore();
+  const { isAuthenticated, authLoading } = useAuthStore();
+  const { openAuthModal } = useUIStore();
   const { formatPrice } = useCurrency();
 
   const [shippingCost, setShippingCost] = useState(0);
@@ -32,8 +34,37 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.15; // 15% VAT
   const total = subtotal + tax + shippingCost;
 
-  if (items.length === 0) {
-    return null;
+  if (items.length === 0) return null;
+
+  // Auth guard — require sign-in before placing an order
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-white flex flex-col">
+        <Breadcrumb />
+        <div className="flex-1 flex items-center justify-center px-4 py-20">
+          <div className="text-center max-w-sm">
+            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+              <User className="w-6 h-6 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-bold text-black mb-2">Sign in to continue</h2>
+            <p className="text-sm text-gray-400 mb-8">
+              You need to be signed in to place an order so we can link it to your account and send updates.
+            </p>
+            <button
+              onClick={openAuthModal}
+              className="h-12 px-8 rounded bg-black text-white text-xs font-bold tracking-widest uppercase hover:bg-gray-800 transition-colors"
+            >
+              Sign In
+            </button>
+            <div className="mt-4">
+              <Link href="/shop" className="text-xs text-gray-400 hover:text-black transition-colors">
+                ← Back to shop
+              </Link>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (

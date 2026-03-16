@@ -124,10 +124,10 @@ const Header = () => {
                   </button>
                 )}
                 {isAuthenticated && (
-                  <span className={`absolute -top-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center text-[9px] font-semibold border pointer-events-none ${
+                  <span className={`absolute -top-1 -right-1 h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-semibold border pointer-events-none ${
                     isTransparent
-                      ? "bg-transparent border-amber-400/50 text-white shadow-[0_0_6px_rgba(251,191,36,0.35)]"
-                      : "bg-transparent border-amber-400/60 text-black shadow-[0_0_6px_rgba(251,191,36,0.4)]"
+                      ? "bg-transparent border-amber-400/20 text-white shadow-[0_0_6px_rgba(251,191,36,0.35)]"
+                      : "bg-transparent border-amber-400/20 text-black shadow-[0_0_6px_rgba(251,191,36,0.4)]"
                   }`}>
                     {initials.charAt(0)}
                   </span>

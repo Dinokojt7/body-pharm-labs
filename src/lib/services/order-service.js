@@ -1,3 +1,11 @@
+export const generateOrderNumber = () => {
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const l1 = letters[Math.floor(Math.random() * letters.length)];
+  const l2 = letters[Math.floor(Math.random() * letters.length)];
+  const digits = Math.floor(1000 + Math.random() * 9000);
+  return `${l1}${l2}${digits}`;
+};
+
 export const processOrder = async (orderData) => {
   if (typeof window === "undefined") {
     throw new Error("processOrder can only be called on the client");
@@ -8,9 +16,6 @@ export const processOrder = async (orderData) => {
     const { id, error } = await createOrder(orderData);
 
     if (error) throw new Error(error);
-
-    const { useCartStore } = await import("../stores/cart-store");
-    useCartStore.getState().clearCart();
 
     return {
       success: true,
