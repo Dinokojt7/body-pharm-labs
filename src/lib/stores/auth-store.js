@@ -8,14 +8,18 @@ export const useAuthStore = create(
       isAuthenticated: false,
       authLoading: true,
       authError: null,
+      isNewUser: false,
 
-      setUser: (user) =>
+      setUser: (user, isNewUser = false) =>
         set({
           user,
           isAuthenticated: !!user,
           authLoading: false,
           authError: null,
+          isNewUser,
         }),
+
+      clearNewUser: () => set({ isNewUser: false }),
 
       setAuthLoading: (loading) => set({ authLoading: loading }),
 
@@ -27,6 +31,7 @@ export const useAuthStore = create(
           isAuthenticated: false,
           authLoading: false,
           authError: null,
+          isNewUser: false,
         }),
 
       // Helper to check if user has required role/permissions

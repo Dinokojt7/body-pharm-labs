@@ -27,10 +27,9 @@ export const signInWithGoogle = async () => {
 export const getGoogleRedirectResult = async () => {
   try {
     const result = await getRedirectResult(auth);
-    if (result?.user) return { user: result.user, error: null };
-    return { user: null, error: null };
+    return { result, error: null };
   } catch (error) {
-    return { user: null, error: error.message };
+    return { result: null, error: error.message };
   }
 };
 

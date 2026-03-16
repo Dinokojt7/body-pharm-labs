@@ -116,6 +116,34 @@ export const updateOrderStatus = async (orderId, status, note = "") => {
   }
 };
 
+// User profiles
+export const getUserProfile = async (uid) => {
+  if (!db) return { profile: null, error: "Not available server-side" };
+  try {
+    const userRef = doc(db, "users", uid);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) return { profile: null, error: null };
+    return { profile: snap.data(), error: null };
+  } catch (error) {
+    return { profile: null, error: error.message };
+  }
+};
+
+export const saveUserProfile = async (uid, data) => {
+  if (!db) return { success: false, error: "Not available server-side" };
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { ...data, updatedAt: Timestamp.now() }).catch(async () => {
+      // doc doesn't exist yet — create it
+      const { setDoc } = await import("firebase/firestore");
+      await setDoc(userRef, { ...data, createdAt: Timestamp.now(), updatedAt: Timestamp.now() });
+    });
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 export const getUserOrders = async (userId) => {
   if (!db) return { orders: [], error: "Not available server-side" };
   try {
