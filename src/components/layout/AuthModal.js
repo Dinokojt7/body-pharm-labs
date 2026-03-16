@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Phone, AlertCircle, ChevronLeft, Check, Loader2 } from "lucide-react";
+import { X, Phone, AlertCircle, ChevronLeft, Loader2 } from "lucide-react";
 
 import {
   signInWithGoogle,
@@ -49,7 +49,6 @@ export default function AuthModal() {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isNewUserPhone, setIsNewUserPhone] = useState(false);
   const otpRefs = useRef([]);
   const modalRef = useRef(null);
 
@@ -60,24 +59,18 @@ export default function AuthModal() {
     if (isAuthResolving && isAuthModalOpen) setStep("resolving");
   }, [isAuthResolving, isAuthModalOpen]);
 
-  // When auth resolves successfully while in resolving step → success → close
+  // Auth resolved — dismiss immediately, no fanfare
   useEffect(() => {
     if (isAuthenticated && step === "resolving") {
       setIsAuthResolving(false);
-      setStep("success");
-      const timer = setTimeout(() => {
-        handleClose();
-        // If new user came via Google, redirect to account (AuthContext already did this for redirect flow,
-        // but we keep it here as a fallback via the isNewUser flag on user object if needed)
-      }, 1400);
-      return () => clearTimeout(timer);
+      handleClose();
     }
   }, [isAuthenticated, step]);
 
-  // Close on Escape (not during resolving/success)
+  // Close on Escape (not during resolving)
   useEffect(() => {
     const handleKey = (e) => {
-      if (e.key === "Escape" && step !== "resolving" && step !== "success") handleClose();
+      if (e.key === "Escape" && step !== "resolving") handleClose();
     };
     if (isAuthModalOpen) window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
@@ -91,7 +84,6 @@ export default function AuthModal() {
       setOtp(["", "", "", "", "", ""]);
       setError("");
       setConfirmationResult(null);
-      setIsNewUserPhone(false);
       if (typeof window !== "undefined" && window.recaptchaVerifier) {
         try { window.recaptchaVerifier.clear(); } catch {}
         window.recaptchaVerifier = null;
@@ -169,7 +161,6 @@ export default function AuthModal() {
 
     // Create Firestore user doc for new phone sign-ups
     if (isNewUser && authedUser) {
-      setIsNewUserPhone(true);
       await createUserDoc(authedUser.uid, {
         phoneNumber: authedUser.phoneNumber || "",
         displayName: "",
@@ -178,24 +169,13 @@ export default function AuthModal() {
       });
     }
 
-    // Show resolving → the isAuthenticated effect above will catch it
+    // Switch to resolving — the isAuthenticated effect will dismiss the modal
     setStep("resolving");
-    // isAuthenticated may already be true at this point — handle that case
-    if (isAuthenticated) {
-      setStep("success");
-      setTimeout(() => {
-        handleClose();
-        if (isNewUser) router.push("/account?welcome=1");
-      }, 1400);
-    }
+    // If auth is already resolved (edge case), close immediately
+    if (isAuthenticated) handleClose();
   };
 
-  // After success closes, redirect new phone users
-  const onSuccessDismiss = () => {
-    if (isNewUserPhone) router.push("/account?welcome=1");
-  };
-
-  const isLocked = step === "resolving" || step === "success";
+  const isLocked = step === "resolving";
 
   return (
     <AnimatePresence>
@@ -203,7 +183,7 @@ export default function AuthModal() {
         <>
           <div id="recaptcha-container-modal" />
 
-          {/* Backdrop — not clickable during resolving/success */}
+          {/* Backdrop — not clickable during resolving */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -243,7 +223,7 @@ export default function AuthModal() {
               {/* Right panel */}
               <div className="w-full md:w-7/12 bg-white relative flex flex-col max-h-[90vh] md:max-h-[500px] overflow-y-auto">
 
-                {/* Close button — hidden during resolving/success */}
+                {/* Close button — hidden during resolving */}
                 {!isLocked && (
                   <button
                     onClick={handleClose}
@@ -417,27 +397,6 @@ export default function AuthModal() {
                       <div className="text-center">
                         <p className="font-semibold text-black text-sm">Signing you in…</p>
                         <p className="text-xs text-gray-400 mt-1">This will only take a moment.</p>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* ── Success step ── */}
-                  {step === "success" && (
-                    <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
-                      className="flex flex-col items-center justify-center min-h-[500px] md:min-h-0 md:h-[500px] p-10 gap-5"
-                      onAnimationComplete={onSuccessDismiss}
-                    >
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
-                        className="w-16 h-16 rounded-full bg-black flex items-center justify-center"
-                      >
-                        <Check className="w-8 h-8 text-white" strokeWidth={2.5} />
-                      </motion.div>
-                      <div className="text-center">
-                        <p className="font-semibold text-black text-sm">Signed in successfully</p>
-                        <p className="text-xs text-gray-400 mt-1">Welcome back.</p>
                       </div>
                     </motion.div>
                   )}

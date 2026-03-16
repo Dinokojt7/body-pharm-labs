@@ -97,31 +97,42 @@ const Header = () => {
                 />
               </button> */}
 
-              {isAuthenticated ? (
-                <Link
-                  href="/account"
-                  className={`w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-sm md:text-base font-semibold transition-colors ${
+              <div className="relative">
+                {isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    className={`p-2.5 rounded-full transition-colors flex items-center justify-center ${
+                      isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
+                    }`}
+                    aria-label="My account"
+                  >
+                    <User
+                      className={`w-5 h-5 md:w-6 md:h-6 ${isTransparent ? "text-white" : "text-black"}`}
+                    />
+                  </Link>
+                ) : (
+                  <button
+                    onClick={openAuthModal}
+                    className={`p-2.5 rounded-full transition-colors ${
+                      isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
+                    }`}
+                    aria-label="Sign in"
+                  >
+                    <User
+                      className={`w-5 h-5 md:w-6 md:h-6 ${isTransparent ? "text-white" : "text-black"}`}
+                    />
+                  </button>
+                )}
+                {isAuthenticated && (
+                  <span className={`absolute -top-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center text-[9px] font-semibold border pointer-events-none ${
                     isTransparent
-                      ? "bg-white/20 text-white hover:bg-white/30"
-                      : "bg-black text-white hover:bg-gray-800"
-                  }`}
-                  aria-label="My account"
-                >
-                  {initials}
-                </Link>
-              ) : (
-                <button
-                  onClick={openAuthModal}
-                  className={`p-2.5 rounded-full transition-colors ${
-                    isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
-                  }`}
-                  aria-label="Sign in"
-                >
-                  <User
-                    className={`w-5 h-5 md:w-6 md:h-6 ${isTransparent ? "text-white" : "text-black"}`}
-                  />
-                </button>
-              )}
+                      ? "bg-transparent border-amber-400/50 text-white shadow-[0_0_6px_rgba(251,191,36,0.35)]"
+                      : "bg-transparent border-amber-400/60 text-black shadow-[0_0_6px_rgba(251,191,36,0.4)]"
+                  }`}>
+                    {initials.charAt(0)}
+                  </span>
+                )}
+              </div>
 
               <button
                 onClick={toggleCart}
