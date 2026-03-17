@@ -67,7 +67,7 @@ const AboutSection = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative w-full h-120 md:h-150 overflow-hidden"
+              className="relative w-full h-140 md:h-180 overflow-hidden"
             >
               <Image
                 src="/images/about-image.jpg"
@@ -75,13 +75,6 @@ const AboutSection = () => {
                 fill
                 className="object-cover object-center"
               />
-              {/* About Us eyebrow — overlaid on top of image */}
-              <div className="absolute top-5 left-5 flex items-center gap-3 z-10">
-                <span className="block w-8 h-px bg-amber-400/60" />
-                <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-amber-400/80">
-                  About Us
-                </p>
-              </div>
               {/* Corner accents */}
               <span className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-amber-400/40 pointer-events-none" />
               <span className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-amber-400/40 pointer-events-none" />
@@ -95,6 +88,14 @@ const AboutSection = () => {
               transition={{ duration: 0.6 }}
               className="space-y-7 pt-2"
             >
+              {/* About Us eyebrow — left-aligned above content */}
+              <div className="flex items-center gap-3">
+                <span className="block w-8 h-px bg-amber-400/60" />
+                <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-amber-400/80">
+                  About Us
+                </p>
+              </div>
+
               <p className="text-gray-400 leading-relaxed text-sm md:text-base">
                 {business.description}
               </p>
