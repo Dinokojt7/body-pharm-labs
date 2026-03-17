@@ -21,7 +21,7 @@ const ProductImageZoom = ({ product }) => {
   return (
     <div
       ref={containerRef}
-      className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-zoom-in select-none"
+      className="relative aspect-square bg-zinc-100 border border-black/10 shadow-sm rounded-lg overflow-hidden cursor-zoom-in select-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -41,7 +41,7 @@ const ProductImageZoom = ({ product }) => {
         src={product.imageString || "/images/placeholder.jpg"}
         alt={product.name}
         fill
-        className="object-cover transition-transform duration-200 ease-out pointer-events-none"
+        className={`transition-transform duration-200 ease-out pointer-events-none ${product.imageString?.endsWith(".png") ? "object-contain p-6" : "object-cover"}`}
         style={{
           transform: isHovered ? "scale(2)" : "scale(1)",
           transformOrigin: `${origin.x}% ${origin.y}%`,

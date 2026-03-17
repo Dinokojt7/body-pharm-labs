@@ -94,6 +94,15 @@ body {
   scrollbar-color: #d1d5db transparent;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* Custom utility classes */
 .container {
   margin-inline: auto;

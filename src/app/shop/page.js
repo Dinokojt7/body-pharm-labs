@@ -79,12 +79,12 @@ export default function ShopPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2 justify-center mb-12">
+        <div className="flex gap-2 overflow-x-auto pb-2 mb-12 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:justify-center">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-5 h-8 rounded text-xs font-medium tracking-widest uppercase transition-colors border ${
+              className={`shrink-0 px-5 h-8 rounded text-xs font-medium tracking-widest uppercase transition-colors border whitespace-nowrap ${
                 selectedCategory === category
                   ? "bg-black text-white border-black"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"

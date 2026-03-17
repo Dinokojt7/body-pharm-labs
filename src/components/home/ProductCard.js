@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image */}
-        <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative aspect-square bg-zinc-100 border border-black/10 shadow-sm rounded-lg overflow-hidden mx-2">
           <div
             className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
             style={{ backgroundColor: product.customColor || "#000" }}
@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
             src={product.imageString || "/images/placeholder.jpg"}
             alt={product.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`transition-transform duration-500 group-hover:scale-105 ${product.imageString?.endsWith(".png") ? "object-contain p-4" : "object-cover"}`}
           />
 
           <AnimatePresence>
