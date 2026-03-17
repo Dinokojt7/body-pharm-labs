@@ -48,8 +48,8 @@ export default function ShopPage() {
     return (
       <main>
         <Breadcrumb />
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6 md:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
@@ -63,23 +63,23 @@ export default function ShopPage() {
     <main>
       <Breadcrumb />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">
+        <div className="text-center mb-8 md:mb-12">
+          <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2 md:mb-3">
             Thousands of Clients Worldwide
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-4">
+          <h1 className="text-2xl md:text-4xl font-bold text-black mb-3 md:mb-4">
             Research Peptides
           </h1>
-          <p className="text-gray-500 text-sm max-w-xl mx-auto leading-relaxed">
+          <p className="text-gray-500 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
             Browse our catalog of &gt;99% pure, third-party tested research
             peptides. All compounds are for laboratory use only.
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-12 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:justify-center">
+        <div className="flex gap-2 overflow-x-auto pb-2 mb-8 md:mb-12 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:justify-center">
           {categories.map((category) => (
             <button
               key={category}
@@ -96,7 +96,7 @@ export default function ShopPage() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6 md:gap-6">
           {filteredProducts.map((product, index) => (
             <motion.div
               key={product.id}

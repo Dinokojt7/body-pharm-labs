@@ -9,16 +9,21 @@ const QuantitySelector = ({
   size = "md",
 }) => {
   const sizeClasses = {
+    xs: "h-6 text-xs",
     sm: "h-8 text-sm",
     md: "h-10 text-base",
     lg: "h-12 text-lg",
   };
 
   const buttonSize = {
+    xs: "w-6",
     sm: "w-8",
     md: "w-10",
     lg: "w-12",
   };
+
+  const iconSize = size === "xs" ? "w-3 h-3" : "w-4 h-4";
+  const px = size === "xs" ? "px-2" : "px-4";
 
   return (
     <div
@@ -28,11 +33,11 @@ const QuantitySelector = ({
         onClick={onDecrement}
         className={`${buttonSize[size]} flex items-center justify-center hover:bg-gray-100 transition-colors rounded-l-lg`}
       >
-        <Minus className="w-4 h-4" />
+        <Minus className={iconSize} />
       </button>
 
       <span
-        className={`px-4 font-medium flex items-center justify-center ${sizeClasses[size]}`}
+        className={`${px} font-medium flex items-center justify-center ${sizeClasses[size]}`}
       >
         {quantity}
       </span>
@@ -41,7 +46,7 @@ const QuantitySelector = ({
         onClick={onIncrement}
         className={`${buttonSize[size]} flex items-center justify-center hover:bg-gray-100 transition-colors rounded-r-lg`}
       >
-        <Plus className="w-4 h-4" />
+        <Plus className={iconSize} />
       </button>
     </div>
   );

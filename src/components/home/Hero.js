@@ -56,9 +56,9 @@ const Hero = () => {
         {/* Overlay */}
         <div className="absolute inset-0" />
 
-        {/* Text + button — left-aligned, vertically centered */}
-        <div className="relative h-full flex items-center px-6 sm:px-10 md:px-16">
-          <div className="max-w-xs sm:max-w-sm">
+        {/* Text + button — centered on mobile, left-aligned md+ */}
+        <div className="relative h-full flex items-center justify-center md:justify-start px-4 sm:px-10 md:px-16">
+          <div className="max-w-xs sm:max-w-sm text-center md:text-left">
             {/* Pre-heading — amber accent */}
             <motion.p
               initial={{ opacity: 0, y: 12 }}
@@ -74,16 +74,16 @@ const Hero = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-6 md:mb-8"
+              className="mb-5 md:mb-8"
               style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
             >
               <span
-                className="block text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase mb-1 md:mb-2 transition-colors duration-700"
+                className="block text-lg sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase mb-1 md:mb-2 transition-colors duration-700"
                 style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", color: current === DARK_SLIDE ? "rgba(255,255,255,0.75)" : "rgba(30,30,30,0.9)" }}
               >
                 Where Science
               </span>
-              <span className="block text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white whitespace-nowrap">
+              <span className="block text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white whitespace-nowrap">
                 Meets Results.
               </span>
             </motion.h1>
@@ -97,7 +97,7 @@ const Hero = () => {
             >
               <Link
                 href="/shop"
-                className="relative flex h-12 px-12 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200 rounded border border-gray-200 shadow-md"
+                className="relative flex h-10 px-8 md:h-12 md:px-12 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200 rounded border border-gray-200 shadow-md"
               >
                 Shop Now
               </Link>

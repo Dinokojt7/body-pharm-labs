@@ -78,9 +78,11 @@ const ProductCard = ({ product }) => {
                   <p className="text-black font-bold text-xl mb-1">
                     {formatPrice(product.price)}
                   </p>
-                  <p className="text-black text-xs font-bold tracking-widest uppercase">
-                    Body Pharm Labz
-                  </p>
+                  {product.subtitle && (
+                    <p className="text-black text-xs font-bold tracking-widest uppercase">
+                      {product.subtitle}
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -91,44 +93,51 @@ const ProductCard = ({ product }) => {
             Mobile: single flex row — [name+subtitle LEFT] [cart RIGHT]
             sm+:    stacked centered (original) */}
         <div className="mt-3">
-          <div className="flex items-start justify-between gap-2 sm:block sm:text-center">
+          <div className="flex flex-col gap-2 sm:block sm:text-center">
 
             {/* Name + subtitle */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-black text-xs sm:text-sm uppercase tracking-wide truncate sm:mb-1">
+            <div className="min-w-0">
+              <h3 className="font-bold text-black text-xs sm:text-sm uppercase tracking-wide truncate sm:mb-3">
                 {product.name}
               </h3>
-              {product.subtitle && (
-                <p className="text-[10px] sm:text-xs text-gray-400 truncate sm:mb-3">
-                  {product.subtitle}
-                </p>
-              )}
             </div>
 
             {/* Cart controls — stop propagation so Link doesn't fire */}
             <div
-              className="shrink-0 sm:mt-2 sm:flex sm:justify-center"
+              className="sm:mt-2 sm:flex sm:justify-center"
               onClick={(e) => e.preventDefault()}
             >
               {inCart ? (
-                <QuantitySelector
-                  quantity={quantity}
-                  onIncrement={handleAdd}
-                  onDecrement={handleDecrement}
-                  size="sm"
-                />
+                <>
+                  <span className="sm:hidden">
+                    <QuantitySelector
+                      quantity={quantity}
+                      onIncrement={handleAdd}
+                      onDecrement={handleDecrement}
+                      size="xs"
+                    />
+                  </span>
+                  <span className="hidden sm:inline-flex">
+                    <QuantitySelector
+                      quantity={quantity}
+                      onIncrement={handleAdd}
+                      onDecrement={handleDecrement}
+                      size="sm"
+                    />
+                  </span>
+                </>
               ) : (
                 <>
                   {/* Mobile: compact + icon */}
                   <button
                     onClick={handleAdd}
                     disabled={isAdding}
-                    className="sm:hidden w-8 h-8 border border-gray-200 rounded bg-white flex items-center justify-center text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    className="sm:hidden w-6 h-6 border border-gray-200 rounded bg-white flex items-center justify-center text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
                   >
                     {isAdding ? (
-                      <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
+                      <div className="w-2.5 h-2.5 rounded-full border border-gray-300 border-t-black animate-spin" />
                     ) : (
-                      <Plus className="w-3.5 h-3.5" />
+                      <Plus className="w-3 h-3" />
                     )}
                   </button>
                   {/* sm+: full text button */}
