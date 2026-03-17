@@ -83,7 +83,7 @@ const STATUS_CONFIG = {
 };
 
 function StatusDot({ status }) {
-  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.paid;
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending_payment;
   return (
     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${cfg.container}`}>
       {cfg.icon}
@@ -615,7 +615,7 @@ function AccountPageInner() {
                   ) : (
                     <div className="divide-y divide-gray-100">
                       {pagedOrders.map((order) => {
-                        const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.paid;
+                        const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.pending_payment;
                         const isPending = order.status === "payment_failed" || order.status === "pending_payment";
                         const orderRef = order.orderNumber || order.id;
                         return (

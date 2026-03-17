@@ -87,6 +87,11 @@ function SuccessPageInner() {
           </div>
         ) : order ? (
           <div className="border border-gray-100 rounded-lg overflow-hidden mb-8">
+            {order.status === "pending_payment" && (
+              <div className="px-6 py-4 bg-amber-50 border-b border-amber-100">
+                <p className="text-xs text-amber-700 font-medium">Payment is being confirmed — this will update automatically.</p>
+              </div>
+            )}
             {/* Items */}
             <div className="px-6 py-5 border-b border-gray-100">
               <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-4">

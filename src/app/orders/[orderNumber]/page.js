@@ -10,7 +10,6 @@ import {
   ArrowLeft, MapPin, Mail, Loader2, AlertCircle,
 } from "lucide-react";
 
-import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { subscribeToUserOrders } from "@/lib/firebase/firestore";
 import productsData from "@/lib/data/products.json";
@@ -81,14 +80,12 @@ export default function OrderDetailPage() {
 
   if (authLoading || !isAuthenticated) return null;
 
-  const status = order ? (STATUS_CONFIG[order.status] || STATUS_CONFIG.paid) : null;
+  const status = order ? (STATUS_CONFIG[order.status] || STATUS_CONFIG.pending_payment) : null;
   const stepIndex = order ? (STEP_INDEX[order.status] ?? -1) : -1;
   const showProgress = order && !["payment_failed", "pending_payment", "cancelled"].includes(order.status);
 
   return (
     <main className="min-h-screen bg-white">
-      <Breadcrumb />
-
       <div className="max-w-3xl mx-auto px-4 md:px-8 pt-12 pb-24">
         <Link
           href="/account"

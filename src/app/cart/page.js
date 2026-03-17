@@ -28,14 +28,14 @@ export default function CartPage() {
   return (
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
-      <div className="max-w-5xl mx-auto px-4 md:px-8 pt-12">
+      <div className="max-w-5xl mx-auto px-4 md:px-8 pt-8 md:pt-12">
         {/* Page header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2">
               Shopping
             </p>
-            <h1 className="text-3xl md:text-4xl font-bold text-black">
+            <h1 className="text-2xl md:text-4xl font-bold text-black">
               Your Cart
             </h1>
           </div>
@@ -54,7 +54,7 @@ export default function CartPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-12">
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-12">
             {/* Items list */}
             <div className="lg:col-span-2 space-y-6">
               {/* Free shipping progress */}

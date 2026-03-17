@@ -78,7 +78,7 @@ function VerifyPageInner() {
           setError("Payment was not completed. You can try again from your account.");
         }
       } catch {
-        setError("Something went wrong verifying your payment. Please contact support.");
+        setError("Payment could not be verified. If you were charged, please contact support with your order reference.");
       }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,14 +91,22 @@ function VerifyPageInner() {
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
             <XCircle className="w-6 h-6 text-red-500" />
           </div>
-          <p className="text-sm font-semibold text-black mb-2">Payment Verification Failed</p>
+          <p className="text-sm font-semibold text-black mb-2">Payment Verification Issue</p>
           <p className="text-xs text-gray-500 mb-6">{error}</p>
-          <a
-            href="/account"
-            className="inline-flex items-center justify-center h-10 px-6 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors"
-          >
-            Go to Account
-          </a>
+          <div className="flex flex-col gap-3">
+            <a
+              href="/account"
+              className="inline-flex items-center justify-center h-10 px-6 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors"
+            >
+              Go to Account
+            </a>
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center h-10 px-6 rounded border border-gray-200 text-xs font-semibold tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
+            >
+              Contact Support
+            </a>
+          </div>
         </div>
       </main>
     );

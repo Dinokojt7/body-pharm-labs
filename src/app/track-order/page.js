@@ -4,10 +4,7 @@ import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search, CheckCircle, Truck, AlertTriangle, Info,
-  AlertCircle, Check, Loader2,
-} from "lucide-react";
+import { Search, CheckCircle, Truck, AlertTriangle, Info, Check, Loader2 } from "lucide-react";
 
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { subscribeToOrderByNumber } from "@/lib/firebase/firestore";
@@ -105,58 +102,47 @@ function TrackOrderInner() {
   const [reference, setReference] = useState(prefillRef || "");
   const [email, setEmail]         = useState("");
   const [result, setResult]       = useState(null);
-  const [error, setError]         = useState("");
   const [loading, setLoading]     = useState(false);
-  const [searched, setSearched]   = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const unsubRef = useRef(null);
 
-  // Cleanup subscription on unmount
   useEffect(() => () => { if (unsubRef.current) unsubRef.current(); }, []);
 
   const handleTrack = (e) => {
     e.preventDefault();
     if (!reference.trim() || !email.trim()) return;
 
-    // Tear down previous subscription
     if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
 
     setLoading(true);
-    setError("");
     setResult(null);
-    setSearched(true);
+    setSubmitted(true);
+    const normalizedRef = reference.trim().toUpperCase();
 
-    unsubRef.current = subscribeToOrderByNumber(reference.trim(), email.trim(), ({ order, error: err }) => {
-      if (err) {
-        setError("Something went wrong. Please try again.");
-        setResult(null);
-      } else if (!order) {
-        setError("No order found with that reference and email. Please check the details or contact us.");
-        setResult(null);
-      } else {
-        setResult(order);
-        setError("");
-      }
+    unsubRef.current = subscribeToOrderByNumber(normalizedRef, email.trim(), ({ order }) => {
       setLoading(false);
+      // Always show something — graceful fallback when not found in Firestore yet
+      setResult(order || { orderNumber: normalizedRef, status: "pending_payment", graceful: true });
     });
   };
 
-  const cfg = result ? (STATUS_CONFIG[result.status] || STATUS_CONFIG.paid) : null;
-  const stepIndex = result ? (STATUS_STEPS[result.status] ?? 1) : 0;
+  const cfg = result ? (STATUS_CONFIG[result.status] || STATUS_CONFIG.pending_payment) : null;
+  const stepIndex = result ? (STATUS_STEPS[result.status] ?? 0) : 0;
   const isFailed = result?.status === "payment_failed" || result?.status === "cancelled";
 
   return (
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
-      <div className="max-w-2xl mx-auto px-4 md:px-8 pt-12">
+      <div className="max-w-2xl mx-auto px-4 md:px-8 pt-8 md:pt-12">
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
           <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-3">Order Status</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Track Your Order</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-black mb-3">Track Your Order</h1>
           <p className="text-gray-400 text-sm leading-relaxed">
             Enter your order reference and email address to check your shipment status.
           </p>
@@ -168,7 +154,7 @@ function TrackOrderInner() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
           onSubmit={handleTrack}
-          className="border border-gray-100 rounded-lg p-6 mb-8 space-y-4"
+          className="border border-gray-100 rounded-lg p-5 md:p-6 mb-8 space-y-4"
         >
           <div>
             <label className="block text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">
@@ -210,115 +196,123 @@ function TrackOrderInner() {
           </button>
         </motion.form>
 
-        {/* Error */}
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="flex items-start gap-3 p-4 border border-gray-100 rounded-lg mb-8"
-            >
-              <AlertCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-              <p className="text-sm text-gray-500">{error}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Result — animates in-place, live-updates via onSnapshot */}
+        {/* Result */}
         <AnimatePresence>
           {result && (
             <motion.div
-              key={result.id}
+              key={result.orderNumber}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               className="border border-gray-100 rounded-lg overflow-hidden"
             >
               {/* Status header */}
-              <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between gap-4">
+              <div className="px-5 md:px-6 py-5 border-b border-gray-100 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs text-gray-400 mb-0.5">Order Reference</p>
                   <p className="text-sm font-bold text-black font-mono">{result.orderNumber}</p>
                 </div>
                 {cfg && (
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={result.status}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className="flex items-center gap-2"
-                    >
-                      <StatusIcon status={result.status} size="sm" />
-                      <span className={`text-xs font-semibold ${cfg.text}`}>{cfg.label}</span>
-                    </motion.div>
-                  </AnimatePresence>
+                  <div className="flex items-center gap-2">
+                    <StatusIcon status={result.status} size="sm" />
+                    <span className={`text-xs font-semibold ${cfg.text}`}>{cfg.label}</span>
+                  </div>
                 )}
               </div>
 
-              {/* Info grid */}
-              <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-2 gap-4 text-xs">
-                <div>
-                  <p className="text-gray-400 mb-0.5">Customer</p>
-                  <p className="font-medium text-black">
-                    {result.customer?.firstName} {result.customer?.lastName}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-400 mb-0.5">Order Placed</p>
-                  <p className="font-medium text-black">{formatDate(result.createdAt)}</p>
-                </div>
-                <div>
-                  <p className="text-gray-400 mb-0.5">Items</p>
-                  <p className="font-medium text-black">
-                    {result.items?.map((i) => `${i.name} × ${i.quantity}`).join(", ")}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-400 mb-0.5">Total</p>
-                  <p className="font-medium text-black">{formatPrice(result.total, result.currency)}</p>
-                </div>
-              </div>
-
-              {/* Progress steps / failed message */}
-              {!isFailed ? (
-                <div className="px-6 py-5">
-                  <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-5">
-                    Shipment Progress
-                  </p>
-                  <div className="space-y-4">
-                    {STEPS.map((step, i) => {
-                      const done = i <= stepIndex;
-                      return (
-                        <div key={step} className="flex items-center gap-3">
-                          <motion.div
-                            animate={{ backgroundColor: done ? "#000" : "#f3f4f6" }}
-                            transition={{ duration: 0.4 }}
-                            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                          >
-                            {done && <Check className="w-3 h-3 text-white" />}
-                          </motion.div>
-                          <p className={`text-sm ${done ? "text-black font-medium" : "text-gray-400"}`}>
-                            {step}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="px-6 py-5">
-                  <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
-                    <AlertTriangle className="w-4 h-4 text-yellow-500 fill-yellow-300 shrink-0 mt-0.5" />
+              {result.graceful ? (
+                /* Graceful MVP view — order ref acknowledged, Firestore lookup pending */
+                <div className="px-5 md:px-6 py-6 space-y-6">
+                  <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
+                    <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-red-700">Payment not completed</p>
-                      <p className="text-xs text-red-500 mt-0.5">
-                        Sign in to your account to retry payment for this order.
+                      <p className="text-sm font-semibold text-amber-800">Order received</p>
+                      <p className="text-xs text-amber-600 mt-0.5 leading-relaxed">
+                        Your order <span className="font-bold">{result.orderNumber}</span> has been placed. Status updates are sent to your email as your order progresses.
                       </p>
                     </div>
                   </div>
+
+                  <div>
+                    <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-4">Shipment Progress</p>
+                    <div className="space-y-4">
+                      {STEPS.map((step, i) => (
+                        <div key={step} className="flex items-center gap-3">
+                          <motion.div
+                            animate={{ backgroundColor: i === 0 ? "#000" : "#f3f4f6" }}
+                            transition={{ duration: 0.4 }}
+                            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                          >
+                            {i === 0 && <Check className="w-3 h-3 text-white" />}
+                          </motion.div>
+                          <p className={`text-sm ${i === 0 ? "text-black font-medium" : "text-gray-400"}`}>{step}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  {/* Info grid — real order */}
+                  <div className="px-5 md:px-6 py-4 border-b border-gray-100 grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <p className="text-gray-400 mb-0.5">Customer</p>
+                      <p className="font-medium text-black">
+                        {result.customer?.firstName} {result.customer?.lastName}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 mb-0.5">Order Placed</p>
+                      <p className="font-medium text-black">{formatDate(result.createdAt)}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 mb-0.5">Items</p>
+                      <p className="font-medium text-black">
+                        {result.items?.map((i) => `${i.name} × ${i.quantity}`).join(", ")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 mb-0.5">Total</p>
+                      <p className="font-medium text-black">{formatPrice(result.total, result.currency)}</p>
+                    </div>
+                  </div>
+
+                  {/* Progress or failed */}
+                  {!isFailed ? (
+                    <div className="px-5 md:px-6 py-5">
+                      <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-5">Shipment Progress</p>
+                      <div className="space-y-4">
+                        {STEPS.map((step, i) => {
+                          const done = i <= stepIndex;
+                          return (
+                            <div key={step} className="flex items-center gap-3">
+                              <motion.div
+                                animate={{ backgroundColor: done ? "#000" : "#f3f4f6" }}
+                                transition={{ duration: 0.4 }}
+                                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                              >
+                                {done && <Check className="w-3 h-3 text-white" />}
+                              </motion.div>
+                              <p className={`text-sm ${done ? "text-black font-medium" : "text-gray-400"}`}>{step}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-5 md:px-6 py-5">
+                      <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
+                        <AlertTriangle className="w-4 h-4 text-yellow-500 fill-yellow-300 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-semibold text-red-700">Payment not completed</p>
+                          <p className="text-xs text-red-500 mt-0.5">
+                            Sign in to your account to retry payment for this order.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
           )}
