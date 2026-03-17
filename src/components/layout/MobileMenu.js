@@ -102,8 +102,8 @@ const MobileMenu = () => {
               </ul>
             </nav>
 
-            {/* Logo — centered, large, between nav and contact */}
-            <div className="px-6 py-6 flex justify-center border-t border-white/10">
+            {/* Logo — left-aligned, between nav and contact */}
+            <div className="px-6 py-6 flex justify-start border-t border-white/10">
               <div className="relative h-16 w-44">
                 <Image
                   src="/images/logo.png"

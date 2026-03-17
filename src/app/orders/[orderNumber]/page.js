@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CheckCircle, Truck, Clock, XCircle, Package,
+  Check, Truck, Info, AlertTriangle, Package,
   ArrowLeft, MapPin, Mail, Loader2, AlertCircle,
 } from "lucide-react";
 
@@ -18,13 +18,13 @@ import productsData from "@/lib/data/products.json";
 const productImageMap = Object.fromEntries(productsData.map((p) => [p.id, p.imageString || null]));
 
 const STATUS_CONFIG = {
-  pending_payment: { label: "Pending Payment", icon: Clock,       color: "text-amber-600",  bg: "bg-amber-50",  border: "border-amber-200"  },
-  payment_failed:  { label: "Payment Failed",  icon: XCircle,     color: "text-red-600",    bg: "bg-red-50",    border: "border-red-200"    },
-  paid:            { label: "Paid",            icon: CheckCircle, color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-200"   },
-  confirmed:       { label: "Confirmed",       icon: CheckCircle, color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-200"   },
-  shipped:         { label: "Shipped",         icon: Truck,       color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200" },
-  delivered:       { label: "Delivered",       icon: CheckCircle, color: "text-green-600",  bg: "bg-green-50",  border: "border-green-200"  },
-  cancelled:       { label: "Cancelled",       icon: XCircle,     color: "text-red-600",    bg: "bg-red-50",    border: "border-red-200"    },
+  pending_payment: { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
+  payment_failed:  { label: "Payment Failed",  iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
+  paid:            { label: "Paid",            iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
+  confirmed:       { label: "Confirmed",       iconEl: <Check className="w-3.5 h-3.5 text-black/80" />,       container: "bg-blue-500/10 ring-1 ring-blue-400/50",     text: "text-blue-700"  },
+  shipped:         { label: "Shipped",         iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
+  delivered:       { label: "Delivered",       iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
+  cancelled:       { label: "Cancelled",       iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
 };
 
 const STEP_INDEX = {
@@ -138,10 +138,12 @@ export default function OrderDetailPage() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold ${status.color} ${status.bg} ${status.border}`}
+                    className="flex items-center gap-2"
                   >
-                    <status.icon className="w-4 h-4" />
-                    {status.label}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${status.container}`}>
+                      {status.iconEl}
+                    </div>
+                    <span className={`text-sm font-semibold ${status.text}`}>{status.label}</span>
                   </motion.div>
                 </AnimatePresence>
               )}
@@ -162,7 +164,7 @@ export default function OrderDetailPage() {
                           transition={{ duration: 0.4 }}
                           className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
                         >
-                          {done && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                          {done && <Check className="w-3.5 h-3.5 text-white" />}
                         </motion.div>
                         <p className={`text-sm ${done ? active ? "text-black font-semibold" : "text-black font-medium" : "text-gray-400"}`}>
                           {step}

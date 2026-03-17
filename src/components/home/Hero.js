@@ -7,7 +7,7 @@ const Hero = () => {
   return (
     <section className="w-full mt-2 md:mt-4 px-4 md:px-8 lg:px-12">
       {/* Hero image container — no border radius */}
-      <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 58vh, 680px)" }}>
+      <div className="relative w-full overflow-hidden" style={{ height: "clamp(400px, 66vh, 760px)" }}>
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -34,7 +34,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.05] tracking-tight mb-8"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-[1.05] tracking-tight mb-8"
             >
               Where Science
               <br />

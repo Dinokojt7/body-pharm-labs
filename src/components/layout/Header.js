@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import { User, ShoppingBag, Menu, X } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
@@ -14,16 +13,34 @@ import CartSidebar from "./CartSidebar";
 import MobileMenu from "./MobileMenu";
 import AuthModal from "./AuthModal";
 
+// PreHeader height in px — used to shift Header up as it scrolls away
+const PREH = 36;
+
 const Header = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handler = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
   const { totalItems, toggleCart } = useCartStore();
   const { toggleMobileMenu, isMobileMenuOpen, openAuthModal } = useUIStore();
   const { isAuthenticated, getDisplayName } = useAuthStore();
 
   const initials = getDisplayName()?.slice(0, 2)?.toUpperCase() || "U";
 
+  // Header slides up as PreHeader scrolls away
+  const headerTop = Math.max(0, PREH - scrollY);
+
   return (
     <>
-      <header className="fixed left-0 right-0 z-40 bg-white border-b border-black/10">
+      <header
+        className="fixed left-0 right-0 z-40 bg-white shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+        style={{ top: `${headerTop}px` }}
+      >
+        {/* Nav row */}
         <div className="px-4 md:px-8 lg:px-12">
           <div className="relative flex items-center justify-between h-24 md:h-28 lg:h-32">
 
@@ -98,6 +115,9 @@ const Header = () => {
             </div>
           </div>
         </div>
+
+        {/* Bottom border — slightly narrower than full-width but wider than hero margins */}
+        <div className="border-b border-gray-100 mx-2 md:mx-4" />
       </header>
 
       <CartSidebar />

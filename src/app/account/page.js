@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Package, Mail, User, LogOut, Clock, ChevronRight,
+  Package, Mail, User, LogOut, Clock, ChevronRight, ChevronDown,
   Check, X, Pencil, ShoppingBag, Loader2, Trash2,
   AlertTriangle, Info, Truck,
 } from "lucide-react";
 
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCartStore } from "@/lib/stores/cart-store";
+import { useCurrency } from "@/lib/hooks/useCurrency";
 import { logout } from "@/lib/firebase/auth";
 import {
   subscribeToUserOrders,
@@ -19,6 +20,7 @@ import {
   saveUserProfile,
   deleteOrder,
 } from "@/lib/firebase/firestore";
+import currencyService from "@/lib/services/currency-service";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import productsData from "@/lib/data/products.json";
@@ -34,50 +36,48 @@ const enrichItems = (items = []) =>
   }));
 
 // ── Status icon config ─────────────────────────────────────────────────────────
-// container: classes for the rounded-full icon wrapper
-// icon: JSX element
-// text: text-color class
+// green/20, yellow/20 fills; black icons for visibility; thin colored rings
 const STATUS_CONFIG = {
   pending_payment: {
     label: "Pending Payment",
-    container: "bg-white ring-1 ring-amber-400/60 shadow-[0_0_0_2px_rgba(217,119,6,0.10)]",
+    container: "bg-amber-500/10 ring-1 ring-amber-400/50",
     icon: <Info className="w-3 h-3 text-black" />,
     text: "text-amber-700",
   },
   payment_failed: {
     label: "Payment Failed",
-    container: "bg-white ring-1 ring-red-400",
-    icon: <AlertTriangle className="w-3 h-3 text-yellow-500 fill-yellow-300" />,
+    container: "bg-yellow-500/20 ring-1 ring-yellow-400/60",
+    icon: <AlertTriangle className="w-3 h-3 text-black" />,
     text: "text-red-600",
   },
   paid: {
     label: "Paid",
-    container: "bg-green-500 border border-black/20",
-    icon: <Check className="w-2.5 h-2.5 text-white" />,
+    container: "bg-green-500/20 ring-1 ring-green-500/40",
+    icon: <Check className="w-2.5 h-2.5 text-black" />,
     text: "text-green-700",
   },
   confirmed: {
     label: "Confirmed",
-    container: "bg-white ring-1 ring-blue-400/60",
+    container: "bg-blue-500/10 ring-1 ring-blue-400/50",
     icon: <Check className="w-3 h-3 text-black/80" />,
     text: "text-blue-700",
   },
   shipped: {
     label: "Shipped",
-    container: "bg-white ring-1 ring-indigo-400/60",
+    container: "bg-indigo-500/10 ring-1 ring-indigo-400/50",
     icon: <Truck className="w-3 h-3 text-black/80" />,
     text: "text-indigo-700",
   },
   delivered: {
     label: "Delivered",
-    container: "bg-green-500 border border-black/20",
-    icon: <Check className="w-2.5 h-2.5 text-white" />,
+    container: "bg-green-500/20 ring-1 ring-green-500/40",
+    icon: <Check className="w-2.5 h-2.5 text-black" />,
     text: "text-green-700",
   },
   cancelled: {
     label: "Cancelled",
-    container: "bg-white ring-1 ring-red-400",
-    icon: <AlertTriangle className="w-3 h-3 text-yellow-500 fill-yellow-300" />,
+    container: "bg-yellow-500/20 ring-1 ring-yellow-400/60",
+    icon: <AlertTriangle className="w-3 h-3 text-black" />,
     text: "text-red-600",
   },
 };
@@ -91,15 +91,31 @@ function StatusDot({ status }) {
   );
 }
 
-// ── Other helpers ─────────────────────────────────────────────────────────────
+// ── Filter options ────────────────────────────────────────────────────────────
+const FILTER_OPTIONS = [
+  { value: "all",       label: "All Orders"  },
+  { value: "paid",      label: "Paid"        },
+  { value: "fulfilled", label: "Fulfilled"   },
+  { value: "pending",   label: "Pending"     },
+  { value: "failed",    label: "Failed"      },
+];
+
+const applyFilter = (orders, filter) => {
+  switch (filter) {
+    case "paid":      return orders.filter((o) => o.status === "paid" || o.status === "confirmed");
+    case "fulfilled": return orders.filter((o) => o.status === "shipped" || o.status === "delivered");
+    case "pending":   return orders.filter((o) => o.status === "pending_payment");
+    case "failed":    return orders.filter((o) => o.status === "payment_failed" || o.status === "cancelled");
+    default:          return orders;
+  }
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 const formatDate = (ts) => {
   if (!ts) return "";
   const d = ts?.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 };
-
-const formatPrice = (n) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n ?? 0);
 
 const ADDRESS_FIELDS = [
   { key: "line1",    label: "Street Address",   placeholder: "123 Main St",   full: true  },
@@ -125,8 +141,15 @@ function AccountPageInner() {
 
   const { user, isAuthenticated, authLoading, getDisplayName } = useAuthStore();
   const { addItem } = useCartStore();
+  const { selectedCurrency } = useCurrency();
 
-  // Profile state
+  // Currency-aware order price formatter
+  const fmtOrderAmt = (amount, orderCurrency) => {
+    const converted = currencyService.convertPrice(amount ?? 0, orderCurrency || "ZAR", selectedCurrency);
+    return currencyService.formatPrice(converted, selectedCurrency);
+  };
+
+  // Profile
   const [profile, setProfile] = useState({
     displayName: "", phone: "",
     address: { line1: "", city: "", province: "", country: "", zip: "" },
@@ -135,22 +158,35 @@ function AccountPageInner() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Orders state
+  // Orders
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [deleteError, setDeleteError] = useState("");
+
+  // Pagination + filter
   const [ordersPage, setOrdersPage] = useState(1);
+  const [orderFilter, setOrderFilter] = useState("all");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [panelLoading, setPanelLoading] = useState(false);
+  const filterRef = useRef(null);
 
-  // Confirm dialogs
+  // Dialogs + sign-out
   const [confirmDialog, setConfirmDialog] = useState({ open: false, type: null, id: null });
-
-  // Sign-out loading
   const [signingOut, setSigningOut] = useState(false);
 
   const PAGE_SIZE = 5;
   const THREE_MONTHS_MS = 3 * 30 * 24 * 60 * 60 * 1000;
+
+  // Close filter dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) setFilterOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push("/");
@@ -187,6 +223,19 @@ function AccountPageInner() {
     return unsubscribe;
   }, [user?.uid]);
 
+  // ── Derived data ─────────────────────────────────────────────────────────────
+  const cutoff = Date.now() - THREE_MONTHS_MS;
+  const recentOrders = orders.filter((o) => {
+    const ms = o.createdAt?.toMillis?.() ?? new Date(o.createdAt ?? 0).getTime();
+    return ms >= cutoff;
+  });
+  const filteredOrders = applyFilter(recentOrders, orderFilter);
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  const pagedOrders = filteredOrders.slice((ordersPage - 1) * PAGE_SIZE, ordersPage * PAGE_SIZE);
+
+  const showingStart = filteredOrders.length === 0 ? 0 : (ordersPage - 1) * PAGE_SIZE + 1;
+  const showingEnd = Math.min(ordersPage * PAGE_SIZE, filteredOrders.length);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!user?.uid) return;
@@ -213,11 +262,9 @@ function AccountPageInner() {
     setConfirmDialog({ open: false, type: null, id: null });
     setDeletingId(orderId);
     setDeleteError("");
-
     const { success, error: err } = await deleteOrder(orderId);
     if (err || !success) {
-      // Show the actual Firebase error to help diagnose (e.g. permission denied)
-      setDeleteError(err || "Could not delete order. Check Firestore security rules allow users to delete their own orders.");
+      setDeleteError(err || "Could not delete order. Ensure Firestore rules allow: allow delete: if request.auth.uid == resource.data.userId;");
     }
     setDeletingId(null);
   };
@@ -234,15 +281,32 @@ function AccountPageInner() {
     router.push("/checkout");
   };
 
-  const handleSignOutClick = () => {
-    setConfirmDialog({ open: true, type: "signout", id: null });
-  };
+  const handleSignOutClick = () => setConfirmDialog({ open: true, type: "signout", id: null });
 
   const confirmSignOut = async () => {
     setConfirmDialog({ open: false, type: null, id: null });
     setSigningOut(true);
     await logout();
     router.push("/");
+  };
+
+  const handleNextPage = () => {
+    if (ordersPage >= totalPages) return;
+    setPanelLoading(true);
+    setTimeout(() => {
+      setOrdersPage((p) => p + 1);
+      setPanelLoading(false);
+    }, 250);
+  };
+
+  const handleFilterChange = (val) => {
+    setPanelLoading(true);
+    setFilterOpen(false);
+    setTimeout(() => {
+      setOrderFilter(val);
+      setOrdersPage(1);
+      setPanelLoading(false);
+    }, 200);
   };
 
   if (authLoading || !isAuthenticated) return null;
@@ -253,13 +317,7 @@ function AccountPageInner() {
     ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", { month: "long", year: "numeric" })
     : null;
 
-  const cutoff = Date.now() - THREE_MONTHS_MS;
-  const recentOrders = orders.filter((o) => {
-    const ms = o.createdAt?.toMillis?.() ?? new Date(o.createdAt ?? 0).getTime();
-    return ms >= cutoff;
-  });
-  const totalPages = Math.max(1, Math.ceil(recentOrders.length / PAGE_SIZE));
-  const pagedOrders = recentOrders.slice((ordersPage - 1) * PAGE_SIZE, ordersPage * PAGE_SIZE);
+  const activeFilterLabel = FILTER_OPTIONS.find((f) => f.value === orderFilter)?.label || "All Orders";
 
   return (
     <>
@@ -341,7 +399,6 @@ function AccountPageInner() {
               animate={{ opacity: 1, y: 0 }}
               className="md:col-span-1 space-y-4"
             >
-              {/* Profile card */}
               <div className="border border-gray-200 rounded p-6 space-y-5">
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="w-16 h-16 rounded-full bg-black text-white flex items-center justify-center text-xl font-semibold tracking-wide">
@@ -349,12 +406,8 @@ function AccountPageInner() {
                   </div>
                   <div>
                     <p className="font-semibold text-black text-sm">{displayName}</p>
-                    {user?.email && (
-                      <p className="text-xs text-gray-400 mt-0.5 break-all">{user.email}</p>
-                    )}
-                    {profile.phone && (
-                      <p className="text-xs text-gray-400 mt-0.5">{profile.phone}</p>
-                    )}
+                    {user?.email && <p className="text-xs text-gray-400 mt-0.5 break-all">{user.email}</p>}
+                    {profile.phone && <p className="text-xs text-gray-400 mt-0.5">{profile.phone}</p>}
                   </div>
                 </div>
 
@@ -369,9 +422,7 @@ function AccountPageInner() {
                   )}
                   <div className="flex items-center gap-2">
                     <ShoppingBag className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                    {ordersLoading
-                      ? "Loading orders…"
-                      : `${orders.length} order${orders.length !== 1 ? "s" : ""} placed`}
+                    {ordersLoading ? "Loading orders…" : `${orders.length} order${orders.length !== 1 ? "s" : ""} placed`}
                   </div>
                 </div>
 
@@ -386,7 +437,6 @@ function AccountPageInner() {
                 </button>
               </div>
 
-              {/* Quick links */}
               <div className="border border-gray-200 rounded overflow-hidden">
                 {[
                   { href: "/shop",        label: "Browse Products", Icon: ShoppingBag },
@@ -415,7 +465,7 @@ function AccountPageInner() {
               transition={{ delay: 0.08 }}
               className="md:col-span-2 space-y-8"
             >
-              {/* Profile details card */}
+              {/* Profile details */}
               <div className="border border-gray-200 rounded">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                   <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Profile Details</h2>
@@ -429,12 +479,8 @@ function AccountPageInner() {
                     </button>
                   ) : (
                     <div className="flex items-center gap-3">
-                      <button
-                        onClick={handleCancel}
-                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                        Cancel
+                      <button onClick={handleCancel} className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                        <X className="w-3.5 h-3.5" />Cancel
                       </button>
                       <button
                         onClick={handleSave}
@@ -456,7 +502,6 @@ function AccountPageInner() {
                 )}
 
                 <div className="p-5 space-y-6">
-                  {/* Personal */}
                   <div>
                     <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Personal</p>
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -474,9 +519,7 @@ function AccountPageInner() {
                               placeholder={placeholder}
                             />
                           ) : (
-                            <p className="text-sm text-black">
-                              {profile[key] || <span className="text-gray-300 italic">Not set</span>}
-                            </p>
+                            <p className="text-sm text-black">{profile[key] || <span className="text-gray-300 italic">Not set</span>}</p>
                           )}
                         </label>
                       ))}
@@ -493,7 +536,6 @@ function AccountPageInner() {
                     </div>
                   )}
 
-                  {/* Shipping address */}
                   <div>
                     <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Default Shipping Address</p>
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -503,16 +545,12 @@ function AccountPageInner() {
                           {editing ? (
                             <input
                               value={profile.address?.[key] || ""}
-                              onChange={(e) =>
-                                setProfile((p) => ({ ...p, address: { ...p.address, [key]: e.target.value } }))
-                              }
+                              onChange={(e) => setProfile((p) => ({ ...p, address: { ...p.address, [key]: e.target.value } }))}
                               className="w-full h-9 border border-gray-200 rounded px-3 text-sm text-black focus:outline-none focus:border-black transition-colors"
                               placeholder={placeholder}
                             />
                           ) : (
-                            <p className="text-sm text-black">
-                              {profile.address?.[key] || <span className="text-gray-300 italic">Not set</span>}
-                            </p>
+                            <p className="text-sm text-black">{profile.address?.[key] || <span className="text-gray-300 italic">Not set</span>}</p>
                           )}
                         </label>
                       ))}
@@ -521,7 +559,7 @@ function AccountPageInner() {
                 </div>
               </div>
 
-              {/* Orders card */}
+              {/* ── Orders card ── */}
               <div className="border border-gray-200 rounded">
                 <div className="px-5 py-4 border-b border-gray-100">
                   <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Order History</h2>
@@ -529,47 +567,52 @@ function AccountPageInner() {
 
                 {ordersError && (
                   <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                    <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    {ordersError}
+                    <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />{ordersError}
                   </div>
                 )}
-
                 {deleteError && (
                   <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
                     <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     <span className="flex-1">{deleteError}</span>
-                    <button onClick={() => setDeleteError("")} className="shrink-0">
-                      <X className="w-3 h-3" />
-                    </button>
+                    <button onClick={() => setDeleteError("")}><X className="w-3 h-3" /></button>
                   </div>
                 )}
 
-                {ordersLoading ? (
-                  <div className="p-5 space-y-3">
-                    {[0, 1].map((i) => (
-                      <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />
-                    ))}
-                  </div>
-                ) : recentOrders.length === 0 ? (
-                  <div className="py-14 flex flex-col items-center justify-center text-center gap-4 px-5">
-                    <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Package className="w-5 h-5 text-gray-300" />
+                {/* Order list area (with panel-loader overlay) */}
+                <div className="relative">
+                  {/* Panel loading overlay */}
+                  {panelLoading && (
+                    <div className="absolute inset-0 bg-white/80 z-10 flex items-center justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-black">No recent orders</p>
-                      <p className="text-xs text-gray-400 mt-1 max-w-xs">
-                        Orders from the last 3 months will appear here.
-                      </p>
+                  )}
+
+                  {ordersLoading ? (
+                    <div className="p-5 space-y-3">
+                      {[0, 1].map((i) => <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />)}
                     </div>
-                    <Link
-                      href="/shop"
-                      className="h-9 px-5 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors inline-flex items-center"
-                    >
-                      Shop Now
-                    </Link>
-                  </div>
-                ) : (
-                  <>
+                  ) : filteredOrders.length === 0 ? (
+                    <div className="py-12 flex flex-col items-center justify-center text-center gap-4 px-5">
+                      <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Package className="w-5 h-5 text-gray-300" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-black">
+                          {orderFilter === "all" ? "No recent orders" : `No ${activeFilterLabel.toLowerCase()} orders`}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1 max-w-xs">
+                          {orderFilter === "all"
+                            ? "Orders from the last 3 months appear here."
+                            : "Try a different filter or check back later."}
+                        </p>
+                      </div>
+                      {orderFilter === "all" && (
+                        <Link href="/shop" className="h-9 px-5 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors inline-flex items-center">
+                          Shop Now
+                        </Link>
+                      )}
+                    </div>
+                  ) : (
                     <div className="divide-y divide-gray-100">
                       {pagedOrders.map((order) => {
                         const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.paid;
@@ -578,38 +621,27 @@ function AccountPageInner() {
                         return (
                           <div key={order.id}>
                             <button
-                              onClick={() =>
-                                isPending
-                                  ? handleResumePayment(order)
-                                  : router.push(`/orders/${orderRef}`)
-                              }
+                              onClick={() => isPending ? handleResumePayment(order) : router.push(`/orders/${orderRef}`)}
                               className="w-full px-5 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left group"
                             >
-                              {/* Status icon container */}
                               <StatusDot status={order.status} />
-
-                              {/* Info */}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <span className="text-xs font-semibold text-black font-mono">{orderRef}</span>
                                   <span className={`text-[10px] font-semibold ${cfg.text}`}>{cfg.label}</span>
                                 </div>
                                 <p className="text-xs text-gray-400">
-                                  {formatDate(order.createdAt)} &middot;{" "}
-                                  {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                                  {formatDate(order.createdAt)} &middot; {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
                                 </p>
                               </div>
-
-                              {/* Total + chevron */}
                               <div className="flex items-center gap-2 shrink-0">
                                 <span className="text-sm font-semibold text-black">
-                                  {formatPrice(order.total ?? order.totals?.total)}
+                                  {fmtOrderAmt(order.total ?? order.totals?.total, order.currency)}
                                 </span>
                                 <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
                               </div>
                             </button>
 
-                            {/* Delete for pending/failed orders */}
                             {isPending && (
                               <div className="px-5 pb-3 flex justify-end">
                                 <button
@@ -617,11 +649,7 @@ function AccountPageInner() {
                                   disabled={deletingId === order.id}
                                   className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
                                 >
-                                  {deletingId === order.id ? (
-                                    <Loader2 className="w-3 h-3 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="w-3 h-3" />
-                                  )}
+                                  {deletingId === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
                                   Delete order
                                 </button>
                               </div>
@@ -630,29 +658,64 @@ function AccountPageInner() {
                         );
                       })}
                     </div>
+                  )}
+                </div>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                      <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-1">
-                        <span className="text-[10px] text-gray-400 mr-2">{ordersPage} / {totalPages}</span>
-                        <button
-                          onClick={() => setOrdersPage((p) => Math.max(1, p - 1))}
-                          disabled={ordersPage === 1}
-                          className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                {/* ── Panel footer — always visible ── */}
+                <div className="px-5 py-3 border-t border-gray-100 bg-gray-50/60 flex items-center justify-between gap-3">
+                  {/* Left: showing range + next-page chevron */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-gray-500 whitespace-nowrap">
+                      {ordersLoading
+                        ? "Loading…"
+                        : filteredOrders.length === 0
+                          ? "No orders"
+                          : `Showing ${showingStart}–${showingEnd} of ${filteredOrders.length}`}
+                    </span>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={ordersPage >= totalPages || ordersLoading || panelLoading}
+                      className="w-6 h-6 flex items-center justify-center bg-white border border-gray-200 rounded shadow-sm text-gray-400 hover:text-black hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Right: filter dropdown */}
+                  <div className="relative" ref={filterRef}>
+                    <button
+                      onClick={() => setFilterOpen((v) => !v)}
+                      className="h-6 px-3 flex items-center gap-1.5 bg-white border border-gray-200 rounded shadow-sm text-[10px] text-gray-500 hover:text-black hover:border-gray-300 transition-colors whitespace-nowrap"
+                    >
+                      {activeFilterLabel}
+                      <ChevronDown className="w-3 h-3 shrink-0" />
+                    </button>
+
+                    <AnimatePresence>
+                      {filterOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 4 }}
+                          transition={{ duration: 0.12 }}
+                          className="absolute right-0 bottom-8 bg-white border border-gray-200 rounded shadow-md overflow-hidden min-w-32 z-20"
                         >
-                          <ChevronRight className="w-3 h-3 rotate-180" />
-                        </button>
-                        <button
-                          onClick={() => setOrdersPage((p) => Math.min(totalPages, p + 1))}
-                          disabled={ordersPage === totalPages}
-                          className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                          <ChevronRight className="w-3 h-3" />
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
+                          {FILTER_OPTIONS.map((opt) => (
+                            <button
+                              key={opt.value}
+                              onClick={() => handleFilterChange(opt.value)}
+                              className={`w-full text-left px-3 py-2 text-[10px] hover:bg-gray-50 transition-colors ${
+                                orderFilter === opt.value ? "font-semibold text-black bg-gray-50" : "text-gray-500"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
