@@ -103,13 +103,13 @@ const MobileMenu = () => {
             </nav>
 
             {/* Logo — left-aligned, between nav and contact */}
-            <div className="px-6 py-6 flex justify-start border-t border-white/10">
-              <div className="relative h-16 w-44">
+            <div className="px-6 py-6 flex justify-start">
+              <div className="relative h-20 w-56">
                 <Image
                   src="/images/logo.png"
                   alt="Body Pharm Labz"
                   fill
-                  className="object-contain brightness-0 invert"
+                  className="object-contain object-left brightness-0 invert"
                 />
               </div>
             </div>
