@@ -51,7 +51,7 @@ const AboutSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative w-full aspect-4/5 overflow-hidden"
+            className="relative w-full aspect-3/4 overflow-hidden"
           >
             <Image
               src="/images/about-image.jpg"

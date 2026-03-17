@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Image Container */}
+        {/* Image */}
         <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
           <div
             className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
@@ -84,40 +84,66 @@ const ProductCard = ({ product }) => {
           </AnimatePresence>
         </div>
 
-        {/* Product Info */}
-        <div className="mt-3 text-center">
-          <h3 className="font-bold text-black text-sm uppercase tracking-wide mb-1 truncate">
-            {product.name}
-          </h3>
-          {product.subtitle && (
-            <p className="text-xs text-gray-400 mb-3">{product.subtitle}</p>
-          )}
+        {/* Product Info
+            Mobile: single flex row — [name+subtitle LEFT] [cart RIGHT]
+            sm+:    stacked centered (original) */}
+        <div className="mt-3">
+          <div className="flex items-start justify-between gap-2 sm:block sm:text-center">
 
-          {/* Cart Controls — stop propagation so Link doesn't fire */}
-          <div
-            className="flex items-center justify-center mt-2"
-            onClick={(e) => e.preventDefault()}
-          >
-            {inCart ? (
-              <QuantitySelector
-                quantity={quantity}
-                onIncrement={handleAdd}
-                onDecrement={handleDecrement}
-                size="sm"
-              />
-            ) : (
-              <button
-                onClick={handleAdd}
-                disabled={isAdding}
-                className="inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
-              >
-                {isAdding ? (
-                  <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
-                ) : (
-                  "ADD TO CART"
-                )}
-              </button>
-            )}
+            {/* Name + subtitle */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-black text-xs sm:text-sm uppercase tracking-wide truncate sm:mb-1">
+                {product.name}
+              </h3>
+              {product.subtitle && (
+                <p className="text-[10px] sm:text-xs text-gray-400 truncate sm:mb-3">
+                  {product.subtitle}
+                </p>
+              )}
+            </div>
+
+            {/* Cart controls — stop propagation so Link doesn't fire */}
+            <div
+              className="shrink-0 sm:mt-2 sm:flex sm:justify-center"
+              onClick={(e) => e.preventDefault()}
+            >
+              {inCart ? (
+                <QuantitySelector
+                  quantity={quantity}
+                  onIncrement={handleAdd}
+                  onDecrement={handleDecrement}
+                  size="sm"
+                />
+              ) : (
+                <>
+                  {/* Mobile: compact + icon */}
+                  <button
+                    onClick={handleAdd}
+                    disabled={isAdding}
+                    className="sm:hidden w-8 h-8 border border-gray-200 rounded bg-white flex items-center justify-center text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  >
+                    {isAdding ? (
+                      <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
+                    ) : (
+                      <Plus className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                  {/* sm+: full text button */}
+                  <button
+                    onClick={handleAdd}
+                    disabled={isAdding}
+                    className="hidden sm:inline-flex items-center gap-2 px-5 h-8 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  >
+                    {isAdding ? (
+                      <div className="w-3 h-3 rounded-full border border-gray-300 border-t-black animate-spin" />
+                    ) : (
+                      "ADD TO CART"
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
+
           </div>
         </div>
       </div>

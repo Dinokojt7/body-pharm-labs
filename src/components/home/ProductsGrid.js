@@ -34,7 +34,7 @@ const ProductsGrid = () => {
             <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4 animate-pulse" />
             <div className="h-4 bg-gray-200 rounded w-40 mx-auto animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 md:gap-x-6 md:gap-y-10">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
@@ -67,8 +67,8 @@ const ProductsGrid = () => {
           <p className="text-black font-bold">FREE SHIPPING $250+</p>
         </div>
 
-        {/* Products Grid — gap-x between columns, gap-y between rows with a faint divider feel */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 mb-12">
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 md:gap-x-6 md:gap-y-10 mb-12">
           {products.map((product, index) => (
             <motion.div
               key={product.id}
@@ -85,11 +85,11 @@ const ProductsGrid = () => {
         {/* Subtle row divider between the two product rows on desktop */}
         <div className="hidden lg:block w-full h-px bg-gray-200/60 -mt-4 mb-10" />
 
-        {/* View All Button */}
-        <div className="text-center">
+        {/* View All Button — full width on mobile, auto on sm+ */}
+        <div>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-5 py-2 border border-gray-200 rounded bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
+            className="flex sm:inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3.5 sm:py-2.5 border border-gray-200 bg-white text-xs font-medium tracking-widest uppercase text-black hover:bg-gray-50 transition-colors"
           >
             VIEW ALL PRODUCTS
             <ArrowRight className="w-3.5 h-3.5" />

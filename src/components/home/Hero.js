@@ -6,43 +6,46 @@ import { motion } from "framer-motion";
 const Hero = () => {
   return (
     <section className="w-full mt-2 md:mt-4 px-4 md:px-8 lg:px-12">
-      {/* Hero image container — no border radius */}
-      <div className="relative w-full overflow-hidden" style={{ height: "clamp(500px, 74vh, 880px)" }}>
+      {/* Hero container — landscape on mobile, tall on desktop */}
+      <div className="relative w-full overflow-hidden h-[58vw] md:h-[clamp(500px,74vh,880px)]">
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/images/hero-bg.jpeg)" }}
         />
-        {/* Light overlay so text is readable */}
-        <div className="absolute inset-0 bg-black/30" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/35" />
 
         {/* Text + button — left-aligned, vertically centered */}
-        <div className="relative h-full flex items-center px-8 sm:px-12 md:px-16">
+        <div className="relative h-full flex items-center px-6 sm:px-10 md:px-16">
           <div className="max-w-xs sm:max-w-sm">
-            {/* Pre-heading */}
+            {/* Pre-heading — amber accent */}
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase text-white/80 mb-3"
+              className="text-[10px] sm:text-xs font-semibold tracking-[0.28em] uppercase text-amber-400/90 mb-3"
             >
               Research-Grade Peptides
             </motion.p>
 
-            {/* Heading */}
+            {/* Heading — editorial split: light label + semibold punch */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white leading-[1.05] tracking-tight mb-8"
-              style={{ textShadow: "0 2px 24px rgba(0,0,0,0.65)" }}
+              className="mb-6 md:mb-8"
+              style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
             >
-              Where Science
-              <br />
-              Meets Results.
+              <span className="block text-lg sm:text-xl md:text-2xl font-light tracking-[0.18em] uppercase text-white/60 mb-1 md:mb-2">
+                Where Science
+              </span>
+              <span className="block text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white">
+                Meets Results.
+              </span>
             </motion.h1>
 
-            {/* CTA — white, no radius, shimmer + hover silver-gray */}
+            {/* CTA — white flat button, silver shimmer on hover */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -55,7 +58,7 @@ const Hero = () => {
               >
                 Shop Now
               </Link>
-              {/* Base shimmer sweep */}
+              {/* Base shimmer */}
               <motion.span
                 aria-hidden
                 className="absolute inset-0 pointer-events-none"
@@ -72,7 +75,7 @@ const Hero = () => {
                   ease: "easeInOut",
                 }}
               />
-              {/* Hover shimmer — brighter & faster, only visible on hover */}
+              {/* Hover shimmer — brighter & faster */}
               <motion.span
                 aria-hidden
                 className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150"

@@ -104,7 +104,7 @@ const MobileMenu = () => {
 
             {/* Logo — left-aligned, between nav and contact */}
             <div className="px-6 py-6 flex justify-start">
-              <div className="relative h-20 w-56">
+              <div className="relative h-24 w-64">
                 <Image
                   src="/images/logo.png"
                   alt="Body Pharm Labz"
