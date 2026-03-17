@@ -1,20 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+
+const SLIDES = [
+  "/images/hero-bg.jpeg",
+  "/images/hero-bg1.jpg",
+  "/images/hero-bg2.webp",
+  "/images/hero-bg3.webp",
+];
+
+const INTERVAL = 5000;
 
 const Hero = () => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((c) => (c + 1) % SLIDES.length);
+    }, INTERVAL);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="w-full">
-      {/* Hero container — landscape on mobile, tall on desktop */}
       <div className="relative w-full overflow-hidden h-[58vw] md:h-[clamp(500px,74vh,880px)]">
-        {/* Background image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/images/hero-bg.jpeg)" }}
-        />
+
+        {/* Sliding background images — right to left */}
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={current}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${SLIDES[current]})` }}
+            initial={{ x: "100%" }}
+            animate={{ x: "0%" }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.75, ease: "easeInOut" }}
+          />
+        </AnimatePresence>
+
         {/* Overlay */}
-        <div className="absolute inset-0 " />
+        <div className="absolute inset-0" />
 
         {/* Text + button — left-aligned, vertically centered */}
         <div className="relative h-full flex items-center px-6 sm:px-10 md:px-16">
@@ -29,7 +56,7 @@ const Hero = () => {
               Research-Grade Peptides
             </motion.p>
 
-            {/* Heading — editorial split: light label + semibold punch */}
+            {/* Heading — editorial split */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -75,7 +102,7 @@ const Hero = () => {
                   ease: "easeInOut",
                 }}
               />
-              {/* Hover shimmer — brighter & faster */}
+              {/* Hover shimmer */}
               <motion.span
                 aria-hidden
                 className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150"
@@ -94,6 +121,24 @@ const Hero = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Rectangular slide indicators — centered bottom */}
+        <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-1.5">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className="h-[3px] transition-all duration-400"
+              style={{
+                width: i === current ? 28 : 14,
+                backgroundColor:
+                  i === current ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
+              }}
+            />
+          ))}
+        </div>
+
       </div>
     </section>
   );
