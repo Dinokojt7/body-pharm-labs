@@ -64,8 +64,8 @@ const Hero = () => {
               style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
             >
               <span
-                className="block text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase text-gray-900 mb-1 md:mb-2"
-                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic" }}
+                className="block text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase mb-1 md:mb-2 transition-colors duration-700"
+                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", color: current === 1 ? "rgba(255,255,255,0.75)" : "rgba(30,30,30,0.9)" }}
               >
                 Where Science
               </span>
