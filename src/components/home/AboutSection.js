@@ -18,19 +18,39 @@ const AboutSection = () => {
   return (
     <>
       {/* ── Bridge: white section between Hero and dark About ── */}
-      <div className="w-full bg-white py-14 px-4 md:px-8 lg:px-12">
+      <div className="w-full bg-white py-16 px-4 md:px-8 lg:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-7xl mx-auto"
+          className="max-w-2xl mx-auto text-center space-y-8"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
+          {/* Eyebrow */}
+          <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-black/35">
+            Trusted by Thousands of Researchers
+          </p>
+
+          {/* Main headline */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-[1.05]">
             <span className="text-black">Science You Can Trust.</span>
             <br />
             <span className="text-black/25">Purity You Can Measure.</span>
           </h2>
+
+          {/* Divider */}
+          <div className="w-10 h-px bg-black/15 mx-auto" />
+
+          {/* Third-party test block */}
+          <div className="space-y-3">
+            <h3 className="text-sm sm:text-base font-semibold tracking-widest uppercase text-black">
+              We Want You to Third-Party Test Our Products
+            </h3>
+            <p className="text-sm text-black/45 leading-relaxed">
+              99%+ Purity is always guaranteed. We will offer credit for testing our products.
+              If any batch fails to meet our published specifications, we&apos;ll replace it at no cost.
+            </p>
+          </div>
         </motion.div>
       </div>
 
