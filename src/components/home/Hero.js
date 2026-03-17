@@ -132,7 +132,7 @@ const Hero = () => {
               style={{
                 width: i === current ? 28 : 14,
                 backgroundColor:
-                  i === current ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.3)",
+                  i === current ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
               }}
             />
           ))}
