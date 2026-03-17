@@ -54,7 +54,7 @@ const Hero = () => {
             >
               <Link
                 href="/shop"
-                className="relative flex h-11 px-10 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200"
+                className="relative flex h-12 px-12 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200 rounded border border-gray-200 shadow-md"
               >
                 Shop Now
               </Link>
