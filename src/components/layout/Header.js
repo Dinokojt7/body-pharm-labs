@@ -14,7 +14,7 @@ import MobileMenu from "./MobileMenu";
 import AuthModal from "./AuthModal";
 
 // PreHeader height in px — used to shift Header up as it scrolls away
-const PREH = 40;
+const PREH = 36;
 
 const Header = () => {
   const [scrollY, setScrollY] = useState(0);
