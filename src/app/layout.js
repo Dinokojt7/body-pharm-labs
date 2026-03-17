@@ -1,4 +1,4 @@
-import { Poppins } from "next/font/google";
+import { Poppins, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import PreHeader from "@/components/layout/PreHeader";
 import Header from "@/components/layout/Header";
@@ -13,6 +13,14 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
   display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  weight: ["600", "700"],
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-cormorant",
 });
 
 export const metadata = {
@@ -42,7 +50,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={poppins.className}>
+    <html lang="en" className={`${poppins.className} ${cormorant.variable}`}>
       <head>
         {/* Apple touch icons */}
         <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />

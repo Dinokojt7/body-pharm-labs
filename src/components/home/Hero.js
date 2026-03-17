@@ -63,7 +63,10 @@ const Hero = () => {
               className="mb-6 md:mb-8"
               style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
             >
-              <span className="block text-lg sm:text-xl md:text-2xl font-light tracking-[0.18em] uppercase text-gray-900 mb-1 md:mb-2">
+              <span
+                className="block text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase text-gray-900 mb-1 md:mb-2"
+                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic" }}
+              >
                 Where Science
               </span>
               <span className="block text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white whitespace-nowrap">
