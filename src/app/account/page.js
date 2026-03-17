@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Package, Mail, User, LogOut, Clock, ChevronRight,
   Check, X, Pencil, ShoppingBag, Loader2, Trash2,
+  AlertTriangle, Info, Truck,
 } from "lucide-react";
 
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -19,9 +20,10 @@ import {
   deleteOrder,
 } from "@/lib/firebase/firestore";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import productsData from "@/lib/data/products.json";
 
-// Fallback image/price lookup from local catalogue
+// ── Local product fallback ────────────────────────────────────────────────────
 const productMap = Object.fromEntries(productsData.map((p) => [p.id, p]));
 
 const enrichItems = (items = []) =>
@@ -31,16 +33,65 @@ const enrichItems = (items = []) =>
     price: item.price ?? productMap[item.productId]?.price ?? 0,
   }));
 
-const STATUS_COLORS = {
-  pending_payment: { dot: "bg-amber-400",  text: "text-amber-600",  label: "Pending Payment" },
-  payment_failed:  { dot: "bg-red-400",    text: "text-red-500",    label: "Payment Failed"  },
-  paid:            { dot: "bg-blue-400",   text: "text-blue-600",   label: "Paid"            },
-  confirmed:       { dot: "bg-blue-400",   text: "text-blue-600",   label: "Confirmed"       },
-  shipped:         { dot: "bg-indigo-400", text: "text-indigo-600", label: "Shipped"         },
-  delivered:       { dot: "bg-green-500",  text: "text-green-600",  label: "Delivered"       },
-  cancelled:       { dot: "bg-red-400",    text: "text-red-500",    label: "Cancelled"       },
+// ── Status icon config ─────────────────────────────────────────────────────────
+// container: classes for the rounded-full icon wrapper
+// icon: JSX element
+// text: text-color class
+const STATUS_CONFIG = {
+  pending_payment: {
+    label: "Pending Payment",
+    container: "bg-white ring-1 ring-amber-400/60 shadow-[0_0_0_2px_rgba(217,119,6,0.10)]",
+    icon: <Info className="w-3 h-3 text-black" />,
+    text: "text-amber-700",
+  },
+  payment_failed: {
+    label: "Payment Failed",
+    container: "bg-white ring-1 ring-red-400",
+    icon: <AlertTriangle className="w-3 h-3 text-yellow-500 fill-yellow-300" />,
+    text: "text-red-600",
+  },
+  paid: {
+    label: "Paid",
+    container: "bg-green-500 border border-black/20",
+    icon: <Check className="w-2.5 h-2.5 text-white" />,
+    text: "text-green-700",
+  },
+  confirmed: {
+    label: "Confirmed",
+    container: "bg-white ring-1 ring-blue-400/60",
+    icon: <Check className="w-3 h-3 text-black/80" />,
+    text: "text-blue-700",
+  },
+  shipped: {
+    label: "Shipped",
+    container: "bg-white ring-1 ring-indigo-400/60",
+    icon: <Truck className="w-3 h-3 text-black/80" />,
+    text: "text-indigo-700",
+  },
+  delivered: {
+    label: "Delivered",
+    container: "bg-green-500 border border-black/20",
+    icon: <Check className="w-2.5 h-2.5 text-white" />,
+    text: "text-green-700",
+  },
+  cancelled: {
+    label: "Cancelled",
+    container: "bg-white ring-1 ring-red-400",
+    icon: <AlertTriangle className="w-3 h-3 text-yellow-500 fill-yellow-300" />,
+    text: "text-red-600",
+  },
 };
 
+function StatusDot({ status }) {
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.paid;
+  return (
+    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${cfg.container}`}>
+      {cfg.icon}
+    </div>
+  );
+}
+
+// ── Other helpers ─────────────────────────────────────────────────────────────
 const formatDate = (ts) => {
   if (!ts) return "";
   const d = ts?.toDate ? ts.toDate() : new Date(ts);
@@ -58,6 +109,7 @@ const ADDRESS_FIELDS = [
   { key: "zip",      label: "Postal Code",      placeholder: "8001",          full: false },
 ];
 
+// ── Page ──────────────────────────────────────────────────────────────────────
 export default function AccountPage() {
   return (
     <Suspense>
@@ -74,6 +126,7 @@ function AccountPageInner() {
   const { user, isAuthenticated, authLoading, getDisplayName } = useAuthStore();
   const { addItem } = useCartStore();
 
+  // Profile state
   const [profile, setProfile] = useState({
     displayName: "", phone: "",
     address: { line1: "", city: "", province: "", country: "", zip: "" },
@@ -82,12 +135,19 @@ function AccountPageInner() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Orders state
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [deleteError, setDeleteError] = useState("");
   const [ordersPage, setOrdersPage] = useState(1);
+
+  // Confirm dialogs
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, type: null, id: null });
+
+  // Sign-out loading
+  const [signingOut, setSigningOut] = useState(false);
 
   const PAGE_SIZE = 5;
   const THREE_MONTHS_MS = 3 * 30 * 24 * 60 * 60 * 1000;
@@ -96,12 +156,10 @@ function AccountPageInner() {
     if (!authLoading && !isAuthenticated) router.push("/");
   }, [isAuthenticated, authLoading, router]);
 
-  // Open edit mode automatically for new users
   useEffect(() => {
     if (isWelcome) setEditing(true);
   }, [isWelcome]);
 
-  // Load Firestore profile
   useEffect(() => {
     if (!user?.uid) return;
     getUserProfile(user.uid).then(({ profile: p }) => {
@@ -113,7 +171,6 @@ function AccountPageInner() {
     });
   }, [user?.uid, user?.displayName, user?.phoneNumber]);
 
-  // Realtime orders subscription — updates whenever Firestore changes
   useEffect(() => {
     if (!user?.uid) return;
     const unsubscribe = subscribeToUserOrders(user.uid, ({ orders: o, error: err }) => {
@@ -130,6 +187,7 @@ function AccountPageInner() {
     return unsubscribe;
   }, [user?.uid]);
 
+  // ── Handlers ────────────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!user?.uid) return;
     setSaving(true);
@@ -146,15 +204,21 @@ function AccountPageInner() {
     if (isWelcome) router.replace("/account");
   };
 
-  const handleDeleteOrder = async (orderId) => {
-    if (!window.confirm("Delete this order? This cannot be undone.")) return;
+  const handleDeleteOrder = (orderId) => {
+    setConfirmDialog({ open: true, type: "delete", id: orderId });
+  };
+
+  const confirmDelete = async () => {
+    const orderId = confirmDialog.id;
+    setConfirmDialog({ open: false, type: null, id: null });
     setDeletingId(orderId);
     setDeleteError("");
+
     const { success, error: err } = await deleteOrder(orderId);
     if (err || !success) {
-      setDeleteError("Could not delete order. Please try again.");
+      // Show the actual Firebase error to help diagnose (e.g. permission denied)
+      setDeleteError(err || "Could not delete order. Check Firestore security rules allow users to delete their own orders.");
     }
-    // On success the realtime listener removes it from the list automatically
     setDeletingId(null);
   };
 
@@ -162,13 +226,7 @@ function AccountPageInner() {
     useCartStore.getState().clearCart();
     order.items?.forEach((item) => {
       addItem(
-        {
-          id: item.productId,
-          name: item.name,
-          price: item.price,
-          imageString: item.image || null,
-          size: item.size || null,
-        },
+        { id: item.productId, name: item.name, price: item.price, imageString: item.image || null },
         item.quantity,
         item.size || null,
       );
@@ -176,7 +234,13 @@ function AccountPageInner() {
     router.push("/checkout");
   };
 
-  const handleLogout = async () => {
+  const handleSignOutClick = () => {
+    setConfirmDialog({ open: true, type: "signout", id: null });
+  };
+
+  const confirmSignOut = async () => {
+    setConfirmDialog({ open: false, type: null, id: null });
+    setSigningOut(true);
     await logout();
     router.push("/");
   };
@@ -184,6 +248,10 @@ function AccountPageInner() {
   if (authLoading || !isAuthenticated) return null;
 
   const displayName = profile.displayName || getDisplayName();
+  const initials = displayName?.slice(0, 2).toUpperCase() || "U";
+  const memberSince = user?.metadata?.creationTime
+    ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : null;
 
   const cutoff = Date.now() - THREE_MONTHS_MS;
   const recentOrders = orders.filter((o) => {
@@ -192,374 +260,404 @@ function AccountPageInner() {
   });
   const totalPages = Math.max(1, Math.ceil(recentOrders.length / PAGE_SIZE));
   const pagedOrders = recentOrders.slice((ordersPage - 1) * PAGE_SIZE, ordersPage * PAGE_SIZE);
-  const initials = displayName?.slice(0, 2).toUpperCase() || "U";
-  const memberSince = user?.metadata?.creationTime
-    ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", { month: "long", year: "numeric" })
-    : null;
 
   return (
-    <main className="min-h-screen bg-white">
-      <Breadcrumb />
-
-      <div className="max-w-5xl mx-auto px-4 md:px-8 lg:px-12 pt-12 pb-24">
-
-        {/* New-user welcome banner */}
-        <AnimatePresence>
-          {isWelcome && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mb-8 flex items-start gap-3 bg-black text-white rounded px-5 py-4"
-            >
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                <User className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm">Welcome to Body Pharm Labz!</p>
-                <p className="text-white/60 text-xs mt-0.5">
-                  Complete your profile so we can personalise your experience and pre-fill your shipping details at checkout.
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Page heading */}
-        <div className="mb-10">
-          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400 mb-2">Your Account</p>
-          <h1 className="text-3xl md:text-4xl font-semibold text-black">
-            Welcome back{displayName ? `, ${displayName.split(" ")[0]}` : ""}
-          </h1>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 items-start">
-
-          {/* ── Sidebar ── */}
-          <motion.aside
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:col-span-1 space-y-4"
-          >
-            {/* Profile card */}
-            <div className="border border-gray-200 rounded p-6 space-y-5">
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-black text-white flex items-center justify-center text-xl font-semibold tracking-wide">
-                  {initials}
-                </div>
-                <div>
-                  <p className="font-semibold text-black text-sm">{displayName}</p>
-                  {user?.email && (
-                    <p className="text-xs text-gray-400 mt-0.5 break-all">{user.email}</p>
-                  )}
-                  {profile.phone && (
-                    <p className="text-xs text-gray-400 mt-0.5">{profile.phone}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="border-t border-gray-100" />
-
-              <div className="space-y-2.5 text-xs text-gray-500">
-                {memberSince && (
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                    Member since {memberSince}
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-                  {ordersLoading
-                    ? "Loading orders…"
-                    : `${orders.length} order${orders.length !== 1 ? "s" : ""} placed`}
-                </div>
-              </div>
-
-              <div className="border-t border-gray-100" />
-
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 h-9 rounded border border-gray-200 text-xs text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                Sign Out
-              </button>
-            </div>
-
-            {/* Quick links */}
-            <div className="border border-gray-200 rounded overflow-hidden">
-              {[
-                { href: "/shop",        label: "Browse Products", Icon: ShoppingBag },
-                { href: "/track-order", label: "Track an Order",  Icon: Package     },
-                { href: "/contact",     label: "Contact Support", Icon: Mail        },
-              ].map(({ href, label, Icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex items-center justify-between px-4 py-3 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
-                >
-                  <span className="flex items-center gap-2.5">
-                    <Icon className="w-3.5 h-3.5 text-gray-400" />
-                    {label}
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
-                </Link>
-              ))}
-            </div>
-          </motion.aside>
-
-          {/* ── Main content ── */}
+    <>
+      {/* Sign-out loading overlay */}
+      <AnimatePresence>
+        {signingOut && (
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 }}
-            className="md:col-span-2 space-y-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-9999 flex items-center justify-center bg-white/20"
           >
-
-            {/* Profile details card */}
-            <div className="border border-gray-200 rounded">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Profile Details</h2>
-                {!editing ? (
-                  <button
-                    onClick={() => setEditing(true)}
-                    className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-black transition-colors"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                    Edit
-                  </button>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleCancel}
-                      className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSave}
-                      disabled={saving}
-                      className="flex items-center gap-1.5 h-7 px-3 rounded bg-black text-white text-xs font-semibold disabled:opacity-60"
-                    >
-                      {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                      {saving ? "Saving…" : "Save"}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {saved && (
-                <div className="px-5 py-2.5 bg-green-50 border-b border-green-100 text-xs text-green-700 flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5" />
-                  Profile saved successfully
-                </div>
-              )}
-
-              <div className="p-5 space-y-6">
-                {/* Personal */}
-                <div>
-                  <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Personal</p>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {[
-                      { key: "displayName", label: "Full Name",    placeholder: "Your name"       },
-                      { key: "phone",       label: "Phone Number", placeholder: "+1 555 000 0000" },
-                    ].map(({ key, label, placeholder }) => (
-                      <label key={key} className="block">
-                        <span className="text-xs text-gray-500 mb-1.5 block">{label}</span>
-                        {editing ? (
-                          <input
-                            value={profile[key] || ""}
-                            onChange={(e) => setProfile((p) => ({ ...p, [key]: e.target.value }))}
-                            className="w-full h-9 border border-gray-200 rounded px-3 text-sm text-black focus:outline-none focus:border-black transition-colors"
-                            placeholder={placeholder}
-                          />
-                        ) : (
-                          <p className="text-sm text-black">
-                            {profile[key] || <span className="text-gray-300 italic">Not set</span>}
-                          </p>
-                        )}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Account (read-only) */}
-                {user?.email && (
-                  <div>
-                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Account</p>
-                    <label className="block">
-                      <span className="text-xs text-gray-500 mb-1.5 block">Email</span>
-                      <p className="text-sm text-black break-all">{user.email}</p>
-                    </label>
-                  </div>
-                )}
-
-                {/* Shipping address */}
-                <div>
-                  <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Default Shipping Address</p>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {ADDRESS_FIELDS.map(({ key, label, placeholder, full }) => (
-                      <label key={key} className={`block ${full ? "sm:col-span-2" : ""}`}>
-                        <span className="text-xs text-gray-500 mb-1.5 block">{label}</span>
-                        {editing ? (
-                          <input
-                            value={profile.address?.[key] || ""}
-                            onChange={(e) =>
-                              setProfile((p) => ({ ...p, address: { ...p.address, [key]: e.target.value } }))
-                            }
-                            className="w-full h-9 border border-gray-200 rounded px-3 text-sm text-black focus:outline-none focus:border-black transition-colors"
-                            placeholder={placeholder}
-                          />
-                        ) : (
-                          <p className="text-sm text-black">
-                            {profile.address?.[key] || <span className="text-gray-300 italic">Not set</span>}
-                          </p>
-                        )}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <div className="w-16 h-16 rounded-lg bg-white shadow-md border border-black/10 flex items-center justify-center">
+              <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-black animate-spin" />
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            {/* Orders card */}
-            <div className="border border-gray-200 rounded">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Order History</h2>
-              </div>
+      {/* Confirm dialogs */}
+      <ConfirmDialog
+        open={confirmDialog.open && confirmDialog.type === "delete"}
+        title="Delete this order?"
+        description="This action cannot be undone. The order will be permanently removed from your account."
+        confirmLabel="Delete Order"
+        danger
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ open: false, type: null, id: null })}
+      />
+      <ConfirmDialog
+        open={confirmDialog.open && confirmDialog.type === "signout"}
+        title="Sign out?"
+        description="You'll need to sign in again to access your account and orders."
+        confirmLabel="Sign Out"
+        onConfirm={confirmSignOut}
+        onCancel={() => setConfirmDialog({ open: false, type: null, id: null })}
+      />
 
-              {/* Orders error */}
-              {ordersError && (
-                <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                  <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  {ordersError}
+      <main className="min-h-screen bg-white">
+        <Breadcrumb />
+
+        <div className="max-w-5xl mx-auto px-4 md:px-8 lg:px-12 pt-12 pb-24">
+
+          {/* Welcome banner */}
+          <AnimatePresence>
+            {isWelcome && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-8 flex items-start gap-3 bg-black text-white rounded px-5 py-4"
+              >
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <User className="w-4 h-4" />
                 </div>
-              )}
-
-              {/* Delete error */}
-              {deleteError && (
-                <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                  <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  {deleteError}
-                  <button onClick={() => setDeleteError("")} className="ml-auto shrink-0"><X className="w-3 h-3" /></button>
+                <div>
+                  <p className="font-semibold text-sm">Welcome to Body Pharm Labz!</p>
+                  <p className="text-white/60 text-xs mt-0.5">
+                    Complete your profile so we can personalise your experience and pre-fill your shipping details at checkout.
+                  </p>
                 </div>
-              )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-              {ordersLoading ? (
-                <div className="p-5 space-y-3">
-                  {[0, 1].map((i) => (
-                    <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />
-                  ))}
-                </div>
-              ) : recentOrders.length === 0 ? (
-                <div className="py-14 flex flex-col items-center justify-center text-center gap-4 px-5">
-                  <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Package className="w-5 h-5 text-gray-300" />
+          {/* Heading */}
+          <div className="mb-10">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400 mb-2">Your Account</p>
+            <h1 className="text-3xl md:text-4xl font-semibold text-black">
+              Welcome back{displayName ? `, ${displayName.split(" ")[0]}` : ""}
+            </h1>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 items-start">
+
+            {/* ── Sidebar ── */}
+            <motion.aside
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="md:col-span-1 space-y-4"
+            >
+              {/* Profile card */}
+              <div className="border border-gray-200 rounded p-6 space-y-5">
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-black text-white flex items-center justify-center text-xl font-semibold tracking-wide">
+                    {initials}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-black">No recent orders</p>
-                    <p className="text-xs text-gray-400 mt-1 max-w-xs">
-                      Orders from the last 3 months will appear here.
-                    </p>
+                    <p className="font-semibold text-black text-sm">{displayName}</p>
+                    {user?.email && (
+                      <p className="text-xs text-gray-400 mt-0.5 break-all">{user.email}</p>
+                    )}
+                    {profile.phone && (
+                      <p className="text-xs text-gray-400 mt-0.5">{profile.phone}</p>
+                    )}
                   </div>
-                  <Link
-                    href="/shop"
-                    className="h-9 px-5 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors inline-flex items-center"
-                  >
-                    Shop Now
-                  </Link>
                 </div>
-              ) : (
-                <>
-                  <div className="divide-y divide-gray-100">
-                    {pagedOrders.map((order) => {
-                      const s = STATUS_COLORS[order.status] || STATUS_COLORS.paid;
-                      const isPending = order.status === "payment_failed" || order.status === "pending_payment";
-                      const orderRef = order.orderNumber || order.id;
-                      return (
-                        <div key={order.id}>
-                          {/* Clickable row */}
-                          <button
-                            onClick={() =>
-                              isPending
-                                ? handleResumePayment(order)
-                                : router.push(`/orders/${orderRef}`)
-                            }
-                            className="w-full px-5 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left group"
-                          >
-                            <div className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-xs font-semibold text-black font-mono">{orderRef}</span>
-                                <span className={`text-[10px] font-semibold ${s.text}`}>{s.label}</span>
-                              </div>
-                              <p className="text-xs text-gray-400">
-                                {formatDate(order.createdAt)} &middot;{" "}
-                                {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
-                                {isPending && (
-                                  <span className="ml-2 text-amber-500 font-medium">— tap to complete payment</span>
-                                )}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-sm font-semibold text-black">
-                                {formatPrice(order.total ?? order.totals?.total)}
-                              </span>
-                              <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
-                            </div>
-                          </button>
 
-                          {isPending && (
-                            <div className="px-5 pb-3 flex justify-end">
-                              <button
-                                onClick={() => handleDeleteOrder(order.id)}
-                                disabled={deletingId === order.id}
-                                className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
-                              >
-                                {deletingId === order.id ? (
-                                  <Loader2 className="w-3 h-3 animate-spin" />
-                                ) : (
-                                  <Trash2 className="w-3 h-3" />
-                                )}
-                                Delete order
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                <div className="border-t border-gray-100" />
+
+                <div className="space-y-2.5 text-xs text-gray-500">
+                  {memberSince && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                      Member since {memberSince}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <ShoppingBag className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                    {ordersLoading
+                      ? "Loading orders…"
+                      : `${orders.length} order${orders.length !== 1 ? "s" : ""} placed`}
                   </div>
+                </div>
 
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-1">
-                      <span className="text-[10px] text-gray-400 mr-2">
-                        {ordersPage} / {totalPages}
-                      </span>
+                <div className="border-t border-gray-100" />
+
+                <button
+                  onClick={handleSignOutClick}
+                  className="w-full flex items-center justify-center gap-2 h-9 rounded border border-gray-200 text-xs text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
+                </button>
+              </div>
+
+              {/* Quick links */}
+              <div className="border border-gray-200 rounded overflow-hidden">
+                {[
+                  { href: "/shop",        label: "Browse Products", Icon: ShoppingBag },
+                  { href: "/track-order", label: "Track an Order",  Icon: Package     },
+                  { href: "/contact",     label: "Contact Support", Icon: Mail        },
+                ].map(({ href, label, Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center justify-between px-4 py-3 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <Icon className="w-3.5 h-3.5 text-gray-400" />
+                      {label}
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
+                  </Link>
+                ))}
+              </div>
+            </motion.aside>
+
+            {/* ── Main content ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 }}
+              className="md:col-span-2 space-y-8"
+            >
+              {/* Profile details card */}
+              <div className="border border-gray-200 rounded">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                  <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Profile Details</h2>
+                  {!editing ? (
+                    <button
+                      onClick={() => setEditing(true)}
+                      className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-black transition-colors"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-3">
                       <button
-                        onClick={() => setOrdersPage((p) => Math.max(1, p - 1))}
-                        disabled={ordersPage === 1}
-                        className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        onClick={handleCancel}
+                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
                       >
-                        <ChevronRight className="w-3 h-3 rotate-180" />
+                        <X className="w-3.5 h-3.5" />
+                        Cancel
                       </button>
                       <button
-                        onClick={() => setOrdersPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={ordersPage === totalPages}
-                        className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex items-center gap-1.5 h-7 px-3 rounded bg-black text-white text-xs font-semibold disabled:opacity-60"
                       >
-                        <ChevronRight className="w-3 h-3" />
+                        {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                        {saving ? "Saving…" : "Save"}
                       </button>
                     </div>
                   )}
-                </>
-              )}
-            </div>
+                </div>
 
-          </motion.div>
+                {saved && (
+                  <div className="px-5 py-2.5 bg-green-50 border-b border-green-100 text-xs text-green-700 flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5" />
+                    Profile saved successfully
+                  </div>
+                )}
+
+                <div className="p-5 space-y-6">
+                  {/* Personal */}
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Personal</p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {[
+                        { key: "displayName", label: "Full Name",    placeholder: "Your name"       },
+                        { key: "phone",       label: "Phone Number", placeholder: "+1 555 000 0000" },
+                      ].map(({ key, label, placeholder }) => (
+                        <label key={key} className="block">
+                          <span className="text-xs text-gray-500 mb-1.5 block">{label}</span>
+                          {editing ? (
+                            <input
+                              value={profile[key] || ""}
+                              onChange={(e) => setProfile((p) => ({ ...p, [key]: e.target.value }))}
+                              className="w-full h-9 border border-gray-200 rounded px-3 text-sm text-black focus:outline-none focus:border-black transition-colors"
+                              placeholder={placeholder}
+                            />
+                          ) : (
+                            <p className="text-sm text-black">
+                              {profile[key] || <span className="text-gray-300 italic">Not set</span>}
+                            </p>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {user?.email && (
+                    <div>
+                      <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Account</p>
+                      <label className="block">
+                        <span className="text-xs text-gray-500 mb-1.5 block">Email</span>
+                        <p className="text-sm text-black break-all">{user.email}</p>
+                      </label>
+                    </div>
+                  )}
+
+                  {/* Shipping address */}
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-gray-400 mb-3">Default Shipping Address</p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {ADDRESS_FIELDS.map(({ key, label, placeholder, full }) => (
+                        <label key={key} className={`block ${full ? "sm:col-span-2" : ""}`}>
+                          <span className="text-xs text-gray-500 mb-1.5 block">{label}</span>
+                          {editing ? (
+                            <input
+                              value={profile.address?.[key] || ""}
+                              onChange={(e) =>
+                                setProfile((p) => ({ ...p, address: { ...p.address, [key]: e.target.value } }))
+                              }
+                              className="w-full h-9 border border-gray-200 rounded px-3 text-sm text-black focus:outline-none focus:border-black transition-colors"
+                              placeholder={placeholder}
+                            />
+                          ) : (
+                            <p className="text-sm text-black">
+                              {profile.address?.[key] || <span className="text-gray-300 italic">Not set</span>}
+                            </p>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Orders card */}
+              <div className="border border-gray-200 rounded">
+                <div className="px-5 py-4 border-b border-gray-100">
+                  <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-black">Order History</h2>
+                </div>
+
+                {ordersError && (
+                  <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                    <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    {ordersError}
+                  </div>
+                )}
+
+                {deleteError && (
+                  <div className="mx-5 mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                    <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <span className="flex-1">{deleteError}</span>
+                    <button onClick={() => setDeleteError("")} className="shrink-0">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+
+                {ordersLoading ? (
+                  <div className="p-5 space-y-3">
+                    {[0, 1].map((i) => (
+                      <div key={i} className="h-20 bg-gray-100 rounded animate-pulse" />
+                    ))}
+                  </div>
+                ) : recentOrders.length === 0 ? (
+                  <div className="py-14 flex flex-col items-center justify-center text-center gap-4 px-5">
+                    <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Package className="w-5 h-5 text-gray-300" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-black">No recent orders</p>
+                      <p className="text-xs text-gray-400 mt-1 max-w-xs">
+                        Orders from the last 3 months will appear here.
+                      </p>
+                    </div>
+                    <Link
+                      href="/shop"
+                      className="h-9 px-5 rounded bg-black text-white text-xs font-semibold tracking-widest uppercase hover:bg-gray-800 transition-colors inline-flex items-center"
+                    >
+                      Shop Now
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <div className="divide-y divide-gray-100">
+                      {pagedOrders.map((order) => {
+                        const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.paid;
+                        const isPending = order.status === "payment_failed" || order.status === "pending_payment";
+                        const orderRef = order.orderNumber || order.id;
+                        return (
+                          <div key={order.id}>
+                            <button
+                              onClick={() =>
+                                isPending
+                                  ? handleResumePayment(order)
+                                  : router.push(`/orders/${orderRef}`)
+                              }
+                              className="w-full px-5 py-4 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left group"
+                            >
+                              {/* Status icon container */}
+                              <StatusDot status={order.status} />
+
+                              {/* Info */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="text-xs font-semibold text-black font-mono">{orderRef}</span>
+                                  <span className={`text-[10px] font-semibold ${cfg.text}`}>{cfg.label}</span>
+                                </div>
+                                <p className="text-xs text-gray-400">
+                                  {formatDate(order.createdAt)} &middot;{" "}
+                                  {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? "s" : ""}
+                                </p>
+                              </div>
+
+                              {/* Total + chevron */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="text-sm font-semibold text-black">
+                                  {formatPrice(order.total ?? order.totals?.total)}
+                                </span>
+                                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors" />
+                              </div>
+                            </button>
+
+                            {/* Delete for pending/failed orders */}
+                            {isPending && (
+                              <div className="px-5 pb-3 flex justify-end">
+                                <button
+                                  onClick={() => handleDeleteOrder(order.id)}
+                                  disabled={deletingId === order.id}
+                                  className="flex items-center gap-1.5 h-6 px-2.5 rounded border border-gray-200 text-[10px] text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
+                                >
+                                  {deletingId === order.id ? (
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-3 h-3" />
+                                  )}
+                                  Delete order
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-1">
+                        <span className="text-[10px] text-gray-400 mr-2">{ordersPage} / {totalPages}</span>
+                        <button
+                          onClick={() => setOrdersPage((p) => Math.max(1, p - 1))}
+                          disabled={ordersPage === 1}
+                          className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <ChevronRight className="w-3 h-3 rotate-180" />
+                        </button>
+                        <button
+                          onClick={() => setOrdersPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={ordersPage === totalPages}
+                          className="h-6 w-6 flex items-center justify-center rounded border border-gray-200 text-gray-400 hover:text-black hover:border-gray-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

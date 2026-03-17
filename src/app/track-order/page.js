@@ -1,39 +1,74 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Package, CheckCircle, Truck, Clock, AlertCircle, XCircle } from "lucide-react";
+import {
+  Search, CheckCircle, Truck, AlertTriangle, Info,
+  AlertCircle, Check, Loader2,
+} from "lucide-react";
 
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { getOrderByNumber } from "@/lib/firebase/firestore";
+import { subscribeToOrderByNumber } from "@/lib/firebase/firestore";
+
+// ── Status configuration ────────────────────────────────────────────────────
+// icon: element rendered inside the container
+// container: Tailwind classes for the rounded container
+// text: Tailwind text-color class for the status label
+const STATUS_CONFIG = {
+  pending_payment: {
+    label: "Pending Payment",
+    container: "bg-white ring-1 ring-amber-400/60 shadow-[0_0_0_2px_rgba(217,119,6,0.12)]",
+    icon: <Info className="w-3.5 h-3.5 text-black" />,
+    text: "text-amber-700",
+  },
+  payment_failed: {
+    label: "Payment Failed",
+    container: "bg-white ring-1 ring-red-400",
+    icon: <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 fill-yellow-300" />,
+    text: "text-red-600",
+  },
+  paid: {
+    label: "Paid",
+    container: "bg-green-500 border border-black/20",
+    icon: <Check className="w-3 h-3 text-white" />,
+    text: "text-green-700",
+  },
+  confirmed: {
+    label: "Confirmed",
+    container: "bg-white ring-1 ring-blue-400/60",
+    icon: <Check className="w-3.5 h-3.5 text-black/80" />,
+    text: "text-blue-700",
+  },
+  shipped: {
+    label: "Shipped",
+    container: "bg-white ring-1 ring-indigo-400/60",
+    icon: <Truck className="w-3.5 h-3.5 text-black/80" />,
+    text: "text-indigo-700",
+  },
+  delivered: {
+    label: "Delivered",
+    container: "bg-green-500 border border-black/20",
+    icon: <Check className="w-3 h-3 text-white" />,
+    text: "text-green-700",
+  },
+  cancelled: {
+    label: "Cancelled",
+    container: "bg-white ring-1 ring-red-400",
+    icon: <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 fill-yellow-300" />,
+    text: "text-red-600",
+  },
+};
 
 const STATUS_STEPS = {
-  pending_payment: 0,
-  payment_failed: 0,
-  paid: 1,
-  confirmed: 2,
-  shipped: 3,
-  delivered: 4,
+  pending_payment: 0, payment_failed: 0,
+  paid: 1, confirmed: 2, shipped: 3, delivered: 4,
 };
 
 const STEPS = [
-  { label: "Order Placed" },
-  { label: "Payment Confirmed" },
-  { label: "Preparing" },
-  { label: "Shipped" },
-  { label: "Delivered" },
+  "Order Placed", "Payment Confirmed", "Preparing", "Shipped", "Delivered",
 ];
-
-const STATUS_BADGE = {
-  pending_payment: { label: "Pending Payment", icon: Clock,       cls: "bg-amber-50 text-amber-700 border-amber-200" },
-  payment_failed:  { label: "Payment Failed",  icon: XCircle,     cls: "bg-red-50 text-red-600 border-red-200"       },
-  paid:            { label: "Paid",            icon: CheckCircle, cls: "bg-blue-50 text-blue-700 border-blue-200"    },
-  confirmed:       { label: "Confirmed",       icon: CheckCircle, cls: "bg-blue-50 text-blue-700 border-blue-200"    },
-  shipped:         { label: "Shipped",         icon: Truck,       cls: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-  delivered:       { label: "Delivered",       icon: CheckCircle, cls: "bg-green-50 text-green-700 border-green-200" },
-};
 
 const formatDate = (ts) => {
   if (!ts) return "";
@@ -43,6 +78,17 @@ const formatDate = (ts) => {
 
 const formatPrice = (n, currency = "ZAR") =>
   new Intl.NumberFormat("en-ZA", { style: "currency", currency }).format(n ?? 0);
+
+// ── Icon container ───────────────────────────────────────────────────────────
+function StatusIcon({ status, size = "md" }) {
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.paid;
+  const dim = size === "sm" ? "w-7 h-7" : "w-9 h-9";
+  return (
+    <div className={`${dim} rounded-full flex items-center justify-center shrink-0 ${cfg.container}`}>
+      {cfg.icon}
+    </div>
+  );
+}
 
 export default function TrackOrderPage() {
   return (
@@ -61,50 +107,56 @@ function TrackOrderInner() {
   const [result, setResult]       = useState(null);
   const [error, setError]         = useState("");
   const [loading, setLoading]     = useState(false);
+  const [searched, setSearched]   = useState(false);
 
-  // Auto-search if ref came from success page / account page and we have a prefilled ref
-  // (user still needs to supply email for security)
+  const unsubRef = useRef(null);
 
-  const handleTrack = async (e) => {
+  // Cleanup subscription on unmount
+  useEffect(() => () => { if (unsubRef.current) unsubRef.current(); }, []);
+
+  const handleTrack = (e) => {
     e.preventDefault();
+    if (!reference.trim() || !email.trim()) return;
+
+    // Tear down previous subscription
+    if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; }
+
     setLoading(true);
     setError("");
     setResult(null);
+    setSearched(true);
 
-    const { order, error: fetchError } = await getOrderByNumber(reference.trim(), email.trim());
-
-    if (fetchError) {
-      setError("Something went wrong. Please try again.");
-    } else if (!order) {
-      setError(
-        "No order found with that reference and email. Please check the details and try again, or contact us at sales@bodypharmlabs.com.",
-      );
-    } else {
-      setResult(order);
-    }
-
-    setLoading(false);
+    unsubRef.current = subscribeToOrderByNumber(reference.trim(), email.trim(), ({ order, error: err }) => {
+      if (err) {
+        setError("Something went wrong. Please try again.");
+        setResult(null);
+      } else if (!order) {
+        setError("No order found with that reference and email. Please check the details or contact us.");
+        setResult(null);
+      } else {
+        setResult(order);
+        setError("");
+      }
+      setLoading(false);
+    });
   };
 
-  const badge = result ? (STATUS_BADGE[result.status] || STATUS_BADGE.paid) : null;
+  const cfg = result ? (STATUS_CONFIG[result.status] || STATUS_CONFIG.paid) : null;
   const stepIndex = result ? (STATUS_STEPS[result.status] ?? 1) : 0;
-  const isFailed = result?.status === "payment_failed";
+  const isFailed = result?.status === "payment_failed" || result?.status === "cancelled";
 
   return (
     <main className="min-h-screen bg-white pb-20">
       <Breadcrumb />
       <div className="max-w-2xl mx-auto px-4 md:px-8 pt-12">
+
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-3">
-            Order Status
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">
-            Track Your Order
-          </h1>
+          <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-3">Order Status</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-black mb-3">Track Your Order</h1>
           <p className="text-gray-400 text-sm leading-relaxed">
             Enter your order reference and email address to check your shipment status.
           </p>
@@ -130,9 +182,7 @@ function TrackOrderInner() {
               required
               className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
             />
-            <p className="text-xs text-gray-400 mt-1.5">
-              Found in your order confirmation email
-            </p>
+            <p className="text-xs text-gray-400 mt-1.5">Found in your order confirmation email</p>
           </div>
           <div>
             <label className="block text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">
@@ -153,11 +203,9 @@ function TrackOrderInner() {
             className="w-full py-3 bg-black text-white rounded-lg text-xs font-medium tracking-widest uppercase hover:bg-gray-900 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
           >
             {loading ? (
-              "Searching…"
+              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Searching…</>
             ) : (
-              <>
-                <Search className="w-3.5 h-3.5" /> Track Order
-              </>
+              <><Search className="w-3.5 h-3.5" /> Track Order</>
             )}
           </button>
         </motion.form>
@@ -177,10 +225,11 @@ function TrackOrderInner() {
           )}
         </AnimatePresence>
 
-        {/* Result */}
+        {/* Result — animates in-place, live-updates via onSnapshot */}
         <AnimatePresence>
           {result && (
             <motion.div
+              key={result.id}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -192,11 +241,19 @@ function TrackOrderInner() {
                   <p className="text-xs text-gray-400 mb-0.5">Order Reference</p>
                   <p className="text-sm font-bold text-black font-mono">{result.orderNumber}</p>
                 </div>
-                {badge && (
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold ${badge.cls}`}>
-                    <badge.icon className="w-3.5 h-3.5" />
-                    {badge.label}
-                  </div>
+                {cfg && (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={result.status}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="flex items-center gap-2"
+                    >
+                      <StatusIcon status={result.status} size="sm" />
+                      <span className={`text-xs font-semibold ${cfg.text}`}>{cfg.label}</span>
+                    </motion.div>
+                  </AnimatePresence>
                 )}
               </div>
 
@@ -220,13 +277,11 @@ function TrackOrderInner() {
                 </div>
                 <div>
                   <p className="text-gray-400 mb-0.5">Total</p>
-                  <p className="font-medium text-black">
-                    {formatPrice(result.total, result.currency)}
-                  </p>
+                  <p className="font-medium text-black">{formatPrice(result.total, result.currency)}</p>
                 </div>
               </div>
 
-              {/* Progress steps (only for non-failed orders) */}
+              {/* Progress steps / failed message */}
               {!isFailed ? (
                 <div className="px-6 py-5">
                   <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-5">
@@ -236,16 +291,16 @@ function TrackOrderInner() {
                     {STEPS.map((step, i) => {
                       const done = i <= stepIndex;
                       return (
-                        <div key={step.label} className="flex items-start gap-3">
-                          <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                              done ? "bg-black" : "bg-gray-100"
-                            }`}
+                        <div key={step} className="flex items-center gap-3">
+                          <motion.div
+                            animate={{ backgroundColor: done ? "#000" : "#f3f4f6" }}
+                            transition={{ duration: 0.4 }}
+                            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
                           >
-                            {done && <CheckCircle className="w-3 h-3 text-white" />}
-                          </div>
+                            {done && <Check className="w-3 h-3 text-white" />}
+                          </motion.div>
                           <p className={`text-sm ${done ? "text-black font-medium" : "text-gray-400"}`}>
-                            {step.label}
+                            {step}
                           </p>
                         </div>
                       );
@@ -255,7 +310,7 @@ function TrackOrderInner() {
               ) : (
                 <div className="px-6 py-5">
                   <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
-                    <XCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                    <AlertTriangle className="w-4 h-4 text-yellow-500 fill-yellow-300 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-semibold text-red-700">Payment not completed</p>
                       <p className="text-xs text-red-500 mt-0.5">
@@ -271,10 +326,7 @@ function TrackOrderInner() {
 
         <p className="text-center text-xs text-gray-400 mt-10">
           Need help?{" "}
-          <Link
-            href="/contact"
-            className="text-black font-medium underline hover:opacity-60 transition-opacity"
-          >
+          <Link href="/contact" className="text-black font-medium underline hover:opacity-60 transition-opacity">
             Contact our team
           </Link>
         </p>

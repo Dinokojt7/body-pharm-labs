@@ -277,6 +277,32 @@ export const subscribeToUserOrders = (userId, callback) => {
   );
 };
 
+// Subscribe to an order by orderNumber + customer email (for public order tracking).
+// callback receives { order, error }
+export const subscribeToOrderByNumber = (orderNumber, email, callback) => {
+  if (!db) {
+    callback({ order: null, error: "Firestore not available" });
+    return () => {};
+  }
+  const q = query(
+    collection(db, "orders"),
+    where("orderNumber", "==", orderNumber.toUpperCase().trim()),
+    where("customer.email", "==", email.toLowerCase().trim()),
+  );
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      if (snapshot.empty) {
+        callback({ order: null, error: null });
+        return;
+      }
+      const d = snapshot.docs[0];
+      callback({ order: { id: d.id, ...d.data() }, error: null });
+    },
+    (error) => callback({ order: null, error: error.message }),
+  );
+};
+
 // Subscribe to a single order document by Firestore doc ID.
 // callback receives { order, error }
 export const subscribeToOrder = (orderId, callback) => {
