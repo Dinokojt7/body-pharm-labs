@@ -60,7 +60,7 @@ const ProductCard = ({ product }) => {
             src={product.imageString || "/images/placeholder.jpg"}
             alt={product.name}
             fill
-            className={`transition-transform duration-500 group-hover:scale-105 ${product.imageString?.endsWith(".png") ? "object-contain p-4" : "object-cover"}`}
+            className={`transition-transform duration-500 group-hover:scale-105 ${product.imageString?.endsWith(".png") ? `object-contain ${product.imageFit === "large" ? "p-1" : "p-4"}` : "object-cover"}`}
           />
 
           <AnimatePresence>

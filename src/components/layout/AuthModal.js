@@ -205,10 +205,7 @@ export default function AuthModal() {
 
               {/* Left panel — desktop only */}
               <div className="hidden md:block md:w-5/12 relative min-h-[500px] bg-black overflow-hidden">
-                <div className="absolute inset-0">
-                  <Image src="/images/auth-bg.jpg" alt="" fill className="object-cover opacity-40" />
-                  <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/30 to-black/80" />
-                </div>
+                <Image src="/images/auth-modal.png" alt="" fill className="object-cover" />
                 <div className="relative z-10 flex items-center justify-center h-full">
                   <div className="relative w-64 h-24 lg:w-80 lg:h-32">
                     <Image src="/images/logo.png" alt="Body Pharm Labz" fill className="object-contain brightness-0 invert" priority />

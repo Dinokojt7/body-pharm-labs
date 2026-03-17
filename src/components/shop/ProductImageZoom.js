@@ -42,7 +42,7 @@ const ProductImageZoom = ({ product }) => {
         src={product.imageString || "/images/placeholder.jpg"}
         alt={product.name}
         fill
-        className={`transition-transform duration-200 ease-out pointer-events-none ${product.imageString?.endsWith(".png") ? "object-contain p-6" : "object-cover"}`}
+        className={`transition-transform duration-200 ease-out pointer-events-none ${product.imageString?.endsWith(".png") ? `object-contain ${product.imageFit === "large" ? "p-2" : "p-6"}` : "object-cover"}`}
         style={{
           transform: isHovered ? "scale(2)" : "scale(1)",
           transformOrigin: `${origin.x}% ${origin.y}%`,

@@ -31,7 +31,8 @@
     "purity": ">99%",
     "stock": 45,
     "featured": false,
-    "points": 45
+    "points": 45,
+    "imageFit": "large"
   },
   {
     "id": "pep-002",
@@ -65,7 +66,8 @@
     "purity": ">99%",
     "stock": 32,
     "featured": false,
-    "points": 60
+    "points": 60,
+    "imageFit": "large"
   },
   {
     "id": "pep-003",
@@ -135,7 +137,8 @@
     "purity": ">99%",
     "stock": 35,
     "featured": false,
-    "points": 75
+    "points": 75,
+    "imageFit": "large"
   },
   {
     "id": "pep-005",
@@ -169,7 +172,8 @@
     "purity": ">99%",
     "stock": 20,
     "featured": false,
-    "points": 90
+    "points": 90,
+    "imageFit": "large"
   },
   {
     "id": "pep-006",
@@ -202,7 +206,8 @@
     "purity": ">99%",
     "stock": 18,
     "featured": false,
-    "points": 100
+    "points": 100,
+    "imageFit": "large"
   },
   {
     "id": "pep-007",
@@ -236,7 +241,8 @@
     "purity": ">99%",
     "stock": 25,
     "featured": false,
-    "points": 65
+    "points": 65,
+    "imageFit": "large"
   },
   {
     "id": "pep-008",
@@ -269,7 +275,8 @@
     "purity": ">99%",
     "stock": 22,
     "featured": false,
-    "points": 65
+    "points": 65,
+    "imageFit": "large"
   },
   {
     "id": "pep-009",
@@ -303,7 +310,8 @@
     "purity": ">99%",
     "stock": 30,
     "featured": false,
-    "points": 50
+    "points": 50,
+    "imageFit": "large"
   },
   {
     "id": "pep-010",
