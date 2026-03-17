@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const SLIDES = [
   "/images/hero-bg.jpeg",
@@ -10,32 +10,46 @@ const SLIDES = [
   "/images/hero-bg2.png",
 ];
 
+const DARK_SLIDE = 1;
 const INTERVAL = 5000;
 
 const Hero = () => {
   const [current, setCurrent] = useState(0);
+  const prevRef = useRef(null);
+
+  // true whenever the dark slide is either entering or leaving
+  const useFade = current === DARK_SLIDE || prevRef.current === DARK_SLIDE;
+
+  const goTo = (next) => {
+    prevRef.current = current;
+    setCurrent(next);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent((c) => (c + 1) % SLIDES.length);
+      goTo((current + 1) % SLIDES.length);
     }, INTERVAL);
     return () => clearInterval(timer);
-  }, []);
+  }, [current]);
+
+  const slideVariants = useFade
+    ? { initial: { opacity: 0, x: 0 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: 0 } }
+    : { initial: { opacity: 1, x: "100%" }, animate: { opacity: 1, x: "0%" }, exit: { opacity: 1, x: "-100%" } };
 
   return (
     <section className="w-full">
       <div className="relative w-full overflow-hidden h-[58vw] md:h-[clamp(500px,74vh,880px)]">
 
-        {/* Sliding background images — right to left */}
+        {/* Background images — slide or dissolve depending on which slide */}
         <AnimatePresence initial={false}>
           <motion.div
             key={current}
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${SLIDES[current]})` }}
-            initial={{ x: "100%" }}
-            animate={{ x: "0%" }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.75, ease: "easeInOut" }}
+            initial={slideVariants.initial}
+            animate={slideVariants.animate}
+            exit={slideVariants.exit}
+            transition={{ duration: useFade ? 1.0 : 0.75, ease: "easeInOut" }}
           />
         </AnimatePresence>
 
@@ -65,7 +79,7 @@ const Hero = () => {
             >
               <span
                 className="block text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase mb-1 md:mb-2 transition-colors duration-700"
-                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", color: current === 1 ? "rgba(255,255,255,0.75)" : "rgba(30,30,30,0.9)" }}
+                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", color: current === DARK_SLIDE ? "rgba(255,255,255,0.75)" : "rgba(30,30,30,0.9)" }}
               >
                 Where Science
               </span>
@@ -129,7 +143,7 @@ const Hero = () => {
           {SLIDES.map((_, i) => (
             <button
               key={i}
-              onClick={() => setCurrent(i)}
+              onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
               className="h-[3px] transition-all duration-400"
               style={{
