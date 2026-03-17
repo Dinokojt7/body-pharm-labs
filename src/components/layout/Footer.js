@@ -20,30 +20,10 @@ const Footer = () => {
   const { business, footer } = siteData;
 
   const socialLinks = [
-    {
-      icon: Instagram,
-      href: business.social.instagram,
-      label: "Instagram",
-      color: "hover:text-[#E4405F]",
-    },
-    {
-      icon: Facebook,
-      href: business.social.facebook,
-      label: "Facebook",
-      color: "hover:text-[#1877F2]",
-    },
-    {
-      icon: Twitter,
-      href: business.social.twitter,
-      label: "Twitter",
-      color: "hover:text-[#1DA1F2]",
-    },
-    {
-      icon: Linkedin,
-      href: business.social.linkedin,
-      label: "LinkedIn",
-      color: "hover:text-[#0A66C2]",
-    },
+    { icon: Instagram, href: business.social.instagram, label: "Instagram" },
+    { icon: Facebook,  href: business.social.facebook,  label: "Facebook"  },
+    { icon: Twitter,   href: business.social.twitter,   label: "Twitter"   },
+    { icon: Linkedin,  href: business.social.linkedin,  label: "LinkedIn"  },
   ];
 
   return (
@@ -83,14 +63,14 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center gap-3 pt-2">
-              {socialLinks.map(({ icon: Icon, href, label, color }) => (
+              {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-white ${color} hover:border-transparent transition-all duration-300 shadow-sm hover:shadow`}
+                  className="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-gray-400 transition-all duration-300 shadow-sm hover:shadow"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
