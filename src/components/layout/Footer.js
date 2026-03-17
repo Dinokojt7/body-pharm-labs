@@ -13,9 +13,6 @@ import {
   Linkedin,
   ChevronRight,
   Sparkles,
-  Shield,
-  Truck,
-  Award,
 } from "lucide-react";
 import siteData from "@/lib/data/site-data.json";
 
@@ -49,38 +46,10 @@ const Footer = () => {
     },
   ];
 
-  const features = [
-    { icon: Shield, text: ">99% Purity Guaranteed" },
-    { icon: Truck, text: "Free Shipping $250+" },
-    { icon: Award, text: "3rd-Party Tested" },
-  ];
-
   return (
     <footer className="w-full bg-gray-50 border-t border-gray-200 relative">
       {/* Main Footer */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 py-12 md:py-16">
-        {/* Features Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12 mb-12 border-b border-gray-200"
-        >
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-center md:justify-start gap-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center">
-                <feature.icon className="w-5 h-5 text-gray-600" />
-              </div>
-              <span className="text-sm font-medium text-gray-700">
-                {feature.text}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-
         {/* Main Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column - Brand (3 columns) */}
@@ -232,10 +201,6 @@ const Footer = () => {
                 </span>
               </div>
 
-              {/* Hours - Simple text line */}
-              <p className="text-xs text-gray-400 mt-4 pt-4 border-t border-gray-200">
-                Mon - Fri: 9:00 AM - 6:00 PM GMT+2
-              </p>
             </div>
           </motion.div>
         </div>
