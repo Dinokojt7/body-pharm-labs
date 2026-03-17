@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   return (
-    <section className="w-full mt-2 md:mt-4 px-4 md:px-8 lg:px-12">
+    <section className="w-full">
       {/* Hero container — landscape on mobile, tall on desktop */}
       <div className="relative w-full overflow-hidden h-[58vw] md:h-[clamp(500px,74vh,880px)]">
         {/* Background image */}
@@ -14,7 +14,7 @@ const Hero = () => {
           style={{ backgroundImage: "url(/images/hero-bg.jpeg)" }}
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 " />
 
         {/* Text + button — left-aligned, vertically centered */}
         <div className="relative h-full flex items-center px-6 sm:px-10 md:px-16">
@@ -37,10 +37,10 @@ const Hero = () => {
               className="mb-6 md:mb-8"
               style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
             >
-              <span className="block text-lg sm:text-xl md:text-2xl font-light tracking-[0.18em] uppercase text-white/60 mb-1 md:mb-2">
+              <span className="block text-lg sm:text-xl md:text-2xl font-light tracking-[0.18em] uppercase text-gray-900 mb-1 md:mb-2">
                 Where Science
               </span>
-              <span className="block text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white">
+              <span className="block text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white whitespace-nowrap">
                 Meets Results.
               </span>
             </motion.h1>
@@ -54,7 +54,7 @@ const Hero = () => {
             >
               <Link
                 href="/shop"
-                className="relative flex h-10 px-8 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200"
+                className="relative flex h-11 px-10 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200"
               >
                 Shop Now
               </Link>
