@@ -6,8 +6,8 @@ import { useState, useEffect } from "react";
 
 const SLIDES = [
   "/images/hero-bg.jpeg",
-  "/images/hero-bg2.webp",
-  "/images/hero-bg3.webp",
+  "/images/hero-bg1.png",
+  "/images/hero-bg2.png",
 ];
 
 const INTERVAL = 5000;
