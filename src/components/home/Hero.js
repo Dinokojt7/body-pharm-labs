@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 
 const SLIDES = [
   "/images/hero-bg.jpeg",
-  "/images/hero-bg1.jpg",
   "/images/hero-bg2.webp",
   "/images/hero-bg3.webp",
 ];
@@ -133,7 +132,7 @@ const Hero = () => {
               style={{
                 width: i === current ? 28 : 14,
                 backgroundColor:
-                  i === current ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
+                  i === current ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.3)",
               }}
             />
           ))}

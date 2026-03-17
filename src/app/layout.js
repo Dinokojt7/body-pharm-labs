@@ -62,7 +62,7 @@ export default function RootLayout({ children }) {
             <ServiceWorkerRegistration />
             <PreHeader />
             <Header />
-            <main className="min-h-screen pt-24 md:pt-28 lg:pt-32">{children}</main>
+            <main className="min-h-screen pt-20 md:pt-24">{children}</main>
             <Footer />
           </CurrencyProvider>
         </AuthProvider>

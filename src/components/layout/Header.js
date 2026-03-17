@@ -14,7 +14,7 @@ import MobileMenu from "./MobileMenu";
 import AuthModal from "./AuthModal";
 
 // PreHeader height in px — used to shift Header up as it scrolls away
-const PREH = 36;
+const PREH = 40;
 
 const Header = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -42,7 +42,7 @@ const Header = () => {
       >
         {/* Nav row */}
         <div className="px-4 md:px-8 lg:px-12">
-          <div className="relative flex items-center justify-between h-24 md:h-28 lg:h-32">
+          <div className="relative flex items-center justify-between h-20 md:h-24">
 
             {/* Left — hamburger */}
             <button
@@ -57,7 +57,7 @@ const Header = () => {
 
             {/* Center — logo */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-40">
-              <div className="relative w-48 h-14 sm:w-64 sm:h-18 md:w-96 md:h-24 lg:w-md lg:h-28">
+              <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
                 <Image
                   src="/images/logo.png"
                   alt="Body Pharm Labz"
