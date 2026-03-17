@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const PreHeader = () => {
   return (
-    <div className="bg-[#FAF8F3] text-black/70 py-2.5 overflow-hidden border-b border-black/8">
+    <div className="bg-zinc-100 text-black/70 py-2.5 overflow-hidden border-b border-black/8">
       <div className="relative flex items-center whitespace-nowrap overflow-hidden">
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
