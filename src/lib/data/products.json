@@ -15,8 +15,14 @@
       "Overall Tissue Regeneration and Resilience"
     ],
     "size": "5mg",
-    "sizes": ["5mg", "10mg"],
-    "sizePrices": { "5mg": 89.99, "10mg": 159.99 },
+    "sizes": [
+      "5mg",
+      "10mg"
+    ],
+    "sizePrices": {
+      "5mg": 89.99,
+      "10mg": 159.99
+    },
     "price": 2.5,
     "compareAtPrice": 119.99,
     "imageString": "/images/products/recover.png",
@@ -24,7 +30,7 @@
     "category": "Recovery",
     "purity": ">99%",
     "stock": 45,
-    "featured": true,
+    "featured": false,
     "points": 45
   },
   {
@@ -43,8 +49,14 @@
       "Overall Healing and Resilience"
     ],
     "size": "5mg",
-    "sizes": ["5mg", "10mg"],
-    "sizePrices": { "5mg": 119.99, "10mg": 209.99 },
+    "sizes": [
+      "5mg",
+      "10mg"
+    ],
+    "sizePrices": {
+      "5mg": 119.99,
+      "10mg": 209.99
+    },
     "price": 119.99,
     "compareAtPrice": 149.99,
     "imageString": "/images/products/repair.png",
@@ -52,7 +64,7 @@
     "category": "Recovery",
     "purity": ">99%",
     "stock": 32,
-    "featured": true,
+    "featured": false,
     "points": 60
   },
   {
@@ -71,8 +83,14 @@
       "Advanced Healing and Resilience"
     ],
     "size": "10mg",
-    "sizes": ["10mg", "20mg"],
-    "sizePrices": { "10mg": 149.99, "20mg": 269.99 },
+    "sizes": [
+      "10mg",
+      "20mg"
+    ],
+    "sizePrices": {
+      "10mg": 149.99,
+      "20mg": 269.99
+    },
     "price": 149.99,
     "compareAtPrice": 199.99,
     "imageString": "/images/products/rebuild.jpg",
@@ -80,7 +98,7 @@
     "category": "Recovery",
     "purity": ">99%",
     "stock": 28,
-    "featured": true,
+    "featured": false,
     "points": 75
   },
   {
@@ -99,8 +117,16 @@
       "Long-term Metabolic Health"
     ],
     "size": "5mg",
-    "sizes": ["2mg", "5mg", "10mg"],
-    "sizePrices": { "2mg": 89.99, "5mg": 149.99, "10mg": 269.99 },
+    "sizes": [
+      "2mg",
+      "5mg",
+      "10mg"
+    ],
+    "sizePrices": {
+      "2mg": 89.99,
+      "5mg": 149.99,
+      "10mg": 269.99
+    },
     "price": 149.99,
     "compareAtPrice": 189.99,
     "imageString": "/images/products/rezempic.png",
@@ -108,7 +134,7 @@
     "category": "Metabolic",
     "purity": ">99%",
     "stock": 35,
-    "featured": true,
+    "featured": false,
     "points": 75
   },
   {
@@ -127,8 +153,14 @@
       "Long-term Metabolic Health"
     ],
     "size": "10mg",
-    "sizes": ["10mg", "30mg"],
-    "sizePrices": { "10mg": 109.99, "30mg": 179.99 },
+    "sizes": [
+      "10mg",
+      "30mg"
+    ],
+    "sizePrices": {
+      "10mg": 109.99,
+      "30mg": 179.99
+    },
     "price": 109.99,
     "compareAtPrice": 229.99,
     "imageString": "/images/products/rezepatide.png",
@@ -136,7 +168,7 @@
     "category": "Metabolic",
     "purity": ">99%",
     "stock": 20,
-    "featured": true,
+    "featured": false,
     "points": 90
   },
   {
@@ -154,8 +186,14 @@
       "Glucose Control and Insulin Sensitivity"
     ],
     "size": "10mg",
-    "sizes": ["10mg", "30mg"],
-    "sizePrices": { "10mg": 129.99, "30mg": 199.99 },
+    "sizes": [
+      "10mg",
+      "30mg"
+    ],
+    "sizePrices": {
+      "10mg": 129.99,
+      "30mg": 199.99
+    },
     "price": 129.99,
     "compareAtPrice": 259.99,
     "imageString": "/images/products/retatrutide.png",
@@ -163,7 +201,7 @@
     "category": "Metabolic",
     "purity": ">99%",
     "stock": 18,
-    "featured": true,
+    "featured": false,
     "points": 100
   },
   {
@@ -182,8 +220,14 @@
       "Anti-aging and Body Composition"
     ],
     "size": "2mg",
-    "sizes": ["2mg", "5mg"],
-    "sizePrices": { "2mg": 129.99, "5mg": 219.99 },
+    "sizes": [
+      "2mg",
+      "5mg"
+    ],
+    "sizePrices": {
+      "2mg": 129.99,
+      "5mg": 219.99
+    },
     "price": 129.99,
     "compareAtPrice": 169.99,
     "imageString": "/images/products/reshape.png",
@@ -191,7 +235,7 @@
     "category": "Body Composition",
     "purity": ">99%",
     "stock": 25,
-    "featured": true,
+    "featured": false,
     "points": 65
   },
   {
@@ -209,8 +253,14 @@
       "Cellular Health and Vitality"
     ],
     "size": "5mg",
-    "sizes": ["5mg", "10mg"],
-    "sizePrices": { "5mg": 129.99, "10mg": 229.99 },
+    "sizes": [
+      "5mg",
+      "10mg"
+    ],
+    "sizePrices": {
+      "5mg": 129.99,
+      "10mg": 229.99
+    },
     "price": 129.99,
     "compareAtPrice": 169.99,
     "imageString": "/images/products/retaliate.png",
@@ -218,7 +268,7 @@
     "category": "Mitochondrial",
     "purity": ">99%",
     "stock": 22,
-    "featured": true,
+    "featured": false,
     "points": 65
   },
   {
@@ -237,8 +287,14 @@
       "Overall Skin Repair and Rejuvenation"
     ],
     "size": "50mg",
-    "sizes": ["50mg", "100mg"],
-    "sizePrices": { "50mg": 99.99, "100mg": 179.99 },
+    "sizes": [
+      "50mg",
+      "100mg"
+    ],
+    "sizePrices": {
+      "50mg": 99.99,
+      "100mg": 179.99
+    },
     "price": 99.99,
     "compareAtPrice": 129.99,
     "imageString": "/images/products/reglow.png",
@@ -246,7 +302,7 @@
     "category": "Longevity",
     "purity": ">99%",
     "stock": 30,
-    "featured": true,
+    "featured": false,
     "points": 50
   },
   {
@@ -265,8 +321,12 @@
       "Sun Sensitivity Reduction"
     ],
     "size": "10mg",
-    "sizes": ["10mg"],
-    "sizePrices": { "10mg": 69.99 },
+    "sizes": [
+      "10mg"
+    ],
+    "sizePrices": {
+      "10mg": 69.99
+    },
     "price": 69.99,
     "compareAtPrice": 89.99,
     "imageString": "/images/products/wa01.jpeg",
@@ -293,16 +353,20 @@
       "Year-Round Pigmentation Support"
     ],
     "size": "15ml",
-    "sizes": ["15ml"],
-    "sizePrices": { "15ml": 79.99 },
+    "sizes": [
+      "15ml"
+    ],
+    "sizePrices": {
+      "15ml": 79.99
+    },
     "price": 79.99,
     "compareAtPrice": 99.99,
-    "imageString": "/images/products/wa02.jpeg",
+    "imageString": "/images/products/wa02.png",
     "customColor": "#b8860b",
     "category": "Tanning",
     "purity": ">99%",
     "stock": 20,
-    "featured": false,
+    "featured": true,
     "points": 40
   },
   {
@@ -321,16 +385,20 @@
       "Cognitive Performance and Neuroprotection"
     ],
     "size": "500mg",
-    "sizes": ["500mg"],
-    "sizePrices": { "500mg": 119.99 },
+    "sizes": [
+      "500mg"
+    ],
+    "sizePrices": {
+      "500mg": 119.99
+    },
     "price": 119.99,
     "compareAtPrice": 149.99,
-    "imageString": "/images/products/wa03.jpeg",
+    "imageString": "/images/products/wa03.png",
     "customColor": "#8B6914",
     "category": "Longevity",
     "purity": ">99%",
     "stock": 18,
-    "featured": false,
+    "featured": true,
     "points": 60
   },
   {
@@ -349,16 +417,20 @@
       "Systemic Healing and Resilience"
     ],
     "size": "5mg",
-    "sizes": ["5mg"],
-    "sizePrices": { "5mg": 59.99 },
+    "sizes": [
+      "5mg"
+    ],
+    "sizePrices": {
+      "5mg": 59.99
+    },
     "price": 59.99,
     "compareAtPrice": 79.99,
-    "imageString": "/images/products/wa04.jpeg",
+    "imageString": "/images/products/wa04.png",
     "customColor": "#c8922a",
     "category": "Recovery",
     "purity": ">99%",
     "stock": 30,
-    "featured": false,
+    "featured": true,
     "points": 30
   },
   {
@@ -377,16 +449,20 @@
       "Anti-Aging and Cellular Repair"
     ],
     "size": "2mg",
-    "sizes": ["2mg"],
-    "sizePrices": { "2mg": 49.99 },
+    "sizes": [
+      "2mg"
+    ],
+    "sizePrices": {
+      "2mg": 49.99
+    },
     "price": 49.99,
     "compareAtPrice": 69.99,
-    "imageString": "/images/products/wa05.jpeg",
+    "imageString": "/images/products/wa05.png",
     "customColor": "#7b2d8b",
     "category": "Performance",
     "purity": ">99%",
     "stock": 22,
-    "featured": false,
+    "featured": true,
     "points": 25
   },
   {
@@ -405,16 +481,20 @@
       "Minimal Side Effect Profile in Research"
     ],
     "size": "5mg",
-    "sizes": ["5mg"],
-    "sizePrices": { "5mg": 44.99 },
+    "sizes": [
+      "5mg"
+    ],
+    "sizePrices": {
+      "5mg": 44.99
+    },
     "price": 44.99,
     "compareAtPrice": 59.99,
-    "imageString": "/images/products/wa06.jpeg",
+    "imageString": "/images/products/wa06.png",
     "customColor": "#2e7d32",
     "category": "Performance",
     "purity": ">99%",
     "stock": 28,
-    "featured": false,
+    "featured": true,
     "points": 22
   },
   {
@@ -433,16 +513,20 @@
       "Non-Hormonal Mechanism of Action"
     ],
     "size": "10mg",
-    "sizes": ["10mg"],
-    "sizePrices": { "10mg": 79.99 },
+    "sizes": [
+      "10mg"
+    ],
+    "sizePrices": {
+      "10mg": 79.99
+    },
     "price": 79.99,
     "compareAtPrice": 99.99,
-    "imageString": "/images/products/wa07.jpeg",
+    "imageString": "/images/products/wa07.png",
     "customColor": "#ad1457",
     "category": "Performance",
     "purity": ">99%",
     "stock": 20,
-    "featured": false,
+    "featured": true,
     "points": 40
   },
   {
@@ -461,16 +545,20 @@
       "LH Mimicking and Gonadotropin Research"
     ],
     "size": "5000IU",
-    "sizes": ["5000IU"],
-    "sizePrices": { "5000IU": 54.99 },
+    "sizes": [
+      "5000IU"
+    ],
+    "sizePrices": {
+      "5000IU": 54.99
+    },
     "price": 54.99,
     "compareAtPrice": 74.99,
-    "imageString": "/images/products/wa08.jpeg",
+    "imageString": "/images/products/wa08.png",
     "customColor": "#c62828",
     "category": "Performance",
     "purity": ">99%",
     "stock": 15,
-    "featured": false,
+    "featured": true,
     "points": 27
   },
   {
@@ -489,16 +577,20 @@
       "Extended Half-Life vs Standard IGF-1"
     ],
     "size": "100mcg",
-    "sizes": ["100mcg"],
-    "sizePrices": { "100mcg": 59.99 },
+    "sizes": [
+      "100mcg"
+    ],
+    "sizePrices": {
+      "100mcg": 59.99
+    },
     "price": 59.99,
     "compareAtPrice": 79.99,
-    "imageString": "/images/products/wa09.jpeg",
+    "imageString": "/images/products/wa09.png",
     "customColor": "#455a64",
     "category": "Performance",
     "purity": ">99%",
     "stock": 18,
-    "featured": false,
+    "featured": true,
     "points": 30
   },
   {
@@ -517,11 +609,15 @@
       "Localised Muscle Growth Studies"
     ],
     "size": "5000mcg",
-    "sizes": ["5000mcg"],
-    "sizePrices": { "5000mcg": 64.99 },
+    "sizes": [
+      "5000mcg"
+    ],
+    "sizePrices": {
+      "5000mcg": 64.99
+    },
     "price": 64.99,
     "compareAtPrice": 84.99,
-    "imageString": "/images/products/wa10.jpeg",
+    "imageString": "/images/products/wa10.png",
     "customColor": "#2e7d32",
     "category": "Performance",
     "purity": ">99%",
@@ -545,11 +641,15 @@
       "Synergistic with GHRH Analogues"
     ],
     "size": "5mg",
-    "sizes": ["5mg"],
-    "sizePrices": { "5mg": 39.99 },
+    "sizes": [
+      "5mg"
+    ],
+    "sizePrices": {
+      "5mg": 39.99
+    },
     "price": 39.99,
     "compareAtPrice": 54.99,
-    "imageString": "/images/products/wa11.jpeg",
+    "imageString": "/images/products/wa11.png",
     "customColor": "#1565c0",
     "category": "Performance",
     "purity": ">99%",
@@ -573,11 +673,15 @@
       "Anti-Obesity Mechanism Research"
     ],
     "size": "2mg",
-    "sizes": ["2mg"],
-    "sizePrices": { "2mg": 44.99 },
+    "sizes": [
+      "2mg"
+    ],
+    "sizePrices": {
+      "2mg": 44.99
+    },
     "price": 44.99,
     "compareAtPrice": 59.99,
-    "imageString": "/images/products/wa12.jpeg",
+    "imageString": "/images/products/wa12.png",
     "customColor": "#37474f",
     "category": "Metabolic",
     "purity": ">99%",
@@ -601,11 +705,15 @@
       "Overall Healing and Tissue Resilience"
     ],
     "size": "5mg",
-    "sizes": ["5mg"],
-    "sizePrices": { "5mg": 59.99 },
+    "sizes": [
+      "5mg"
+    ],
+    "sizePrices": {
+      "5mg": 59.99
+    },
     "price": 59.99,
     "compareAtPrice": 79.99,
-    "imageString": "/images/products/wa13.jpeg",
+    "imageString": "/images/products/wa13.png",
     "customColor": "#546e7a",
     "category": "Recovery",
     "purity": ">99%",

@@ -21,7 +21,8 @@ const ProductImageZoom = ({ product }) => {
   return (
     <div
       ref={containerRef}
-      className="relative aspect-square bg-zinc-100 border border-black/10 shadow-sm rounded-lg overflow-hidden cursor-zoom-in select-none"
+      className="relative aspect-square border border-black/25 rounded-lg overflow-hidden cursor-zoom-in select-none"
+      style={{ background: "linear-gradient(135deg, #d0d0d0 0%, #e8e8e8 30%, #f8f8f8 50%, #e4e4e4 70%, #cccccc 100%)" }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
