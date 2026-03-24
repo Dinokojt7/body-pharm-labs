@@ -1,8 +1,6 @@
 import { Poppins, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-import PreHeader from "@/components/layout/PreHeader";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import SiteChrome from "@/components/layout/SiteChrome";
 import RouteLoader from "@/components/ui/RouteLoader";
 import ServiceWorkerRegistration from "@/components/ui/ServiceWorkerRegistration";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -68,10 +66,7 @@ export default function RootLayout({ children }) {
           <CurrencyProvider>
             <RouteLoader />
             <ServiceWorkerRegistration />
-            <PreHeader />
-            <Header />
-            <main className="min-h-screen pt-20 md:pt-24">{children}</main>
-            <Footer />
+            <SiteChrome>{children}</SiteChrome>
           </CurrencyProvider>
         </AuthProvider>
       </body>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { useAuthStore } from "@/lib/stores/auth-store";
 
@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       if (cred.user.uid !== ADMIN_UID) {
-        await auth.signOut();
+        await signOut(auth);
         setError("Access denied.");
         setSubmitting(false);
         return;
