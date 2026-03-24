@@ -10,7 +10,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { getProducts } from "@/lib/firebase/firestore";
 import { adminDeleteProduct } from "@/lib/firebase/firestore";
 import { deleteProductImage } from "@/lib/firebase/storage";
-import { Plus, Pencil, Trash2, LogOut, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Package, AlertTriangle } from "lucide-react";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [confirmProduct, setConfirmProduct] = useState(null); // product pending delete confirmation
 
   // Auth guard
   useEffect(() => {
@@ -43,8 +44,9 @@ export default function AdminDashboard() {
     setFetching(false);
   };
 
-  const handleDelete = async (product) => {
-    if (!confirm(`Delete "${product.name}"? This cannot be undone.`)) return;
+  const handleDeleteConfirmed = async () => {
+    const product = confirmProduct;
+    setConfirmProduct(null);
     setDeletingId(product.id);
     await adminDeleteProduct(product.id);
     if (product.imageUrl) await deleteProductImage(product.imageUrl);
@@ -183,7 +185,7 @@ export default function AdminDashboard() {
                           <Pencil className="w-3.5 h-3.5" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(product)}
+                          onClick={() => setConfirmProduct(product)}
                           disabled={deletingId === product.id}
                           className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
                         >
@@ -207,6 +209,39 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+      {/* Delete confirm modal */}
+      {confirmProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmProduct(null)} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4 text-red-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Delete product?</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  <span className="font-medium text-gray-700">{confirmProduct.name}</span> will be permanently removed. This cannot be undone.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-1">
+              <button
+                onClick={() => setConfirmProduct(null)}
+                className="h-9 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirmed}
+                className="h-9 px-4 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

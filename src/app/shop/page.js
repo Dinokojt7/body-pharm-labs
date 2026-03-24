@@ -46,7 +46,7 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <main>
+      <main className="bg-white">
         <Breadcrumb />
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6 md:gap-6">
@@ -60,7 +60,7 @@ export default function ShopPage() {
   }
 
   return (
-    <main>
+    <main className="bg-white">
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
