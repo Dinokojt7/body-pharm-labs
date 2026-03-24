@@ -4,7 +4,9 @@ import {
   getDocs,
   getDoc,
   addDoc,
+  setDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
   query,
   where,
@@ -301,6 +303,63 @@ export const subscribeToOrderByNumber = (orderNumber, email, callback) => {
     },
     (error) => callback({ order: null, error: error.message }),
   );
+};
+
+// ─── Admin product CRUD ────────────────────────────────────────────────────
+
+export const adminCreateProduct = async (data) => {
+  if (!db) return { id: null, error: "Not available" };
+  try {
+    const now = Timestamp.now();
+    const docRef = await addDoc(collection(db, "products"), {
+      ...data,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return { id: docRef.id, error: null };
+  } catch (error) {
+    return { id: null, error: error.message };
+  }
+};
+
+export const adminUpdateProduct = async (id, data) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await updateDoc(doc(db, "products", id), {
+      ...data,
+      updatedAt: Timestamp.now(),
+    });
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const adminDeleteProduct = async (id) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await deleteDoc(doc(db, "products", id));
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const adminGetAllOrders = async () => {
+  if (!db) return { orders: [], error: "Not available" };
+  try {
+    const snapshot = await getDocs(collection(db, "orders"));
+    const orders = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => {
+        const aMs = a.createdAt?.toMillis?.() ?? 0;
+        const bMs = b.createdAt?.toMillis?.() ?? 0;
+        return bMs - aMs;
+      });
+    return { orders, error: null };
+  } catch (error) {
+    return { orders: [], error: error.message };
+  }
 };
 
 // Subscribe to a single order document by Firestore doc ID.

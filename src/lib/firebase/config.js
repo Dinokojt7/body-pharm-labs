@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 // authDomain uses the current app domain so the /__/auth/* proxy rewrite works
 // for signInWithRedirect on both localhost and production (Vercel).
@@ -31,5 +32,6 @@ const app = isClient
 
 const db = app ? getFirestore(app) : null;
 const auth = app ? getAuth(app) : null;
+const storage = app ? getStorage(app) : null;
 
-export { app, db, auth };
+export { app, db, auth, storage };
