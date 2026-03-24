@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
         if (!profileChecked.current) {
           profileChecked.current = true;
           const { profile } = await getUserProfile(user.uid);
-          if (!profile && pathname !== "/account") {
+          if (!profile && pathname !== "/account" && !pathname.startsWith("/admin")) {
             router.push("/account?welcome=1");
           }
         }
