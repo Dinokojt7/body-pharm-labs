@@ -106,7 +106,7 @@ const MobileMenu = () => {
             <div className="px-6 py-6 flex justify-start">
               <div className="relative h-24 w-64">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logomark.png"
                   alt="Body Pharm Labs"
                   fill
                   className="object-contain object-left brightness-0 invert"

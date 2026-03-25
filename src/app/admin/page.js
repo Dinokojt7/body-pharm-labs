@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Image
-            src="/images/logo.png"
+            src="/images/logomark.png"
             alt="Body Pharm Labs"
             width={140}
             height={50}

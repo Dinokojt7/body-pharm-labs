@@ -59,7 +59,7 @@ const Header = () => {
             <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-40">
               <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logomark.png"
                   alt="Body Pharm Labs"
                   fill
                   priority
