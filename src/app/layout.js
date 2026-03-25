@@ -29,7 +29,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Body Pharm Labz",
+    title: "Body Pharm Labs",
   },
   formatDetection: { telephone: false },
   other: {

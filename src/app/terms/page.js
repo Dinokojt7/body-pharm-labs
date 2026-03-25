@@ -7,11 +7,11 @@ import { motion } from "framer-motion";
 const sections = [
   {
     title: "1. Research Use Only",
-    body: `All products sold by Body Pharm Labz are intended strictly for laboratory and in-vitro research purposes. They are not approved for human or veterinary use, consumption, or any clinical application. By purchasing from us, you confirm that you are a qualified researcher and will use the products accordingly.`,
+    body: `All products sold by Body Pharm Labs are intended strictly for laboratory and in-vitro research purposes. They are not approved for human or veterinary use, consumption, or any clinical application. By purchasing from us, you confirm that you are a qualified researcher and will use the products accordingly.`,
   },
   {
     title: "2. Eligibility",
-    body: `You must be at least 18 years of age and legally permitted to purchase research chemicals in your jurisdiction. By placing an order, you represent that you meet these requirements. Body Pharm Labz reserves the right to refuse any order at its sole discretion.`,
+    body: `You must be at least 18 years of age and legally permitted to purchase research chemicals in your jurisdiction. By placing an order, you represent that you meet these requirements. Body Pharm Labs reserves the right to refuse any order at its sole discretion.`,
   },
   {
     title: "3. Orders & Payment",
@@ -19,7 +19,7 @@ const sections = [
   },
   {
     title: "4. Shipping & Delivery",
-    body: `We offer same-day worldwide shipping on orders placed before 14:00 GMT+2. Free shipping applies to orders of $250 or more. Delivery times vary by destination and are estimated only — Body Pharm Labz is not liable for delays caused by customs authorities or courier services beyond our control.`,
+    body: `We offer same-day worldwide shipping on orders placed before 14:00 GMT+2. Free shipping applies to orders of $250 or more. Delivery times vary by destination and are estimated only — Body Pharm Labs is not liable for delays caused by customs authorities or courier services beyond our control.`,
   },
   {
     title: "5. Returns & Refunds",
@@ -27,11 +27,11 @@ const sections = [
   },
   {
     title: "6. Intellectual Property",
-    body: `All content on this website — including text, images, product descriptions, and branding — is the exclusive property of Body Pharm Labz. Reproduction or commercial use without written permission is strictly prohibited.`,
+    body: `All content on this website — including text, images, product descriptions, and branding — is the exclusive property of Body Pharm Labs. Reproduction or commercial use without written permission is strictly prohibited.`,
   },
   {
     title: "7. Limitation of Liability",
-    body: `Body Pharm Labz shall not be held liable for any direct, indirect, incidental, or consequential damages arising from the use or misuse of our products. All products are sold as-is for research purposes only.`,
+    body: `Body Pharm Labs shall not be held liable for any direct, indirect, incidental, or consequential damages arising from the use or misuse of our products. All products are sold as-is for research purposes only.`,
   },
   {
     title: "8. Governing Law",

@@ -208,7 +208,7 @@ export default function AuthModal() {
                 <Image src="/images/auth-modal.png" alt="" fill className="object-cover" />
                 <div className="relative z-10 flex items-center justify-center h-full">
                   <div className="relative w-64 h-24 lg:w-80 lg:h-32">
-                    <Image src="/images/logo.png" alt="Body Pharm Labz" fill className="object-contain brightness-0 invert" priority />
+                    <Image src="/images/logo.png" alt="Body Pharm Labs" fill className="object-contain brightness-0 invert" priority />
                   </div>
                 </div>
                 <div className="absolute bottom-8 left-8 right-8 z-10">
@@ -239,7 +239,7 @@ export default function AuthModal() {
                     >
                       <div className="md:hidden flex justify-center mb-6">
                         <div className="relative w-48 h-16">
-                          <Image src="/images/logo.png" alt="Body Pharm Labz" fill className="object-contain" priority />
+                          <Image src="/images/logo.png" alt="Body Pharm Labs" fill className="object-contain" priority />
                         </div>
                       </div>
 

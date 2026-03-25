@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Admin — Body Pharm Labz",
+  title: "Admin — Body Pharm Labs",
   robots: { index: false, follow: false },
 };
 

@@ -374,7 +374,7 @@ function AccountPageInner() {
                   <User className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">Welcome to Body Pharm Labz!</p>
+                  <p className="font-semibold text-sm">Welcome to Body Pharm Labs!</p>
                   <p className="text-white/60 text-xs mt-0.5">
                     Complete your profile so we can personalise your experience and pre-fill your shipping details at checkout.
                   </p>

@@ -176,7 +176,7 @@ export default function AuthPage() {
         <div className="relative h-14 w-44">
           <Image
             src="/images/logo.png"
-            alt="Body Pharm Labz"
+            alt="Body Pharm Labs"
             fill
             className="object-contain"
           />

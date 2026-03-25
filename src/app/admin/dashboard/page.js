@@ -67,7 +67,7 @@ export default function AdminDashboard() {
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Package className="w-5 h-5 text-gray-400" />
-          <span className="font-semibold text-gray-900 text-sm">Body Pharm Labz Admin</span>
+          <span className="font-semibold text-gray-900 text-sm">Body Pharm Labs Admin</span>
         </div>
         <button
           onClick={handleSignOut}

@@ -60,7 +60,7 @@ const sections = [
   },
   {
     title: "Customs & Import Duties",
-    body: "International orders may be subject to customs duties, taxes, or import fees levied by the destination country. These charges are the responsibility of the recipient. Body Pharm Labz has no control over customs processes and cannot predict applicable fees.",
+    body: "International orders may be subject to customs duties, taxes, or import fees levied by the destination country. These charges are the responsibility of the recipient. Body Pharm Labs has no control over customs processes and cannot predict applicable fees.",
   },
   {
     title: "Packaging",

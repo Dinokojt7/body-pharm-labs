@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import Image from "next/image";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -50,9 +51,13 @@ export default function AdminLoginPage() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <p className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-1">
-            Body Pharm Labz
-          </p>
+          <Image
+            src="/images/logo.png"
+            alt="Body Pharm Labs"
+            width={140}
+            height={50}
+            className="object-contain mx-auto mb-3"
+          />
           <h1 className="text-2xl font-bold text-gray-900">Admin</h1>
         </div>
 

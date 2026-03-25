@@ -15,7 +15,7 @@ const sections = [
   },
   {
     title: "3. Payment Security",
-    body: `All payment processing is handled by Paystack, a PCI-DSS compliant payment gateway. Body Pharm Labz does not store your credit card details. All transactions are encrypted using SSL technology.`,
+    body: `All payment processing is handled by Paystack, a PCI-DSS compliant payment gateway. Body Pharm Labs does not store your credit card details. All transactions are encrypted using SSL technology.`,
   },
   {
     title: "4. Cookies",

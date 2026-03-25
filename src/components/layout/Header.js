@@ -60,7 +60,7 @@ const Header = () => {
               <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
                 <Image
                   src="/images/logo.png"
-                  alt="Body Pharm Labz"
+                  alt="Body Pharm Labs"
                   fill
                   priority
                   className="object-contain"

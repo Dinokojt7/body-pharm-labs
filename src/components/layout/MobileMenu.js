@@ -107,7 +107,7 @@ const MobileMenu = () => {
               <div className="relative h-24 w-64">
                 <Image
                   src="/images/logo.png"
-                  alt="Body Pharm Labz"
+                  alt="Body Pharm Labs"
                   fill
                   className="object-contain object-left brightness-0 invert"
                 />

@@ -40,7 +40,7 @@ export async function POST(request) {
         <!-- Header -->
         <tr>
           <td style="background:#000;padding:36px 32px;text-align:center;">
-            <p style="margin:0 0 6px;color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;">Body Pharm Labz</p>
+            <p style="margin:0 0 6px;color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;">Body Pharm Labs</p>
             <p style="margin:0 0 2px;color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.01em;">Order Confirmed</p>
             <p style="margin:0;color:rgba(255,255,255,0.55);font-size:13px;">Thank you, ${firstName}!</p>
           </td>
@@ -113,7 +113,7 @@ export async function POST(request) {
       body: JSON.stringify({
         from: process.env.EMAIL_FROM || "orders@bodypharmlabs.com",
         to: email,
-        subject: `Order Confirmed — ${orderNumber} | Body Pharm Labz`,
+        subject: `Order Confirmed — ${orderNumber} | Body Pharm Labs`,
         html,
       }),
     });

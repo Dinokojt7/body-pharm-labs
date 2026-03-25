@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 const SLIDES = [
-  "/images/hero-bg.jpeg",
-  "/images/hero-bg1.png",
-  "/images/hero-bg2.png",
+  "/images/hero-bg.webp",
+  "/images/hero-bg1.webp",
+  "/images/hero-bg2.webp",
 ];
 
 const DARK_SLIDE = 1;

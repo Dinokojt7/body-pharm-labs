@@ -10,14 +10,14 @@ const testimonials = [
     role: "Research Scientist, Neuroscience Lab",
     country: "UK",
     rating: 5,
-    text: "Body Pharm Labz has been our go-to supplier for over two years. The purity consistently exceeds our expectations, and the detailed CoA reports give our team full confidence. Delivery to the UK is remarkably fast.",
+    text: "Body Pharm Labs has been our go-to supplier for over two years. The purity consistently exceeds our expectations, and the detailed CoA reports give our team full confidence. Delivery to the UK is remarkably fast.",
   },
   {
     name: "Prof. Marcus Reinholt",
     role: "Principal Investigator, University Hospital",
     country: "Germany",
     rating: 5,
-    text: "We have sourced peptides from multiple vendors and Body Pharm Labz stands apart. Every batch is third-party verified and the consistency between orders is something we have not found elsewhere at this price point.",
+    text: "We have sourced peptides from multiple vendors and Body Pharm Labs stands apart. Every batch is third-party verified and the consistency between orders is something we have not found elsewhere at this price point.",
   },
   {
     name: "Dr. Zanele Mokoena",
@@ -45,7 +45,7 @@ const testimonials = [
     role: "Endocrinology Research Fellow",
     country: "Netherlands",
     rating: 5,
-    text: "I was skeptical at first but the CoA matched independent testing we conducted in-house. That level of transparency is rare. Body Pharm Labz has earned our long-term business.",
+    text: "I was skeptical at first but the CoA matched independent testing we conducted in-house. That level of transparency is rare. Body Pharm Labs has earned our long-term business.",
   },
 ];
 

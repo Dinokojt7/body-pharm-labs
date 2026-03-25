@@ -1,6 +1,6 @@
 export default function manifest() {
   return {
-    name: "Body Pharm Labz",
+    name: "Body Pharm Labs",
     short_name: "BPL",
     description: "Research-grade peptides. Lab tested. Worldwide shipping.",
     start_url: "/",
