@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { getUserProfile, activateMembership } from "@/lib/firebase/firestore";
+import { usePreventScroll } from "@/lib/hooks/usePreventScroll";
 
 const BENEFITS = [
   "10% off applied automatically at checkout",
@@ -30,6 +31,7 @@ export default function MembershipModal() {
   const [loading, setLoading] = useState(false);
   const { user, authLoading } = useAuthStore();
   const { openAuthModal } = useUIStore();
+  usePreventScroll(open);
 
   useEffect(() => {
     if (authLoading) return;
@@ -122,10 +124,7 @@ export default function MembershipModal() {
                   <span className="block text-xl font-light text-gray-400 leading-tight tracking-wide">
                     Unlock
                   </span>
-                  <span
-                    className="block text-[54px] leading-none font-bold tracking-tight"
-                    style={goldStyle}
-                  >
+                  <span className="block text-[54px] leading-none font-bold tracking-tight text-black">
                     10%
                   </span>
                   <span className="block text-lg font-light italic text-gray-500 leading-snug -mt-1">
@@ -152,8 +151,7 @@ export default function MembershipModal() {
                 <button
                   onClick={handleJoin}
                   disabled={loading}
-                  className="w-full h-11 rounded-lg text-black text-sm font-semibold tracking-wide transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
-                  style={goldBg}
+                  className="w-full h-11 rounded-lg bg-black text-white text-sm font-semibold tracking-wide hover:bg-gray-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
