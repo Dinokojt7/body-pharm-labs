@@ -11,18 +11,20 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
+import { getUserProfile } from "@/lib/firebase/firestore";
 import CheckoutForm from "@/components/forms/CheckoutForm";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal } = useCartStore();
-  const { isAuthenticated, authLoading } = useAuthStore();
+  const { user, isAuthenticated, authLoading } = useAuthStore();
   const { openAuthModal } = useUIStore();
   const { formatPrice } = useCurrency();
 
   const [shippingCost, setShippingCost] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isMember, setIsMember] = useState(false);
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -31,8 +33,17 @@ export default function CheckoutPage() {
     }
   }, [items, router]);
 
+  // Check membership status
+  useEffect(() => {
+    if (!user?.uid) return;
+    getUserProfile(user.uid).then(({ profile }) => {
+      setIsMember(!!profile?.membership?.active);
+    });
+  }, [user?.uid]);
+
+  const memberDiscount = isMember ? subtotal * 0.1 : 0;
   const tax = subtotal * 0.15; // 15% VAT
-  const total = subtotal + tax + shippingCost;
+  const total = subtotal - memberDiscount + tax + shippingCost;
 
   if (items.length === 0) return null;
 
@@ -82,6 +93,7 @@ export default function CheckoutPage() {
               tax={tax}
               shippingCost={shippingCost}
               total={total}
+              memberDiscount={memberDiscount}
               onShippingChange={setShippingCost}
               loading={loading}
               setLoading={setLoading}
@@ -126,6 +138,12 @@ export default function CheckoutPage() {
                   <span className="text-gray-600">Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
+                {memberDiscount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-blue-600 font-medium">Member Discount (10%)</span>
+                    <span className="text-blue-600 font-medium">−{formatPrice(memberDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
                   <span>

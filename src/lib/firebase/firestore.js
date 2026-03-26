@@ -305,6 +305,34 @@ export const subscribeToOrderByNumber = (orderNumber, email, callback) => {
   );
 };
 
+// ─── Membership ────────────────────────────────────────────────────────────
+
+export const activateMembership = async (uid, { joinedAt, paystackRef }) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    const userRef = doc(db, "users", uid);
+    const snap = await getDoc(userRef);
+    const membershipData = {
+      membership: {
+        active: true,
+        plan: "lifetime",
+        joinedAt: joinedAt || new Date().toISOString(),
+        paystackRef: paystackRef || null,
+        fee: 199,
+      },
+      updatedAt: Timestamp.now(),
+    };
+    if (snap.exists()) {
+      await updateDoc(userRef, membershipData);
+    } else {
+      await setDoc(userRef, { uid, ...membershipData, createdAt: Timestamp.now() });
+    }
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 // ─── Admin product CRUD ────────────────────────────────────────────────────
 
 export const adminCreateProduct = async (data) => {

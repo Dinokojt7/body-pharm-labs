@@ -23,6 +23,7 @@ const CheckoutForm = ({
   tax,
   shippingCost,
   total,
+  memberDiscount = 0,
   loading,
   setLoading,
 }) => {
@@ -135,6 +136,7 @@ const CheckoutForm = ({
       subtotal,
       tax,
       shipping: shippingCost,
+      memberDiscount,
       total,
       currency: selectedCurrency,
       notes: formData.notes.trim(),
