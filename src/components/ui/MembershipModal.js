@@ -168,13 +168,6 @@ export default function MembershipModal() {
                 </button>
               </div>
 
-              {/* Skip */}
-              <button
-                onClick={dismiss}
-                className="mt-5 text-xs text-gray-400 hover:text-gray-600 transition-colors text-left tracking-wide"
-              >
-                Skip for now
-              </button>
             </div>
           </motion.div>
         </div>
