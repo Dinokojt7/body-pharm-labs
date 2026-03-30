@@ -101,6 +101,17 @@ const Footer = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a
+                  href="https://s2.affiliatly.com/af-1062735/affiliate.panel?mode=register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-gray-500 hover:text-black transition-colors text-sm"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-black transition-colors" />
+                  Affiliates
+                </a>
+              </li>
             </ul>
           </motion.div>
 
