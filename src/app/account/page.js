@@ -368,14 +368,14 @@ function AccountPageInner() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-8 flex items-start gap-3 bg-black text-white rounded px-5 py-4"
+                className="mb-8 flex items-start gap-3 bg-amber-50 border border-amber-200/60 rounded px-5 py-4"
               >
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <User className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <User className="w-4 h-4 text-amber-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">Welcome to Body Pharm Labs!</p>
-                  <p className="text-white/60 text-xs mt-0.5">
+                  <p className="font-semibold text-sm text-amber-900">Welcome to Body Pharm Labs!</p>
+                  <p className="text-amber-700/70 text-xs mt-0.5">
                     Complete your profile so we can personalise your experience and pre-fill your shipping details at checkout.
                   </p>
                 </div>
