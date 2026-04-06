@@ -12,7 +12,23 @@ export async function POST(request) {
   }
 
   try {
-    const { orderNumber, firstName, lastName, items, total, currency } = await request.json();
+    const {
+      orderId,
+      orderNumber,
+      firstName,
+      lastName,
+      email,
+      phone,
+      shippingAddress = {},
+      items,
+      subtotal,
+      tax,
+      shipping,
+      memberDiscount,
+      total,
+      currency,
+      notes,
+    } = await request.json();
 
     const formatter = new Intl.NumberFormat("en-ZA", {
       style: "currency",
@@ -20,22 +36,50 @@ export async function POST(request) {
     });
 
     const itemLines = (items || [])
-      .map((item) => `  • ${item.name}${item.size ? ` (${item.size})` : ""} × ${item.quantity}`)
+      .map((item) => `  • ${item.name}${item.size ? ` (${item.size})` : ""} × ${item.quantity} — ${formatter.format(item.price * item.quantity)}`)
       .join("\n");
 
-    const message = [
+    const addressLine = [
+      shippingAddress.address,
+      shippingAddress.city,
+      shippingAddress.postalCode,
+      shippingAddress.country,
+    ].filter(Boolean).join(", ");
+
+    const lines = [
       `🛒 *New Order — Body Pharm Labs*`,
       ``,
       `Order: *${orderNumber}*`,
-      `Customer: ${firstName} ${lastName}`,
       ``,
-      `*Items:*`,
+      `*Customer*`,
+      `Name: ${firstName} ${lastName}`,
+      `Email: ${email}`,
+      `Phone: ${phone}`,
+      ``,
+      `*Shipping Address*`,
+      addressLine,
+      ``,
+      `*Items*`,
       itemLines,
       ``,
+      `Subtotal: ${formatter.format(subtotal)}`,
+      ...(memberDiscount > 0 ? [`Member Discount: −${formatter.format(memberDiscount)}`] : []),
+      `Shipping: ${shipping === 0 ? "Free" : formatter.format(shipping)}`,
+      `VAT (15%): ${formatter.format(tax)}`,
       `*Total: ${formatter.format(total)}*`,
-    ].join("\n");
+      ...(notes ? [``, `Notes: ${notes}`] : []),
+    ];
 
+    const message = lines.join("\n");
     const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bodypharmlabs.com";
+
+    const body = new URLSearchParams({ From: from, To: to, Body: message });
+
+    // Attach PDF invoice if Firebase Admin is configured (orderId present)
+    if (orderId && process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+      body.append("MediaUrl0", `${siteUrl}/api/invoice/${orderId}`);
+    }
 
     const res = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
@@ -45,7 +89,7 @@ export async function POST(request) {
           Authorization: `Basic ${credentials}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({ From: from, To: to, Body: message }).toString(),
+        body: body.toString(),
       },
     );
 
