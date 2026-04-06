@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generateInvoicePdf } from "@/lib/pdf/invoice-generator";
 
 export async function POST(request) {
   if (!process.env.RESEND_API_KEY) {
@@ -6,7 +7,7 @@ export async function POST(request) {
   }
 
   try {
-    const { orderNumber, email, firstName, items, total, currency } = await request.json();
+    const { orderNumber, email, firstName, items, total, currency, ...orderRest } = await request.json();
 
     const formatter = new Intl.NumberFormat("en-ZA", {
       style: "currency",
@@ -104,6 +105,18 @@ export async function POST(request) {
 </body>
 </html>`;
 
+    // Generate PDF invoice attachment
+    let attachments = [];
+    try {
+      const pdfBuffer = await generateInvoicePdf({ orderNumber, items, total, currency, ...orderRest });
+      attachments = [{
+        filename: `invoice-${orderNumber}.pdf`,
+        content: pdfBuffer.toString("base64"),
+      }];
+    } catch (pdfErr) {
+      console.warn("PDF generation failed, sending email without attachment:", pdfErr);
+    }
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -115,6 +128,7 @@ export async function POST(request) {
         to: email,
         subject: `Order Confirmed — ${orderNumber} | Body Pharm Labs`,
         html,
+        ...(attachments.length > 0 && { attachments }),
       }),
     });
 
