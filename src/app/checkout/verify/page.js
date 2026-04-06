@@ -53,7 +53,7 @@ function VerifyPageInner() {
             paidAt: new Date().toISOString(),
           });
 
-          // Send confirmation email (fire-and-forget)
+          // Send confirmation email + owner WhatsApp notify (fire-and-forget)
           getOrderById(orderId).then(({ order }) => {
             if (!order) return;
             fetch("/api/send-order-email", {
@@ -63,6 +63,18 @@ function VerifyPageInner() {
                 orderNumber: order.orderNumber,
                 email: order.customer?.email,
                 firstName: order.customer?.firstName,
+                items: order.items,
+                total: order.total,
+                currency: order.currency,
+              }),
+            }).catch(() => {});
+            fetch("/api/notify-owner", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderNumber: order.orderNumber,
+                firstName: order.customer?.firstName,
+                lastName: order.customer?.lastName,
                 items: order.items,
                 total: order.total,
                 currency: order.currency,
