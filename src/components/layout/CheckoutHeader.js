@@ -22,16 +22,14 @@ export default function CheckoutHeader() {
 
         {/* Left — logomark */}
         <Link href="/" className="shrink-0">
-          <div className="relative w-14 h-14 sm:w-16 sm:h-16">
-            <Image
-              src="/images/logomark.png"
-              alt="Body Pharm Labs"
-              fill
-              priority
-              className="object-contain"
-              sizes="48px"
-            />
-          </div>
+          <Image
+            src="/images/logomark.png"
+            alt="Body Pharm Labs"
+            width={128}
+            height={128}
+            priority
+            className="object-contain w-14 h-14 sm:w-16 sm:h-16"
+          />
         </Link>
 
         {/* Center — step bars with labels below */}
