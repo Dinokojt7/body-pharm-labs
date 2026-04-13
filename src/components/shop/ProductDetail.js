@@ -10,8 +10,11 @@ import ProductImageZoom from "./ProductImageZoom";
 import QuantitySelector from "./QuantitySelector";
 
 const ProductDetail = ({ product }) => {
+  const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 0;
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(product.size);
+  const [selectedSize, setSelectedSize] = useState(
+    product.size || (hasSizes ? product.sizes[0] : "")
+  );
   const [isAdding, setIsAdding] = useState(false);
 
   const { addItem, items } = useCartStore();
@@ -88,42 +91,43 @@ const ProductDetail = ({ product }) => {
           </span>
         </p>
 
-        {/* Size Selection */}
-        <div>
-          <h3 className="font-bold text-black mb-2">Select Mg</h3>
-          <div className="relative">
-            <select
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg appearance-none bg-white text-gray-900 focus:border-black focus:outline-none cursor-pointer"
-            >
-              <option value="">Choose an option</option>
-              {product.sizes?.map((size) => {
-                const sizePrice = product.sizePrices?.[size] ?? product.price;
-                return (
-                  <option key={size} value={size}>
-                    {size} — {formatPrice(sizePrice)}
-                  </option>
-                );
-              })}
-            </select>
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        {/* Size Selection — only shown if product has sizes */}
+        {hasSizes && (
+          <div>
+            <h3 className="font-bold text-black mb-2">Select Mg</h3>
+            <div className="relative">
+              <select
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg appearance-none bg-white text-gray-900 focus:border-black focus:outline-none cursor-pointer"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+                {product.sizes.map((size) => {
+                  const sizePrice = product.sizePrices?.[size] ?? product.price;
+                  return (
+                    <option key={size} value={size}>
+                      {size} — {formatPrice(sizePrice)}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Quantity and Add to Cart */}
         <div className="space-y-4">
@@ -139,7 +143,7 @@ const ProductDetail = ({ product }) => {
           <div className="flex gap-3">
             <button
               onClick={handleAddToCart}
-              disabled={!selectedSize || isAdding}
+              disabled={(hasSizes && !selectedSize) || isAdding}
               className="flex-1 h-11 bg-black text-white rounded text-xs font-medium tracking-widest uppercase hover:bg-gray-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isAdding ? "ADDING..." : "ADD TO CART"}
