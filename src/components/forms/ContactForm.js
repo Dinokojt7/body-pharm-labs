@@ -21,11 +21,12 @@ const ContactForm = () => {
     setStatus("sending");
 
     try {
-      await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      if (!res.ok) throw new Error("failed");
       setStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch {
