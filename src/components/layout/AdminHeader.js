@@ -28,14 +28,14 @@ export default function AdminHeader({ backHref = null }) {
               <ArrowLeft className="w-4 h-4 text-gray-400" />
             </Link>
           )}
-          <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
+          <div className="relative w-10 h-10 sm:w-12 sm:h-12">
             <Image
-              src="/images/logo-header.png"
+              src="/images/logomark.png"
               alt="Body Pharm Labs"
               fill
               priority
-              className="object-contain object-left"
-              sizes="(max-width: 768px) 288px, (max-width: 1024px) 384px, 448px"
+              className="object-contain"
+              sizes="48px"
             />
           </div>
         </div>

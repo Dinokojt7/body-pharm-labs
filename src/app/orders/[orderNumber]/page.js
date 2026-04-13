@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useOrderStepStore } from "@/lib/stores/order-step-store";
 import { subscribeToUserOrders } from "@/lib/firebase/firestore";
 import productsData from "@/lib/data/products.json";
 
@@ -48,6 +49,7 @@ export default function OrderDetailPage() {
   const { orderNumber } = useParams();
   const router = useRouter();
   const { user, isAuthenticated, authLoading } = useAuthStore();
+  const setStepIndex = useOrderStepStore((s) => s.setStepIndex);
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,11 +77,12 @@ export default function OrderDetailPage() {
         }));
       }
       setOrder(found);
+      setStepIndex(found ? (STEP_INDEX[found.status] ?? -1) : -1);
       setFetchError("");
       setLoading(false);
     });
     return unsubscribe;
-  }, [user?.uid, orderNumber]);
+  }, [user?.uid, orderNumber, setStepIndex]);
 
   if (authLoading || !isAuthenticated) return null;
 
