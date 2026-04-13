@@ -23,18 +23,19 @@ export default function CheckoutHeader() {
   const segmentFilled = (i) => currentStep > i;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-16">
-      <div className="h-full px-5 md:px-10 flex items-center justify-between gap-4">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-20 md:h-24">
+      <div className="h-full px-4 md:px-8 lg:px-12 flex items-center justify-between gap-4">
 
         {/* Left — logo */}
         <Link href="/" className="shrink-0">
-          <div className="relative w-28 h-9 sm:w-36 sm:h-11">
+          <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
             <Image
               src="/images/logo-header.png"
               alt="Body Pharm Labs"
               fill
               priority
               className="object-contain object-left"
+              sizes="(max-width: 768px) 288px, (max-width: 1024px) 384px, 448px"
             />
           </div>
         </Link>

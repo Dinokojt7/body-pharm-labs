@@ -22,7 +22,7 @@ export default function SiteChrome({ children }) {
     return (
       <>
         <CheckoutHeader />
-        <main className="min-h-screen pt-16 bg-white">{children}</main>
+        <main className="min-h-screen pt-20 md:pt-24 bg-white">{children}</main>
       </>
     );
   }
