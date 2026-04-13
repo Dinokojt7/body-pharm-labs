@@ -7,7 +7,6 @@ import { X } from "lucide-react";
 
 const STEPS = ["Cart", "Payment", "Done"];
 
-// Which step index is "current" per route
 function useStep(pathname) {
   if (pathname?.startsWith("/checkout/success")) return 2;
   return 1; // /checkout and /checkout/verify
@@ -17,14 +16,9 @@ export default function CheckoutHeader() {
   const pathname = usePathname();
   const currentStep = useStep(pathname);
 
-  // Segment fill: segment i fills when currentStep > i
-  // Segment 0 (Cart→Payment): filled when currentStep >= 1 (always on these routes)
-  // Segment 1 (Payment→Done): filled when currentStep >= 2
-  const segmentFilled = (i) => currentStep > i;
-
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 h-20 md:h-24">
-      <div className="h-full px-4 md:px-8 lg:px-12 flex items-center justify-between gap-4">
+      <div className="h-full px-4 md:px-8 lg:px-12 flex items-center justify-between gap-6">
 
         {/* Left — logo */}
         <Link href="/" className="shrink-0">
@@ -40,42 +34,25 @@ export default function CheckoutHeader() {
           </div>
         </Link>
 
-        {/* Center — 3-step progress */}
-        <div className="flex items-center justify-center flex-1 select-none">
-          {STEPS.map((label, i) => {
-            const done = currentStep > i;
-            const active = currentStep === i;
-            return (
-              <div key={label} className="flex items-center">
-                {/* Step node */}
-                <div className="flex flex-col items-center gap-1">
-                  <div
-                    className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                      done || active ? "bg-black" : "bg-gray-300"
-                    }`}
-                  />
-                  <span
-                    className={`text-[9px] sm:text-[10px] font-semibold tracking-[0.14em] uppercase transition-colors duration-300 ${
-                      done || active ? "text-black" : "text-gray-400"
-                    }`}
-                  >
-                    {label}
-                  </span>
+        {/* Center — pill step bars */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex gap-1 w-full max-w-64 sm:max-w-xs select-none">
+            {STEPS.map((label, i) => {
+              const filled = i <= currentStep;
+              return (
+                <div
+                  key={label}
+                  className={`flex-1 h-8 rounded-full flex items-center justify-center text-[9px] sm:text-[10px] font-semibold tracking-[0.12em] uppercase transition-all duration-300 ${
+                    filled
+                      ? "bg-gray-900 text-white"
+                      : "bg-transparent border border-gray-300 text-gray-400"
+                  }`}
+                >
+                  {label}
                 </div>
-
-                {/* Segment track between steps */}
-                {i < STEPS.length - 1 && (
-                  <div className="w-12 sm:w-20 md:w-28 h-px bg-gray-200 mx-2 mb-4 relative overflow-hidden">
-                    <div
-                      className={`absolute inset-y-0 left-0 bg-black transition-all duration-500 ${
-                        segmentFilled(i) ? "w-full" : "w-0"
-                      }`}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Right — close → back to cart */}
