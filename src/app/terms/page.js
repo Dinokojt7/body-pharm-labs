@@ -86,10 +86,10 @@ export default function TermsPage() {
           <p className="text-xs text-gray-400">
             Questions? Email us at{" "}
             <a
-              href="mailto:sales@bodypharmlabs.com"
+              href="mailto:info@bodypharmlabs.com"
               className="text-black underline"
             >
-              sales@bodypharmlabs.com
+              info@bodypharmlabs.com
             </a>
           </p>
           <Link

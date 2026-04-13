@@ -68,7 +68,7 @@ const sections = [
   },
   {
     title: "Lost or Delayed Shipments",
-    body: "If your order has not arrived within the estimated delivery window, please contact us at sales@bodypharmlabs.com. We will investigate with the courier and provide updates. Claims for lost packages must be submitted within 21 business days of the shipping date.",
+    body: "If your order has not arrived within the estimated delivery window, please contact us at info@bodypharmlabs.com. We will investigate with the courier and provide updates. Claims for lost packages must be submitted within 21 business days of the shipping date.",
   },
 ];
 

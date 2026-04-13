@@ -127,7 +127,7 @@ export async function POST(request) {
               </a>
             </div>
             <p style="margin:24px 0 0;color:#9ca3af;font-size:11px;text-align:center;line-height:1.5;">
-              Questions? <a href="mailto:sales@bodypharmlabs.com" style="color:#000;text-decoration:underline;">sales@bodypharmlabs.com</a>
+              Questions? <a href="mailto:info@bodypharmlabs.com" style="color:#000;text-decoration:underline;">info@bodypharmlabs.com</a>
             </p>
             <p style="margin:8px 0 0;color:#d1d5db;font-size:10px;text-align:center;">
               All products are for research and laboratory use only.

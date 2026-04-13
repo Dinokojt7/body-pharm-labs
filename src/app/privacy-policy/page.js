@@ -27,7 +27,7 @@ const sections = [
   },
   {
     title: "6. Your Rights",
-    body: `Under the Protection of Personal Information Act (POPIA), you have the right to access, correct, or delete your personal data. To exercise these rights, contact us at sales@bodypharmlabs.com. We will respond within 30 days.`,
+    body: `Under the Protection of Personal Information Act (POPIA), you have the right to access, correct, or delete your personal data. To exercise these rights, contact us at info@bodypharmlabs.com. We will respond within 30 days.`,
   },
   {
     title: "7. Third-Party Links",
@@ -82,10 +82,10 @@ export default function PrivacyPolicyPage() {
           <p className="text-xs text-gray-400">
             Questions? Email{" "}
             <a
-              href="mailto:sales@bodypharmlabs.com"
+              href="mailto:info@bodypharmlabs.com"
               className="text-black underline"
             >
-              sales@bodypharmlabs.com
+              info@bodypharmlabs.com
             </a>
           </p>
           <Link

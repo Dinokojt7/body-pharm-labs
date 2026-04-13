@@ -26,7 +26,7 @@ const sections = [
   },
   {
     title: "Process",
-    body: "Email sales@bodypharmlabs.com with your order number, a description of the issue, and photographic evidence where applicable. Our team will respond within 1–2 business days with a resolution.",
+    body: "Email info@bodypharmlabs.com with your order number, a description of the issue, and photographic evidence where applicable. Our team will respond within 1–2 business days with a resolution.",
   },
   {
     title: "Resolution",
@@ -133,10 +133,10 @@ export default function RefundPolicyPage() {
           <p className="text-xs text-gray-500 leading-relaxed">
             To initiate a claim, email{" "}
             <a
-              href="mailto:sales@bodypharmlabs.com"
+              href="mailto:info@bodypharmlabs.com"
               className="text-black font-medium underline"
             >
-              sales@bodypharmlabs.com
+              info@bodypharmlabs.com
             </a>{" "}
             with your order number and supporting evidence within 48 hours of
             delivery.

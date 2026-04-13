@@ -109,10 +109,10 @@ const ContactForm = () => {
         <p className="text-sm text-gray-500">
           Something went wrong. Email us directly at{" "}
           <a
-            href="mailto:sales@bodypharmlabs.com"
+            href="mailto:info@bodypharmlabs.com"
             className="text-black underline"
           >
-            sales@bodypharmlabs.com
+            info@bodypharmlabs.com
           </a>
         </p>
       )}
