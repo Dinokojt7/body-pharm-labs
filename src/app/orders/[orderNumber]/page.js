@@ -17,13 +17,16 @@ import productsData from "@/lib/data/products.json";
 const productImageMap = Object.fromEntries(productsData.map((p) => [p.id, p.imageString || null]));
 
 const STATUS_CONFIG = {
-  pending_payment: { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
-  payment_failed:  { label: "Payment Failed",  iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
-  paid:            { label: "Paid",            iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
-  confirmed:       { label: "Confirmed",       iconEl: <Check className="w-3.5 h-3.5 text-black/80" />,       container: "bg-blue-500/10 ring-1 ring-blue-400/50",     text: "text-blue-700"  },
-  shipped:         { label: "Shipped",         iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
-  delivered:       { label: "Delivered",       iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
-  cancelled:       { label: "Cancelled",       iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
+  pending_payment:  { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
+  pending:          { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
+  payment_failed:   { label: "Payment Failed",  iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
+  paid:             { label: "Paid",            iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
+  processing:       { label: "Processing",      iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
+  confirmed:        { label: "Confirmed",       iconEl: <Check className="w-3.5 h-3.5 text-black/80" />,       container: "bg-blue-500/10 ring-1 ring-blue-400/50",     text: "text-blue-700"  },
+  shipped:          { label: "Shipped",         iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
+  out_for_delivery: { label: "Out for Delivery",iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
+  delivered:        { label: "Delivered",       iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
+  cancelled:        { label: "Cancelled",       iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
 };
 
 const STEP_INDEX = {

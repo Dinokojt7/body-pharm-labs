@@ -392,6 +392,29 @@ export const adminGetAllOrders = async () => {
   }
 };
 
+// Realtime subscription for all orders (admin use). Returns unsubscribe function.
+// callback receives { orders, error }
+export const adminSubscribeToAllOrders = (callback) => {
+  if (!db) {
+    callback({ orders: [], error: "Firestore not available" });
+    return () => {};
+  }
+  return onSnapshot(
+    collection(db, "orders"),
+    (snapshot) => {
+      const orders = snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const aMs = a.createdAt?.toMillis?.() ?? 0;
+          const bMs = b.createdAt?.toMillis?.() ?? 0;
+          return bMs - aMs;
+        });
+      callback({ orders, error: null });
+    },
+    (error) => callback({ orders: [], error: error.message })
+  );
+};
+
 // Subscribe to a single order document by Firestore doc ID.
 // callback receives { order, error }
 export const subscribeToOrder = (orderId, callback) => {

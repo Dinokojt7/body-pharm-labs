@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
-import { adminGetAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
+import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
 import { ChevronDown, ChevronUp, Trash2, AlertTriangle } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 
@@ -58,22 +58,19 @@ export default function AdminOrders() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (!loading && user?.uid === ADMIN_UID) loadOrders();
-  }, [user, loading]);
-
-  const loadOrders = async () => {
+    if (loading || user?.uid !== ADMIN_UID) return;
     setFetching(true);
-    const { orders } = await adminGetAllOrders();
-    setOrders(orders);
-    setFetching(false);
-  };
+    const unsubscribe = adminSubscribeToAllOrders(({ orders }) => {
+      setOrders(orders);
+      setFetching(false);
+    });
+    return unsubscribe;
+  }, [user, loading]);
 
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdatingId(orderId);
     await updateOrderStatus(orderId, newStatus);
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-    );
+    // Realtime subscription will push the update — no manual state patch needed
     setUpdatingId(null);
   };
 
@@ -82,7 +79,7 @@ export default function AdminOrders() {
     setConfirmOrder(null);
     setDeletingId(order.id);
     await deleteOrder(order.id);
-    setOrders((prev) => prev.filter((o) => o.id !== order.id));
+    // Realtime subscription will drop it from orders automatically
     setDeletingId(null);
   };
 
