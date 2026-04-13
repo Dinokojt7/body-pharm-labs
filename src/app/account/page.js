@@ -510,7 +510,7 @@ function AccountPageInner() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       {[
                         { key: "displayName", label: "Full Name",    placeholder: "Your name"       },
-                        { key: "phone",       label: "Phone Number", placeholder: "+1 555 000 0000" },
+                        { key: "phone",       label: "Phone Number", placeholder: "+27 XX XXX XXXX" },
                       ].map(({ key, label, placeholder }) => (
                         <label key={key} className="block">
                           <span className="text-xs text-gray-500 mb-1.5 block">{label}</span>
