@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
-import { ChevronDown, ChevronUp, Trash2, AlertTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
@@ -201,6 +201,26 @@ export default function AdminOrders() {
                             <span>Total</span>
                             <span>{formatCurrency(order.total, order.currency)}</span>
                           </div>
+                        </div>
+
+                        {/* Receipt preview + print */}
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Receipt</p>
+                            <button
+                              onClick={() => window.open(`/api/invoice/${order.id}`, "_blank")}
+                              className="flex items-center gap-1.5 text-[11px] font-medium text-gray-600 hover:text-black transition-colors"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                              Print / Save PDF
+                            </button>
+                          </div>
+                          <iframe
+                            src={`/api/invoice/${order.id}`}
+                            className="w-full rounded-lg border border-gray-200"
+                            style={{ height: "420px" }}
+                            title={`Receipt ${order.orderNumber}`}
+                          />
                         </div>
                       </div>
 
