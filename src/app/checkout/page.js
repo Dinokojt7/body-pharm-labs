@@ -56,7 +56,7 @@ export default function CheckoutPage() {
         <Breadcrumb />
         <div className="flex-1 flex items-center justify-center px-4 py-20">
           <div className="text-center max-w-sm">
-            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+            <div className="w-14 h-14 rounded-full border-2 border-gray-200 flex items-center justify-center mx-auto mb-6">
               <User className="w-6 h-6 text-gray-400" />
             </div>
             <h2 className="text-xl font-bold text-black mb-2">Sign in to continue</h2>
@@ -87,7 +87,7 @@ export default function CheckoutPage() {
         <Breadcrumb />
         <div className="flex-1 flex items-center justify-center px-4 py-20">
           <div className="text-center max-w-sm">
-            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+            <div className="w-14 h-14 rounded-full border-2 border-gray-200 flex items-center justify-center mx-auto mb-6">
               <Clock className="w-6 h-6 text-gray-400" />
             </div>
             <h2 className="text-xl font-bold text-black mb-2">Store coming soon</h2>

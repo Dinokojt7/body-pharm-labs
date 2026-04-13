@@ -56,8 +56,8 @@ function SuccessPageInner() {
       >
         {/* Icon */}
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-black flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-full border-2 border-gray-300 flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-black" />
           </div>
         </div>
 

@@ -17,17 +17,19 @@ import productsData from "@/lib/data/products.json";
 
 const productImageMap = Object.fromEntries(productsData.map((p) => [p.id, p.imageString || null]));
 
+const ICON_CONTAINER = "border-2 border-gray-300";
+
 const STATUS_CONFIG = {
-  pending_payment:  { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
-  pending:          { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,           container: "bg-amber-500/10 ring-1 ring-amber-400/50",   text: "text-amber-700"  },
-  payment_failed:   { label: "Payment Failed",  iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
-  paid:             { label: "Paid",            iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
-  processing:       { label: "Processing",      iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
-  confirmed:        { label: "Confirmed",       iconEl: <Check className="w-3.5 h-3.5 text-black/80" />,       container: "bg-blue-500/10 ring-1 ring-blue-400/50",     text: "text-blue-700"  },
-  shipped:          { label: "Shipped",         iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
-  out_for_delivery: { label: "Out for Delivery",iconEl: <Truck className="w-3.5 h-3.5 text-black/80" />,       container: "bg-indigo-500/10 ring-1 ring-indigo-400/50", text: "text-indigo-700"},
-  delivered:        { label: "Delivered",       iconEl: <Check className="w-3 h-3 text-black" />,              container: "bg-green-500/20 ring-1 ring-green-500/40",   text: "text-green-700" },
-  cancelled:        { label: "Cancelled",       iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />,  container: "bg-yellow-500/20 ring-1 ring-yellow-400/60", text: "text-red-600"    },
+  pending_payment:  { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,          container: ICON_CONTAINER, text: "text-amber-700"  },
+  pending:          { label: "Pending Payment", iconEl: <Info className="w-3.5 h-3.5 text-black" />,          container: ICON_CONTAINER, text: "text-amber-700"  },
+  payment_failed:   { label: "Payment Failed",  iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />, container: ICON_CONTAINER, text: "text-red-600"    },
+  paid:             { label: "Paid",            iconEl: <Check className="w-3 h-3 text-black" />,             container: ICON_CONTAINER, text: "text-green-700" },
+  processing:       { label: "Processing",      iconEl: <Check className="w-3 h-3 text-black" />,             container: ICON_CONTAINER, text: "text-green-700" },
+  confirmed:        { label: "Confirmed",       iconEl: <Check className="w-3.5 h-3.5 text-black" />,         container: ICON_CONTAINER, text: "text-blue-700"  },
+  shipped:          { label: "Shipped",         iconEl: <Truck className="w-3.5 h-3.5 text-black" />,         container: ICON_CONTAINER, text: "text-indigo-700"},
+  out_for_delivery: { label: "Out for Delivery",iconEl: <Truck className="w-3.5 h-3.5 text-black" />,         container: ICON_CONTAINER, text: "text-indigo-700"},
+  delivered:        { label: "Delivered",       iconEl: <Check className="w-3 h-3 text-black" />,             container: ICON_CONTAINER, text: "text-green-700" },
+  cancelled:        { label: "Cancelled",       iconEl: <AlertTriangle className="w-3.5 h-3.5 text-black" />, container: ICON_CONTAINER, text: "text-red-600"    },
 };
 
 const STEP_INDEX = {
@@ -115,7 +117,7 @@ export default function OrderDetailPage() {
           </div>
         ) : !order ? (
           <div className="text-center py-24">
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center mx-auto mb-4">
               <Package className="w-5 h-5 text-gray-300" />
             </div>
             <p className="text-sm font-semibold text-black mb-1">Order not found</p>
@@ -162,13 +164,9 @@ export default function OrderDetailPage() {
                     const active = i === stepIndex;
                     return (
                       <div key={step} className="flex items-center gap-3">
-                        <motion.div
-                          animate={{ backgroundColor: done ? "#000" : "#f3f4f6" }}
-                          transition={{ duration: 0.4 }}
-                          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                        >
-                          {done && <Check className="w-3.5 h-3.5 text-white" />}
-                        </motion.div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${done ? "border-gray-400" : "border-gray-200"}`}>
+                          {done && <Check className="w-3.5 h-3.5 text-black" />}
+                        </div>
                         <p className={`text-sm ${done ? active ? "text-black font-semibold" : "text-black font-medium" : "text-gray-400"}`}>
                           {step}
                         </p>

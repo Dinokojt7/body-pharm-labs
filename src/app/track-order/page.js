@@ -13,46 +13,48 @@ import { subscribeToOrderByNumber } from "@/lib/firebase/firestore";
 // icon: element rendered inside the container
 // container: Tailwind classes for the rounded container
 // text: Tailwind text-color class for the status label
+const ICON_CONTAINER = "border-2 border-gray-300";
+
 const STATUS_CONFIG = {
   pending_payment: {
     label: "Pending Payment",
-    container: "bg-amber-500/10 ring-1 ring-amber-400/50",
+    container: ICON_CONTAINER,
     icon: <Info className="w-3.5 h-3.5 text-black" />,
     text: "text-amber-700",
   },
   payment_failed: {
     label: "Payment Failed",
-    container: "bg-yellow-500/20 ring-1 ring-yellow-400/60",
+    container: ICON_CONTAINER,
     icon: <AlertTriangle className="w-3.5 h-3.5 text-black" />,
     text: "text-red-600",
   },
   paid: {
     label: "Paid",
-    container: "bg-green-500/20 ring-1 ring-green-500/40",
+    container: ICON_CONTAINER,
     icon: <Check className="w-3 h-3 text-black" />,
     text: "text-green-700",
   },
   confirmed: {
     label: "Confirmed",
-    container: "bg-blue-500/10 ring-1 ring-blue-400/50",
-    icon: <Check className="w-3.5 h-3.5 text-black/80" />,
+    container: ICON_CONTAINER,
+    icon: <Check className="w-3.5 h-3.5 text-black" />,
     text: "text-blue-700",
   },
   shipped: {
     label: "Shipped",
-    container: "bg-indigo-500/10 ring-1 ring-indigo-400/50",
-    icon: <Truck className="w-3.5 h-3.5 text-black/80" />,
+    container: ICON_CONTAINER,
+    icon: <Truck className="w-3.5 h-3.5 text-black" />,
     text: "text-indigo-700",
   },
   delivered: {
     label: "Delivered",
-    container: "bg-green-500/20 ring-1 ring-green-500/40",
+    container: ICON_CONTAINER,
     icon: <Check className="w-3 h-3 text-black" />,
     text: "text-green-700",
   },
   cancelled: {
     label: "Cancelled",
-    container: "bg-yellow-500/20 ring-1 ring-yellow-400/60",
+    container: ICON_CONTAINER,
     icon: <AlertTriangle className="w-3.5 h-3.5 text-black" />,
     text: "text-red-600",
   },
@@ -238,13 +240,9 @@ function TrackOrderInner() {
                     <div className="space-y-4">
                       {STEPS.map((step, i) => (
                         <div key={step} className="flex items-center gap-3">
-                          <motion.div
-                            animate={{ backgroundColor: i === 0 ? "#000" : "#f3f4f6" }}
-                            transition={{ duration: 0.4 }}
-                            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                          >
-                            {i === 0 && <Check className="w-3 h-3 text-white" />}
-                          </motion.div>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${i === 0 ? "border-gray-400" : "border-gray-200"}`}>
+                            {i === 0 && <Check className="w-3 h-3 text-black" />}
+                          </div>
                           <p className={`text-sm ${i === 0 ? "text-black font-medium" : "text-gray-400"}`}>{step}</p>
                         </div>
                       ))}
@@ -286,13 +284,9 @@ function TrackOrderInner() {
                           const done = i <= stepIndex;
                           return (
                             <div key={step} className="flex items-center gap-3">
-                              <motion.div
-                                animate={{ backgroundColor: done ? "#000" : "#f3f4f6" }}
-                                transition={{ duration: 0.4 }}
-                                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                              >
-                                {done && <Check className="w-3 h-3 text-white" />}
-                              </motion.div>
+                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-300 ${done ? "border-gray-400" : "border-gray-200"}`}>
+                                {done && <Check className="w-3 h-3 text-black" />}
+                              </div>
                               <p className={`text-sm ${done ? "text-black font-medium" : "text-gray-400"}`}>{step}</p>
                             </div>
                           );

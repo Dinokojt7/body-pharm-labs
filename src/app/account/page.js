@@ -373,8 +373,8 @@ function AccountPageInner() {
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-8 flex items-start gap-3 bg-amber-50 border border-amber-200/60 rounded px-5 py-4"
               >
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <User className="w-4 h-4 text-amber-600" />
+                <div className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <User className="w-4 h-4 text-black" />
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-amber-900">Welcome to Body Pharm Labs!</p>
@@ -596,7 +596,7 @@ function AccountPageInner() {
                     </div>
                   ) : filteredOrders.length === 0 ? (
                     <div className="py-12 flex flex-col items-center justify-center text-center gap-4 px-5">
-                      <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-11 h-11 rounded-full border-2 border-gray-200 flex items-center justify-center">
                         <Package className="w-5 h-5 text-gray-300" />
                       </div>
                       <div>
