@@ -15,9 +15,7 @@ import { getUserProfile } from "@/lib/firebase/firestore";
 import CheckoutForm from "@/components/forms/CheckoutForm";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
-// ─── TEMPORARY: set to false once the store is ready to accept orders ───
-const STORE_COMMISSIONING = true;
-// ────────────────────────────────────────────────────────────────────────
+const STORE_COMMISSIONING = false;
 
 export default function CheckoutPage() {
   const router = useRouter();
