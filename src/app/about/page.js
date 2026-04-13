@@ -28,7 +28,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="">
+    <main className="bg-white">
       <Breadcrumb />
 
       {/* Hero Section */}

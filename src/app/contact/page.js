@@ -38,7 +38,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="">
+    <main className="bg-white">
       <Breadcrumb />
 
       {/* Hero */}

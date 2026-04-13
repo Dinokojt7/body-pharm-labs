@@ -104,7 +104,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="">
+    <main className="bg-white">
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">

@@ -95,7 +95,7 @@ const ProductDetail = ({ product }) => {
             <select
               value={selectedSize}
               onChange={(e) => setSelectedSize(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg appearance-none focus:border-black focus:outline-none cursor-pointer"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg appearance-none bg-white text-gray-900 focus:border-black focus:outline-none cursor-pointer"
             >
               <option value="">Choose an option</option>
               {product.sizes?.map((size) => {

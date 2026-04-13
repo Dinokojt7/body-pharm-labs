@@ -48,7 +48,7 @@ export default function ProductPage() {
 
   if (error || !product) {
     return (
-      <main className="">
+      <main className="bg-white">
         <Breadcrumb />
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">
@@ -63,7 +63,7 @@ export default function ProductPage() {
   }
 
   return (
-    <main className="">
+    <main className="bg-white">
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
