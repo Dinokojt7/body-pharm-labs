@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { getProducts, adminCreateProduct, adminUpdateProduct } from "@/lib/firebase/firestore";
 import { uploadProductImage } from "@/lib/firebase/storage";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -16,7 +16,7 @@ const CATEGORIES = ["Recovery", "Weight Management", "Performance", "Tanning", "
 const emptyForm = {
   name: "", slug: "", subtitle: "", type: "Research Peptide",
   description: "", details: "", benefits: "", category: "",
-  size: "", sizes: "", sizePrices: "", price: "", compareAtPrice: "",
+  price: "", compareAtPrice: "",
   purity: ">99%", stock: "", featured: false, points: "",
   customColor: "#6ab04c", imageFit: "",
 };
@@ -54,6 +54,7 @@ export default function ProductForm({ productId }) {
   const { user, loading } = useAuthStore();
 
   const [form, setForm] = useState(emptyForm);
+  const [sizeEntries, setSizeEntries] = useState([]); // [{ label: string, price: string }]
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
@@ -75,6 +76,14 @@ export default function ProductForm({ productId }) {
       const { products } = await getProducts();
       const product = products.find((p) => p.id === productId);
       if (!product) { router.replace("/admin/dashboard"); return; }
+      // Build sizeEntries from sizes + sizePrices
+      const loadedSizes = Array.isArray(product.sizes) ? product.sizes : [];
+      const loadedPrices = product.sizePrices || {};
+      const entries = loadedSizes.length > 0
+        ? loadedSizes.map((s) => ({ label: s, price: String(loadedPrices[s] ?? product.price ?? "") }))
+        : product.size ? [{ label: product.size, price: String(product.price ?? "") }] : [];
+      setSizeEntries(entries);
+
       setForm({
         name: product.name || "",
         slug: product.slug || "",
@@ -84,9 +93,6 @@ export default function ProductForm({ productId }) {
         details: product.details || "",
         benefits: Array.isArray(product.benefits) ? product.benefits.join("\n") : "",
         category: product.category || "",
-        size: product.size || "",
-        sizes: Array.isArray(product.sizes) ? product.sizes.join(", ") : "",
-        sizePrices: serializeSizePrices(product.sizePrices),
         price: product.price ?? "",
         compareAtPrice: product.compareAtPrice ?? "",
         purity: product.purity || ">99%",
@@ -141,6 +147,11 @@ export default function ProductForm({ productId }) {
         imageUrl = url;
       }
 
+      const validEntries = sizeEntries.filter((e) => e.label.trim());
+      const sizes = validEntries.map((e) => e.label.trim());
+      const sizePrices = Object.fromEntries(validEntries.map((e) => [e.label.trim(), parseFloat(e.price) || parseFloat(form.price) || 0]));
+      const defaultPrice = validEntries.length > 0 ? (parseFloat(validEntries[0].price) || parseFloat(form.price) || 0) : parseFloat(form.price) || 0;
+
       const payload = {
         name: form.name.trim(),
         slug: form.slug.trim() || slugify(form.name),
@@ -150,10 +161,10 @@ export default function ProductForm({ productId }) {
         details: form.details.trim(),
         benefits: parseLines(form.benefits),
         category: form.category,
-        size: form.size.trim(),
-        sizes: parseSizes(form.sizes),
-        sizePrices: parseSizePrices(form.sizePrices),
-        price: parseFloat(form.price) || 0,
+        size: sizes[0] || "",
+        sizes,
+        sizePrices,
+        price: defaultPrice,
         compareAtPrice: form.compareAtPrice ? parseFloat(form.compareAtPrice) : null,
         purity: form.purity.trim(),
         stock: parseInt(form.stock) || 0,
@@ -173,7 +184,7 @@ export default function ProductForm({ productId }) {
         if (updateErr) { setError(updateErr); setSaving(false); return; }
       }
 
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/store");
     } catch (err) {
       setError(err.message);
       setSaving(false);
@@ -188,7 +199,7 @@ export default function ProductForm({ productId }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
-        <Link href="/admin/dashboard" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+        <Link href="/admin/dashboard/store" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <h1 className="text-sm font-semibold text-gray-900">
@@ -250,11 +261,49 @@ export default function ProductForm({ productId }) {
 
         {/* Pricing */}
         <Section title="Pricing & Sizes">
+          {/* Size entries */}
+          <Field label="Sizes & Prices (mg)">
+            <div className="space-y-2">
+              {sizeEntries.map((entry, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={entry.label}
+                    onChange={(e) => setSizeEntries((prev) => prev.map((s, j) => j === i ? { ...s, label: e.target.value } : s))}
+                    placeholder="e.g. 5mg"
+                    className={`${inputCls} flex-1`}
+                  />
+                  <span className="text-xs text-gray-400 shrink-0">R</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={entry.price}
+                    onChange={(e) => setSizeEntries((prev) => prev.map((s, j) => j === i ? { ...s, price: e.target.value } : s))}
+                    placeholder="Price"
+                    className={`${inputCls} w-28`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSizeEntries((prev) => prev.filter((_, j) => j !== i))}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setSizeEntries((prev) => [...prev, { label: "", price: "" }])}
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-dashed border-gray-300 text-xs text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add size
+              </button>
+            </div>
+          </Field>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Default Size Label"><input type="text" value={form.size} onChange={set("size")} className={inputCls} placeholder="5mg" /></Field>
-            <Field label="Sizes (comma-separated)"><input type="text" value={form.sizes} onChange={set("sizes")} className={inputCls} placeholder="5mg, 10mg" /></Field>
-            <Field label="Size Prices (size: price, ...)"><input type="text" value={form.sizePrices} onChange={set("sizePrices")} className={inputCls} placeholder="5mg: 89.99, 10mg: 159.99" /></Field>
-            <Field label="Default Price (R)"><input type="number" step="0.01" value={form.price} onChange={set("price")} className={inputCls} /></Field>
+            <Field label="Fallback Price (R) — used if no sizes set"><input type="number" step="0.01" value={form.price} onChange={set("price")} className={inputCls} /></Field>
             <Field label="Compare-at Price (R)"><input type="number" step="0.01" value={form.compareAtPrice} onChange={set("compareAtPrice")} className={inputCls} /></Field>
           </div>
         </Section>
@@ -288,7 +337,7 @@ export default function ProductForm({ productId }) {
         {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
         <div className="flex items-center justify-end gap-3 pt-2">
-          <Link href="/admin/dashboard" className="h-10 px-5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+          <Link href="/admin/dashboard/store" className="h-10 px-5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors inline-flex items-center justify-center">
             Cancel
           </Link>
           <button type="submit" disabled={saving}

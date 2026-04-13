@@ -115,9 +115,17 @@ export default function AdminStore() {
                       </span>
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${product.featured ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
-                        {product.featured ? "Yes" : "No"}
-                      </span>
+                      <div className="relative group inline-flex">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium cursor-default ${product.featured ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                          {product.featured ? "Yes" : "No"}
+                        </span>
+                        {product.featured && (
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-[10px] rounded px-2.5 py-1.5 leading-snug opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 text-center">
+                            This product appears on the homepage featured grid
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 justify-end">
