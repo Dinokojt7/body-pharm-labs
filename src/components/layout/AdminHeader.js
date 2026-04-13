@@ -28,7 +28,7 @@ export default function AdminHeader({ backHref = null }) {
               <ArrowLeft className="w-4 h-4 text-gray-400" />
             </Link>
           )}
-          <div className="relative w-10 h-10 sm:w-12 sm:h-12">
+          <div className="relative w-14 h-14 sm:w-16 sm:h-16">
             <Image
               src="/images/logomark.png"
               alt="Body Pharm Labs"
