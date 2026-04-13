@@ -34,21 +34,21 @@ export default function CheckoutHeader() {
           </div>
         </Link>
 
-        {/* Center — pill step bars */}
+        {/* Center — step bars with labels below */}
         <div className="flex flex-1 items-center justify-center">
           <div className="flex gap-1 w-full max-w-64 sm:max-w-xs select-none">
             {STEPS.map((label, i) => {
               const filled = i <= currentStep;
               return (
-                <div
-                  key={label}
-                  className={`flex-1 h-8 rounded-full flex items-center justify-center text-[9px] sm:text-[10px] font-semibold tracking-[0.12em] uppercase transition-all duration-300 ${
-                    filled
-                      ? "bg-gray-900 text-white"
-                      : "bg-transparent border border-gray-300 text-gray-400"
-                  }`}
-                >
-                  {label}
+                <div key={label} className="flex-1 flex flex-col items-center gap-1.5">
+                  <div
+                    className={`w-full h-1.5 rounded-full transition-all duration-300 ${
+                      filled ? "bg-gray-700" : "border border-gray-300"
+                    }`}
+                  />
+                  <span className={`text-[9px] font-medium tracking-wide ${filled ? "text-gray-700" : "text-gray-400"}`}>
+                    {label}
+                  </span>
                 </div>
               );
             })}
