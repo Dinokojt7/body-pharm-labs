@@ -5,6 +5,7 @@ export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
+      profileName: "",
       isAuthenticated: false,
       authLoading: true,
       authError: null,
@@ -25,9 +26,12 @@ export const useAuthStore = create(
 
       setAuthError: (error) => set({ authError: error, authLoading: false }),
 
+      setProfileName: (name) => set({ profileName: name }),
+
       logout: () =>
         set({
           user: null,
+          profileName: "",
           isAuthenticated: false,
           authLoading: false,
           authError: null,
@@ -42,9 +46,9 @@ export const useAuthStore = create(
 
       // Helper to get user's display name
       getDisplayName: () => {
-        const user = get().user;
+        const { user, profileName } = get();
         if (!user) return "";
-        return user.displayName || user.email?.split("@")[0] || "User";
+        return profileName || user.displayName || user.email?.split("@")[0] || "User";
       },
     }),
     {

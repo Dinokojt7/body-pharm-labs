@@ -139,7 +139,7 @@ function AccountPageInner() {
   const searchParams = useSearchParams();
   const isWelcome = searchParams.get("welcome") === "1";
 
-  const { user, isAuthenticated, authLoading, getDisplayName } = useAuthStore();
+  const { user, isAuthenticated, authLoading, getDisplayName, setProfileName } = useAuthStore();
   const { addItem } = useCartStore();
   const { selectedCurrency } = useCurrency();
 
@@ -199,11 +199,13 @@ function AccountPageInner() {
   useEffect(() => {
     if (!user?.uid) return;
     getUserProfile(user.uid).then(({ profile: p }) => {
+      const displayName = p?.displayName || user.displayName || "";
       setProfile({
-        displayName: p?.displayName || user.displayName || "",
-        phone:       p?.phone       || user.phoneNumber  || "",
-        address:     p?.address     || { line1: "", city: "", province: "", country: "", zip: "" },
+        displayName,
+        phone:   p?.phone   || user.phoneNumber || "",
+        address: p?.address || { line1: "", city: "", province: "", country: "", zip: "" },
       });
+      if (displayName) setProfileName(displayName);
     });
   }, [user?.uid, user?.displayName, user?.phoneNumber]);
 
@@ -241,6 +243,7 @@ function AccountPageInner() {
     if (!user?.uid) return;
     setSaving(true);
     await saveUserProfile(user.uid, profile);
+    if (profile.displayName) setProfileName(profile.displayName);
     setSaving(false);
     setSaved(true);
     setEditing(false);
