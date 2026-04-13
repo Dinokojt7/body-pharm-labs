@@ -1,0 +1,318 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase/config";
+import { useAuthStore } from "@/lib/stores/auth-store";
+import { adminGetAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
+import { LogOut, ShoppingBag, ArrowLeft, ChevronDown, ChevronUp, Trash2, AlertTriangle } from "lucide-react";
+
+const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+
+const FULFILLMENT_STATUSES = [
+  { value: "pending",          label: "Pending",           color: "bg-yellow-50 text-yellow-700" },
+  { value: "processing",       label: "Processing",        color: "bg-blue-50 text-blue-700" },
+  { value: "shipped",          label: "Shipped",           color: "bg-indigo-50 text-indigo-700" },
+  { value: "out_for_delivery", label: "Out for Delivery",  color: "bg-purple-50 text-purple-700" },
+  { value: "delivered",        label: "Delivered",         color: "bg-green-50 text-green-700" },
+  { value: "on_hold",          label: "On Hold",           color: "bg-orange-50 text-orange-700" },
+  { value: "cancelled",        label: "Cancelled",         color: "bg-red-50 text-red-700" },
+  { value: "returned",         label: "Returned",          color: "bg-gray-100 text-gray-600" },
+];
+
+function StatusBadge({ status }) {
+  const match = FULFILLMENT_STATUSES.find((s) => s.value === status);
+  const color = match?.color || "bg-gray-100 text-gray-600";
+  const label = match?.label || status || "—";
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${color}`}>
+      {label}
+    </span>
+  );
+}
+
+function formatDate(ts) {
+  if (!ts) return "—";
+  const date = ts.toDate ? ts.toDate() : new Date(ts);
+  return date.toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function formatCurrency(amount, currency = "ZAR") {
+  return new Intl.NumberFormat("en-ZA", { style: "currency", currency }).format(amount ?? 0);
+}
+
+export default function AdminOrders() {
+  const router = useRouter();
+  const { user, loading } = useAuthStore();
+
+  const [orders, setOrders] = useState([]);
+  const [fetching, setFetching] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
+  const [confirmOrder, setConfirmOrder] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  useEffect(() => {
+    if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    if (!loading && user?.uid === ADMIN_UID) loadOrders();
+  }, [user, loading]);
+
+  const loadOrders = async () => {
+    setFetching(true);
+    const { orders } = await adminGetAllOrders();
+    setOrders(orders);
+    setFetching(false);
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    setUpdatingId(orderId);
+    await updateOrderStatus(orderId, newStatus);
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+    );
+    setUpdatingId(null);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    const order = confirmOrder;
+    setConfirmOrder(null);
+    setDeletingId(order.id);
+    await deleteOrder(order.id);
+    setOrders((prev) => prev.filter((o) => o.id !== order.id));
+    setDeletingId(null);
+  };
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.replace("/admin");
+  };
+
+  if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top bar */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link href="/admin/dashboard" className="p-1 rounded hover:bg-gray-100 transition-colors">
+            <ArrowLeft className="w-4 h-4 text-gray-400" />
+          </Link>
+          <ShoppingBag className="w-5 h-5 text-gray-400" />
+          <span className="font-semibold text-gray-900 text-sm">Manage Orders</span>
+        </div>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign out
+        </button>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-gray-900">Orders</h1>
+          <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
+        </div>
+
+        {fetching ? (
+          <div className="text-center py-20 text-gray-400 text-sm">Loading…</div>
+        ) : orders.length === 0 ? (
+          <div className="text-center py-20 text-gray-400 text-sm">No orders yet.</div>
+        ) : (
+          <div className="space-y-2">
+            {orders.map((order) => {
+              const isExpanded = expandedId === order.id;
+              return (
+                <div key={order.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  {/* Order row */}
+                  <div className="px-5 py-4 flex flex-wrap items-center gap-4">
+                    {/* Order number + date */}
+                    <div className="min-w-[140px]">
+                      <p className="text-xs font-bold text-gray-900 font-mono">{order.orderNumber || order.id.slice(0, 8).toUpperCase()}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">{formatDate(order.createdAt)}</p>
+                    </div>
+
+                    {/* Customer */}
+                    <div className="flex-1 min-w-[160px]">
+                      <p className="text-xs font-semibold text-gray-800">{order.firstName} {order.lastName}</p>
+                      <p className="text-[11px] text-gray-400 truncate">{order.email}</p>
+                    </div>
+
+                    {/* Items count + total */}
+                    <div className="hidden sm:block min-w-[80px] text-right">
+                      <p className="text-xs text-gray-500">{(order.items || []).length} item{order.items?.length !== 1 ? "s" : ""}</p>
+                      <p className="text-xs font-bold text-gray-900 mt-0.5">{formatCurrency(order.total, order.currency)}</p>
+                    </div>
+
+                    {/* Payment status */}
+                    <div className="hidden md:block">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${order.paymentStatus === "paid" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+                        {order.paymentStatus === "paid" ? "Paid" : order.paymentStatus || "Unpaid"}
+                      </span>
+                    </div>
+
+                    {/* Fulfillment status dropdown */}
+                    <div>
+                      <select
+                        value={order.status || "pending"}
+                        disabled={updatingId === order.id}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        className="h-7 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:border-gray-400 disabled:opacity-50 cursor-pointer"
+                      >
+                        {FULFILLMENT_STATUSES.map((s) => (
+                          <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 ml-auto">
+                      <button
+                        onClick={() => setConfirmOrder(order)}
+                        disabled={deletingId === order.id}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setExpandedId(isExpanded ? null : order.id)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expanded detail panel */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 px-5 py-5 bg-gray-50 grid sm:grid-cols-2 gap-6">
+                      {/* Items */}
+                      <div>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Items</p>
+                        <div className="space-y-2">
+                          {(order.items || []).map((item, i) => (
+                            <div key={i} className="flex items-center justify-between text-xs">
+                              <span className="text-gray-700 font-medium">
+                                {item.name}{item.size ? ` — ${item.size}` : ""} <span className="text-gray-400">× {item.quantity}</span>
+                              </span>
+                              <span className="text-gray-900 font-semibold">{formatCurrency(item.price * item.quantity, order.currency)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-gray-200 space-y-1">
+                          {order.memberDiscount > 0 && (
+                            <div className="flex justify-between text-xs text-gray-500">
+                              <span>Member discount</span>
+                              <span>−{formatCurrency(order.memberDiscount, order.currency)}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>Shipping</span>
+                            <span>{order.shipping === 0 ? "Free" : formatCurrency(order.shipping, order.currency)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>VAT (15%)</span>
+                            <span>{formatCurrency(order.tax, order.currency)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs font-bold text-gray-900 pt-1">
+                            <span>Total</span>
+                            <span>{formatCurrency(order.total, order.currency)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Customer + Shipping */}
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Customer</p>
+                          <p className="text-xs text-gray-700">{order.firstName} {order.lastName}</p>
+                          <p className="text-xs text-gray-500">{order.email}</p>
+                          {order.phone && <p className="text-xs text-gray-500">{order.phone}</p>}
+                        </div>
+
+                        {order.shippingAddress && (
+                          <div>
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Shipping Address</p>
+                            <p className="text-xs text-gray-700 leading-relaxed">
+                              {[
+                                order.shippingAddress.address,
+                                order.shippingAddress.city,
+                                order.shippingAddress.province,
+                                order.shippingAddress.postalCode,
+                                order.shippingAddress.country,
+                              ].filter(Boolean).join(", ")}
+                            </p>
+                          </div>
+                        )}
+
+                        {order.notes && (
+                          <div>
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</p>
+                            <p className="text-xs text-gray-600 italic">{order.notes}</p>
+                          </div>
+                        )}
+
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Status History</p>
+                          <div className="space-y-1.5">
+                            {(order.statusHistory || []).slice().reverse().map((h, i) => (
+                              <div key={i} className="flex items-start gap-2">
+                                <StatusBadge status={h.status} />
+                                <span className="text-[11px] text-gray-400">{formatDate(h.timestamp)}</span>
+                                {h.note && <span className="text-[11px] text-gray-400">— {h.note}</span>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Delete confirm modal */}
+      {confirmOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmOrder(null)} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-4 h-4 text-red-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Delete order?</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Order <span className="font-medium text-gray-700">{confirmOrder.orderNumber}</span> will be permanently removed.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-1">
+              <button
+                onClick={() => setConfirmOrder(null)}
+                className="h-9 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirmed}
+                className="h-9 px-4 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
