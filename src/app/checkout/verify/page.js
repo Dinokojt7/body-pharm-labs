@@ -101,7 +101,7 @@ function VerifyPageInner() {
           });
 
           clearCart();
-          router.replace(`/checkout/success?order=${orderNumber}`);
+          router.replace(`/orders/${orderNumber}`);
         } else {
           // Payment not successful — mark failed
           await updateOrderPayment(orderId, { status: "payment_failed" }).catch(() => {});

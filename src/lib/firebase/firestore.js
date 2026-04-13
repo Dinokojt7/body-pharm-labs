@@ -179,7 +179,9 @@ export const updateOrderPayment = async (orderId, { status, paystackReference, p
     ];
 
     await updateDoc(orderRef, {
-      status,
+      paymentStatus: status,
+      // Advance fulfillment status when payment confirmed
+      status: status === "paid" ? "processing" : status === "payment_failed" ? "payment_failed" : current.status,
       statusHistory,
       ...(paystackReference && { paystackReference }),
       ...(paidAt && { paidAt }),

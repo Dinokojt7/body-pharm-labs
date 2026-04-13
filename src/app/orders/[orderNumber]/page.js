@@ -92,7 +92,7 @@ export default function OrderDetailPage() {
           className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-black transition-colors mb-8"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Back to account
+          Back to orders
         </Link>
 
         {/* Fetch error */}
