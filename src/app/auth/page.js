@@ -278,7 +278,7 @@ export default function AuthPage() {
                           COUNTRY_CODES.find((c) => c.code === e.target.value),
                         )
                       }
-                      className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:border-black transition-colors cursor-pointer"
+                      className="appearance-none h-full pl-3 pr-8 border border-gray-200 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:border-black transition-colors cursor-pointer"
                     >
                       {COUNTRY_CODES.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -313,7 +313,7 @@ export default function AuthPage() {
                     placeholder="81 234 5678"
                     required
                     autoFocus
-                    className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+                    className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm bg-white text-gray-900 focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
                   />
                 </div>
 
@@ -380,7 +380,7 @@ export default function AuthPage() {
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="w-11 h-12 text-center text-lg font-bold border border-gray-200 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      className="w-11 h-12 text-center text-lg font-bold border border-gray-200 rounded-lg bg-white text-gray-900 focus:outline-none focus:border-black transition-colors"
                     />
                   ))}
                 </div>
