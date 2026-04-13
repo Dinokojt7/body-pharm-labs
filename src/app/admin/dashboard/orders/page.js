@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase/config";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { adminGetAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
-import { LogOut, ShoppingBag, ArrowLeft, ChevronDown, ChevronUp, Trash2, AlertTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, AlertTriangle } from "lucide-react";
+import AdminHeader from "@/components/layout/AdminHeader";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -87,32 +86,11 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
-  const handleSignOut = async () => {
-    await signOut(auth);
-    router.replace("/admin");
-  };
-
   if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/dashboard" className="p-1 rounded hover:bg-gray-100 transition-colors">
-            <ArrowLeft className="w-4 h-4 text-gray-400" />
-          </Link>
-          <ShoppingBag className="w-5 h-5 text-gray-400" />
-          <span className="font-semibold text-gray-900 text-sm">Manage Orders</span>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign out
-        </button>
-      </header>
+      <AdminHeader backHref="/admin/dashboard" />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="mb-6">
@@ -133,19 +111,19 @@ export default function AdminOrders() {
                   {/* Order row */}
                   <div className="px-5 py-4 flex flex-wrap items-center gap-4">
                     {/* Order number + date */}
-                    <div className="min-w-[140px]">
+                    <div className="min-w-35">
                       <p className="text-xs font-bold text-gray-900 font-mono">{order.orderNumber || order.id.slice(0, 8).toUpperCase()}</p>
                       <p className="text-[11px] text-gray-400 mt-0.5">{formatDate(order.createdAt)}</p>
                     </div>
 
                     {/* Customer */}
-                    <div className="flex-1 min-w-[160px]">
+                    <div className="flex-1 min-w-40">
                       <p className="text-xs font-semibold text-gray-800">{order.firstName} {order.lastName}</p>
                       <p className="text-[11px] text-gray-400 truncate">{order.email}</p>
                     </div>
 
                     {/* Items count + total */}
-                    <div className="hidden sm:block min-w-[80px] text-right">
+                    <div className="hidden sm:block min-w-20 text-right">
                       <p className="text-xs text-gray-500">{(order.items || []).length} item{order.items?.length !== 1 ? "s" : ""}</p>
                       <p className="text-xs font-bold text-gray-900 mt-0.5">{formatCurrency(order.total, order.currency)}</p>
                     </div>

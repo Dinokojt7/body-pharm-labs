@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase/config";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { getProducts, adminDeleteProduct } from "@/lib/firebase/firestore";
 import { deleteProductImage } from "@/lib/firebase/storage";
-import { Plus, Pencil, Trash2, LogOut, Package, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Plus, Pencil, Trash2, AlertTriangle } from "lucide-react";
+import AdminHeader from "@/components/layout/AdminHeader";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -47,31 +46,11 @@ export default function AdminStore() {
     setDeletingId(null);
   };
 
-  const handleSignOut = async () => {
-    await signOut(auth);
-    router.replace("/admin");
-  };
-
   if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/dashboard" className="p-1 rounded hover:bg-gray-100 transition-colors">
-            <ArrowLeft className="w-4 h-4 text-gray-400" />
-          </Link>
-          <Package className="w-5 h-5 text-gray-400" />
-          <span className="font-semibold text-gray-900 text-sm">Manage Store</span>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign out
-        </button>
-      </header>
+      <AdminHeader backHref="/admin/dashboard" />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
