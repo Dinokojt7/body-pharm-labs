@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="absolute inset-0">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url(/images/about-hero.jpg)" }}
+            style={{ backgroundImage: "url(/images/hero-bg1.webp)" }}
           />
           <div className="absolute inset-0 bg-black/60" />
         </div>
