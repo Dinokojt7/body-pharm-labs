@@ -115,8 +115,10 @@ export default function AdminOrders() {
 
                     {/* Customer */}
                     <div className="flex-1 min-w-40">
-                      <p className="text-xs font-semibold text-gray-800">{order.firstName} {order.lastName}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{order.email}</p>
+                      <p className="text-xs font-semibold text-gray-800">
+                        {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
+                      </p>
+                      <p className="text-[11px] text-gray-400 truncate">{order.customer?.email || order.email}</p>
                     </div>
 
                     {/* Items count + total */}
@@ -206,9 +208,13 @@ export default function AdminOrders() {
                       <div className="space-y-4">
                         <div>
                           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Customer</p>
-                          <p className="text-xs text-gray-700">{order.firstName} {order.lastName}</p>
-                          <p className="text-xs text-gray-500">{order.email}</p>
-                          {order.phone && <p className="text-xs text-gray-500">{order.phone}</p>}
+                          <p className="text-xs font-semibold text-gray-700">
+                            {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500">{order.customer?.email || order.email}</p>
+                          {(order.customer?.phone || order.phone) && (
+                            <p className="text-xs text-gray-500">{order.customer?.phone || order.phone}</p>
+                          )}
                         </div>
 
                         {order.shippingAddress && (

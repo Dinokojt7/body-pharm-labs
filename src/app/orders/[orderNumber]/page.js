@@ -30,7 +30,7 @@ const STATUS_CONFIG = {
 };
 
 const STEP_INDEX = {
-  paid: 1, confirmed: 2, shipped: 3, delivered: 4,
+  paid: 1, processing: 1, confirmed: 2, shipped: 3, out_for_delivery: 3, on_hold: 3, delivered: 4,
 };
 
 const STEPS = ["Order Placed", "Payment Confirmed", "Preparing", "Shipped", "Delivered"];
