@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { User, ShoppingBag, Menu, X } from "lucide-react";
+import { User, ShoppingBag, X } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useUIStore } from "@/lib/stores/ui-store";
@@ -52,14 +52,14 @@ const Header = () => {
             >
               {isMobileMenuOpen
                 ? <X className="w-6 h-6 text-black" />
-                : <Menu className="w-6 h-6 text-black" />}
+                : <Image src="/images/hamburger-v2.webp" alt="Menu" width={24} height={24} className="object-contain" />}
             </button>
 
             {/* Center — logo */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-40">
               <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
                 <Image
-                  src="/images/logomark.png"
+                  src="/images/logo-header.png"
                   alt="Body Pharm Labs"
                   fill
                   priority
