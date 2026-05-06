@@ -6,8 +6,6 @@ import { motion } from "framer-motion";
 import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 const eligible = [
-  "Order arrived damaged or contaminated",
-  "Product received differs materially from description",
   "Order never arrived after 21 business days",
   "Duplicate charge processed in error",
 ];
