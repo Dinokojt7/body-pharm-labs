@@ -44,12 +44,8 @@ const AboutSection = () => {
           {/* Third-party test block */}
           <div className="space-y-3">
             <h3 className="text-sm sm:text-base font-semibold tracking-widest uppercase text-black">
-              We Want You to Third-Party Test Our Products
+              99%+ Purity is always guaranteed. 
             </h3>
-            <p className="text-sm text-black/45 leading-relaxed">
-              99%+ Purity is always guaranteed. We will offer credit for testing our products.
-              If any batch fails to meet our published specifications, we&apos;ll replace it at no cost.
-            </p>
           </div>
         </motion.div>
       </div>
