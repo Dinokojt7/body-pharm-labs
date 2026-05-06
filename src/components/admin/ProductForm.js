@@ -269,16 +269,26 @@ export default function ProductForm({ productId }) {
                   <input
                     type="text"
                     value={entry.label}
-                    onChange={(e) => setSizeEntries((prev) => prev.map((s, j) => j === i ? { ...s, label: e.target.value } : s))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const updated = [...sizeEntries];
+                      updated[i] = { ...updated[i], label: val };
+                      setSizeEntries(updated);
+                    }}
                     placeholder="e.g. 5mg"
-                    className="flex-1 min-w-0 h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-gray-400 bg-white"
+                    className="w-32 h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-gray-400 bg-white"
                   />
                   <span className="text-xs text-gray-400 shrink-0">R</span>
                   <input
                     type="number"
                     step="0.01"
                     value={entry.price}
-                    onChange={(e) => setSizeEntries((prev) => prev.map((s, j) => j === i ? { ...s, price: e.target.value } : s))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const updated = [...sizeEntries];
+                      updated[i] = { ...updated[i], price: val };
+                      setSizeEntries(updated);
+                    }}
                     placeholder="Price"
                     className={`${inputCls} w-28`}
                   />
