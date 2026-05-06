@@ -271,7 +271,7 @@ export default function ProductForm({ productId }) {
                     value={entry.label}
                     onChange={(e) => setSizeEntries((prev) => prev.map((s, j) => j === i ? { ...s, label: e.target.value } : s))}
                     placeholder="e.g. 5mg"
-                    className={`${inputCls} flex-1`}
+                    className="flex-1 min-w-0 h-10 px-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-gray-400 bg-white"
                   />
                   <span className="text-xs text-gray-400 shrink-0">R</span>
                   <input
