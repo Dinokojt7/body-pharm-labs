@@ -20,26 +20,12 @@ const PromoSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-2xl sm:text-4xl md:text-6xl font-bold text-black leading-tight mb-6"
+          className="text-2xl sm:text-4xl md:text-6xl font-bold text-black leading-tight"
         >
-          WE WANT YOU
+          99%+ PURITY IS
           <br />
-          TO THIRD-PARTY TEST
-          <br />
-          OUR PRODUCTS
+          ALWAYS GUARANTEED.
         </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto"
-        >
-          99%+ Purity is always guaranteed. We will offer credit for testing our
-          products. If any batch fails to meet our published specifications,
-          we'll replace it at no cost.
-        </motion.p>
       </div>
     </section>
   );
