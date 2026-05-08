@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import CheckoutHeader from "./CheckoutHeader";
 import OrderHeader from "./OrderHeader";
 import MembershipModal from "@/components/ui/MembershipModal";
+import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
 const CHECKOUT_ROUTES = ["/checkout", "/checkout/success", "/checkout/verify"];
 
@@ -45,6 +46,7 @@ export default function SiteChrome({ children }) {
       <main className="min-h-screen pt-20 md:pt-24">{children}</main>
       <Footer />
       <MembershipModal />
+      <WhatsAppFloat />
     </>
   );
 }

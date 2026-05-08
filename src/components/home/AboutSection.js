@@ -51,7 +51,7 @@ const AboutSection = () => {
       </div>
 
       {/* ── Dark About section ── */}
-      <section className="relative w-full py-24 pb-36 px-4 md:px-8 lg:px-12 bg-black overflow-hidden">
+      <section id="about-section" className="relative w-full py-24 pb-36 px-4 md:px-8 lg:px-12 bg-black overflow-hidden">
         <div className="relative max-w-7xl mx-auto">
 
           {/* Two-column layout */}
