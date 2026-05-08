@@ -6,13 +6,11 @@ import { motion } from "framer-motion";
 import {
   Mail,
   Phone,
-  MapPin,
   Instagram,
   Facebook,
   Twitter,
   Linkedin,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 import siteData from "@/lib/data/site-data.json";
 
@@ -54,13 +52,6 @@ const Footer = () => {
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               {business.description}
             </p>
-
-            <div className="flex items-center gap-2 pt-2">
-              <Sparkles className="w-4 h-4 text-gray-400" />
-              <span className="text-xs text-gray-400 tracking-wider uppercase">
-                ISO 9001:2024 Certified
-              </span>
-            </div>
 
             <div className="flex items-center gap-3 pt-2">
               {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -181,16 +172,6 @@ const Footer = () => {
                 </div>
                 <span className="text-sm break-all">{business.email}</span>
               </a>
-
-              {/* Address */}
-              <div className="flex items-start gap-3 text-gray-600">
-                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <span className="text-sm leading-relaxed">
-                  {business.address}
-                </span>
-              </div>
 
             </div>
           </motion.div>

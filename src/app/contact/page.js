@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, Clock } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ContactForm from "@/components/forms/ContactForm";
 import siteData from "@/lib/data/site-data.json";
@@ -22,12 +22,6 @@ export default function ContactPage() {
       title: "Email",
       content: business.email,
       link: `mailto:${business.email}`,
-    },
-    {
-      icon: <MapPin className="w-6 h-6" />,
-      title: "Address",
-      content: business.address,
-      link: `https://maps.google.com/?q=${encodeURIComponent(business.address)}`,
     },
     {
       icon: <Clock className="w-6 h-6" />,
@@ -112,34 +106,15 @@ export default function ContactPage() {
           ))}
         </div>
 
-        {/* Contact Form & Map */}
-        <div className="grid lg:grid-cols-2 gap-12">
+        {/* Contact Form */}
+        <div className="max-w-2xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
             <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
             <ContactForm />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl font-bold mb-6">Our Location</h2>
-            <div className="aspect-video bg-gray-200 rounded overflow-hidden">
-              <iframe
-                src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(business.address)}`}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                className="w-full h-full"
-              />
-            </div>
           </motion.div>
         </div>
       </section>
