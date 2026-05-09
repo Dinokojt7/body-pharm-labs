@@ -54,7 +54,7 @@ export default function ProductForm({ productId }) {
   const { user, loading } = useAuthStore();
 
   const [form, setForm] = useState(emptyForm);
-  const [sizeEntries, setSizeEntries] = useState([]); // [{ label: string, price: string }]
+  const [sizeEntries, setSizeEntries] = useState([]); // [{ label, price, imageUrl, imageFile }]
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
@@ -62,6 +62,8 @@ export default function ProductForm({ productId }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
+  const sizeImageInputRef = useRef(null);
+  const activeSizeIndexRef = useRef(null);
 
   // Auth guard
   useEffect(() => {
@@ -79,9 +81,10 @@ export default function ProductForm({ productId }) {
       // Build sizeEntries from sizes + sizePrices
       const loadedSizes = Array.isArray(product.sizes) ? product.sizes : [];
       const loadedPrices = product.sizePrices || {};
+      const loadedSizeImages = product.sizeImages || {};
       const entries = loadedSizes.length > 0
-        ? loadedSizes.map((s) => ({ label: s, price: String(loadedPrices[s] ?? product.price ?? "") }))
-        : product.size ? [{ label: product.size, price: String(product.price ?? "") }] : [];
+        ? loadedSizes.map((s) => ({ label: s, price: String(loadedPrices[s] ?? product.price ?? ""), imageUrl: loadedSizeImages[s] || null, imageFile: null }))
+        : product.size ? [{ label: product.size, price: String(product.price ?? ""), imageUrl: loadedSizeImages[product.size] || null, imageFile: null }] : [];
       setSizeEntries(entries);
 
       setForm({
@@ -131,6 +134,27 @@ export default function ProductForm({ productId }) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleSizeImagePick = (i) => {
+    activeSizeIndexRef.current = i;
+    sizeImageInputRef.current?.click();
+  };
+
+  const handleSizeImageChange = (e) => {
+    const file = e.target.files?.[0];
+    const i = activeSizeIndexRef.current;
+    if (!file || i === null) return;
+    const updated = [...sizeEntries];
+    updated[i] = { ...updated[i], imageFile: file, imageUrl: URL.createObjectURL(file) };
+    setSizeEntries(updated);
+    e.target.value = "";
+  };
+
+  const removeSizeImage = (i) => {
+    const updated = [...sizeEntries];
+    updated[i] = { ...updated[i], imageFile: null, imageUrl: null };
+    setSizeEntries(updated);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) { setError("Name is required."); return; }
@@ -139,9 +163,9 @@ export default function ProductForm({ productId }) {
 
     try {
       let imageUrl = existingImageUrl;
+      const docId = isNew ? `new-${Date.now()}` : productId;
 
       if (imageFile) {
-        const docId = isNew ? `new-${Date.now()}` : productId;
         const { url, error: uploadErr } = await uploadProductImage(imageFile, docId);
         if (uploadErr) { setError("Image upload failed: " + uploadErr); setSaving(false); return; }
         imageUrl = url;
@@ -151,6 +175,19 @@ export default function ProductForm({ productId }) {
       const sizes = validEntries.map((e) => e.label.trim());
       const sizePrices = Object.fromEntries(validEntries.map((e) => [e.label.trim(), parseFloat(e.price) || parseFloat(form.price) || 0]));
       const defaultPrice = validEntries.length > 0 ? (parseFloat(validEntries[0].price) || parseFloat(form.price) || 0) : parseFloat(form.price) || 0;
+
+      // Upload per-size images
+      const sizeImages = {};
+      for (const entry of validEntries) {
+        const key = entry.label.trim();
+        if (entry.imageFile) {
+          const { url, error: uploadErr } = await uploadProductImage(entry.imageFile, `${docId}-size-${slugify(key)}`);
+          if (uploadErr) { setError("Size image upload failed: " + uploadErr); setSaving(false); return; }
+          sizeImages[key] = url;
+        } else if (entry.imageUrl && !entry.imageUrl.startsWith("blob:")) {
+          sizeImages[key] = entry.imageUrl;
+        }
+      }
 
       const payload = {
         name: form.name.trim(),
@@ -174,6 +211,7 @@ export default function ProductForm({ productId }) {
         imageFit: form.imageFit || null,
         imageUrl: imageUrl || null,
         imageString: imageUrl || null,
+        sizeImages,
       };
 
       if (isNew) {
@@ -264,6 +302,7 @@ export default function ProductForm({ productId }) {
           {/* Size entries */}
           <Field label="Sizes & Prices (mg)">
             <div className="space-y-2">
+              <input ref={sizeImageInputRef} type="file" accept="image/*" onChange={handleSizeImageChange} className="hidden" />
               {sizeEntries.map((entry, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <input
@@ -292,6 +331,28 @@ export default function ProductForm({ productId }) {
                     placeholder="Price"
                     className={`${inputCls} w-28`}
                   />
+                  {/* Per-size image */}
+                  {entry.imageUrl ? (
+                    <div className="relative w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden shrink-0">
+                      <Image src={entry.imageUrl} alt="" fill className="object-contain p-1" unoptimized />
+                      <button
+                        type="button"
+                        onClick={() => removeSizeImage(i)}
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSizeImagePick(i)}
+                      className="w-10 h-10 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-gray-500 hover:text-gray-600 transition-colors shrink-0"
+                      title="Add image for this size"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => setSizeEntries((prev) => prev.filter((_, j) => j !== i))}
@@ -303,7 +364,7 @@ export default function ProductForm({ productId }) {
               ))}
               <button
                 type="button"
-                onClick={() => setSizeEntries((prev) => [...prev, { label: "", price: "" }])}
+                onClick={() => setSizeEntries((prev) => [...prev, { label: "", price: "", imageUrl: null, imageFile: null }])}
                 className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-dashed border-gray-300 text-xs text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />

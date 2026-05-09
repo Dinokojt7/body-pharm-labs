@@ -25,6 +25,13 @@ const ProductDetail = ({ product }) => {
     (product.sizePrices && selectedSize && product.sizePrices[selectedSize]) ||
     product.price;
 
+  // Image for the currently selected size (falls back to product image)
+  const activeImage =
+    (product.sizeImages && selectedSize && product.sizeImages[selectedSize]) ||
+    product.imageString ||
+    product.imageUrl ||
+    null;
+
   // Total qty of this product currently in cart (all sizes combined)
   const cartQty = items
     .filter((item) => item.id === product.id)
@@ -42,7 +49,7 @@ const ProductDetail = ({ product }) => {
     <div className="grid md:grid-cols-2 gap-12">
       {/* Left Column - Image */}
       <div className="space-y-4">
-        <ProductImageZoom product={product} />
+        <ProductImageZoom product={product} activeImage={activeImage} />
 
         {/* Thumbnails - Add if needed */}
       </div>

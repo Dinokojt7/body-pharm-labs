@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 
-const ProductImageZoom = ({ product }) => {
+const ProductImageZoom = ({ product, activeImage }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [origin, setOrigin] = useState({ x: 50, y: 50 });
   const containerRef = useRef(null);
@@ -39,10 +39,10 @@ const ProductImageZoom = ({ product }) => {
 
       {/* Zoomable Image */}
       <Image
-        src={product.imageString || "/images/placeholder.jpg"}
+        src={activeImage || product.imageString || "/images/placeholder.jpg"}
         alt={product.name}
         fill
-        className={`transition-transform duration-200 ease-out pointer-events-none ${product.imageString?.endsWith(".png") ? `object-contain ${product.imageFit === "large" ? "p-2" : "p-6"}` : "object-cover"}`}
+        className={`transition-transform duration-200 ease-out pointer-events-none ${(activeImage || product.imageString)?.endsWith(".png") ? `object-contain ${product.imageFit === "large" ? "p-2" : "p-6"}` : "object-cover"}`}
         style={{
           transform: isHovered ? "scale(2)" : "scale(1)",
           transformOrigin: `${origin.x}% ${origin.y}%`,
