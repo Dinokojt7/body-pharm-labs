@@ -12,6 +12,7 @@ import {
   adminDeleteDiscount,
 } from "@/lib/firebase/firestore";
 import AdminHeader from "@/components/layout/AdminHeader";
+import CustomDatePicker from "@/components/ui/CustomDatePicker";
 import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Info } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
 
@@ -69,6 +70,7 @@ export default function DiscountsPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null); // discount id to delete
 
   useEffect(() => {
     if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
@@ -115,10 +117,11 @@ export default function DiscountsPage() {
     setDiscounts((prev) => prev.map((d) => d.id === discount.id ? { ...d, active: !d.active } : d));
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this discount code?")) return;
-    await adminDeleteDiscount(id);
-    setDiscounts((prev) => prev.filter((d) => d.id !== id));
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
+    await adminDeleteDiscount(confirmDelete);
+    setDiscounts((prev) => prev.filter((d) => d.id !== confirmDelete));
+    setConfirmDelete(null);
   };
 
   const isExpired = (d) => d.expiresAt && d.expiresAt.toMillis() < Date.now();
@@ -226,11 +229,10 @@ export default function DiscountsPage() {
                   <FieldLabel tooltip="The last date this code can be used. After midnight on this date, the code will be rejected at checkout. Leave blank if the code should never expire.">
                     Expiry Date
                   </FieldLabel>
-                  <input
-                    type="date"
+                  <CustomDatePicker
                     value={form.expiresAt}
-                    onChange={(e) => setForm((p) => ({ ...p, expiresAt: e.target.value }))}
-                    className={inputCls}
+                    onChange={(val) => setForm((p) => ({ ...p, expiresAt: val }))}
+                    placeholder="No expiry"
                   />
                 </motion.div>
 
@@ -338,7 +340,7 @@ export default function DiscountsPage() {
                                 : <ToggleLeft className="w-5 h-5" />}
                             </button>
                             <button
-                              onClick={() => handleDelete(d.id)}
+                              onClick={() => setConfirmDelete(d.id)}
                               className="text-gray-300 hover:text-red-500 transition-colors"
                               title="Delete"
                             >
@@ -355,6 +357,40 @@ export default function DiscountsPage() {
           )}
         </motion.div>
       </div>
+
+      {/* Delete confirm modal */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0"
+          >
+            <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmDelete(null)} />
+            <motion.div
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 16, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4"
+            >
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Delete discount code?</p>
+                <p className="text-xs text-gray-500 mt-1">This action cannot be undone. The code will stop working immediately.</p>
+              </div>
+              <div className="flex gap-2 justify-end pt-1">
+                <button onClick={() => setConfirmDelete(null)} className="h-10 px-5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+                  Cancel
+                </button>
+                <button onClick={handleDelete} className="h-10 px-5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

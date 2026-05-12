@@ -9,6 +9,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import { processOrder, generateOrderNumber } from "@/lib/services/order-service";
 import { getUserProfile } from "@/lib/firebase/firestore";
+import CustomSelect from "@/components/ui/CustomSelect";
 import productsData from "@/lib/data/products.json";
 
 // Lookup map so we can always resolve images even if missing from the cart item
@@ -310,21 +311,14 @@ const CheckoutForm = ({
 
           <div>
             <label className={labelClass}>Country <span className="text-red-400">*</span></label>
-            <select
-              name="country"
+            <CustomSelect
               value={formData.country}
-              onChange={handleInputChange}
-              className={inputClass}
-            >
-              <option value="South Africa">South Africa</option>
-              <option value="United States">United States</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="Canada">Canada</option>
-              <option value="Australia">Australia</option>
-              <option value="Germany">Germany</option>
-              <option value="France">France</option>
-              <option value="Netherlands">Netherlands</option>
-            </select>
+              onChange={(val) => setFormData((p) => ({ ...p, country: val }))}
+              options={[
+                "South Africa","United States","United Kingdom","Canada",
+                "Australia","Germany","France","Netherlands",
+              ].map((c) => ({ value: c, label: c }))}
+            />
           </div>
         </div>
       </div>

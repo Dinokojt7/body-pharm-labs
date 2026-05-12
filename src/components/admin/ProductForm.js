@@ -8,6 +8,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { getProducts, adminCreateProduct, adminUpdateProduct } from "@/lib/firebase/firestore";
 import { uploadProductImage } from "@/lib/firebase/storage";
 import { ArrowLeft, Upload, X, Plus } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -283,10 +284,11 @@ export default function ProductForm({ productId }) {
             <Field label="Subtitle"><input type="text" value={form.subtitle} onChange={set("subtitle")} className={inputCls} placeholder="e.g. BPC 157" /></Field>
             <Field label="Type"><input type="text" value={form.type} onChange={set("type")} className={inputCls} /></Field>
             <Field label="Category">
-              <select value={form.category} onChange={set("category")} className={inputCls}>
-                <option value="">Select…</option>
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <CustomSelect
+                value={form.category}
+                onChange={(val) => setForm((p) => ({ ...p, category: val }))}
+                options={[{ value: "", label: "Select…" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))]}
+              />
             </Field>
             <Field label="Purity"><input type="text" value={form.purity} onChange={set("purity")} className={inputCls} /></Field>
           </div>
@@ -391,10 +393,11 @@ export default function ProductForm({ productId }) {
               </div>
             </Field>
             <Field label="Image Fit">
-              <select value={form.imageFit} onChange={set("imageFit")} className={inputCls}>
-                <option value="">Default (padded)</option>
-                <option value="large">Large (minimal padding)</option>
-              </select>
+              <CustomSelect
+                value={form.imageFit}
+                onChange={(val) => setForm((p) => ({ ...p, imageFit: val }))}
+                options={[{ value: "", label: "Default (padded)" }, { value: "large", label: "Large (minimal padding)" }]}
+              />
             </Field>
             <Field label="Featured">
               <label className="flex items-center gap-2 h-10 cursor-pointer">

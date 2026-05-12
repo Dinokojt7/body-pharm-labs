@@ -7,6 +7,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
 import { ChevronDown, ChevronUp, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 
@@ -135,17 +136,13 @@ export default function AdminOrders() {
                     </div>
 
                     {/* Fulfillment status dropdown */}
-                    <div>
-                      <select
+                    <div className={updatingId === order.id ? "opacity-50 pointer-events-none" : ""}>
+                      <CustomSelect
+                        compact
                         value={order.status || "pending"}
-                        disabled={updatingId === order.id}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        className="h-7 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:border-gray-400 disabled:opacity-50 cursor-pointer"
-                      >
-                        {FULFILLMENT_STATUSES.map((s) => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
+                        onChange={(val) => handleStatusChange(order.id, val)}
+                        options={FULFILLMENT_STATUSES.map((s) => ({ value: s.value, label: s.label }))}
+                      />
                     </div>
 
                     {/* Actions */}
