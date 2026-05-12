@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, CalendarDays, X } from "lucide-react";
 
@@ -25,17 +26,45 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
   const today = new Date();
 
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
   const [view, setView] = useState(() => {
     const base = selected || today;
     return { year: base.getFullYear(), month: base.getMonth() };
   });
-  const ref = useRef(null);
+  const triggerRef = useRef(null);
+  const calendarRef = useRef(null);
 
+  // Close on any scroll or resize
   useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [open]);
+
+  // Click-outside: check both trigger and portal calendar
+  useEffect(() => {
+    const handler = (e) => {
+      if (!triggerRef.current?.contains(e.target) && !calendarRef.current?.contains(e.target)) {
+        setOpen(false);
+      }
+    };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Compute position synchronously at click time
+  const handleToggle = () => {
+    if (!open && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setCoords({ top: r.bottom + 6, left: r.left });
+    }
+    setOpen((v) => !v);
+  };
 
   const prevMonth = () => setView((v) => {
     const d = new Date(v.year, v.month - 1);
@@ -75,11 +104,12 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
     : "";
 
   return (
-    <div ref={ref} className="relative w-full">
+    <div className="relative w-full">
       {/* Trigger */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleToggle}
         className="w-full h-10 px-3 flex items-center justify-between gap-2 border border-gray-200 rounded-lg bg-white text-sm focus:outline-none focus:border-gray-400 transition-colors cursor-pointer select-none"
       >
         <span className={displayValue ? "text-gray-900" : "text-gray-400"}>
@@ -98,15 +128,17 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
         </div>
       </button>
 
-      {/* Calendar popup */}
+      {/* Calendar — portaled to document.body, never clipped by any ancestor */}
       <AnimatePresence>
-        {open && (
+        {open && createPortal(
           <motion.div
+            ref={calendarRef}
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.16 }}
-            className="absolute z-50 top-full mt-1.5 left-0 bg-white border border-gray-100 rounded-xl shadow-xl p-4 w-72"
+            style={{ top: coords.top, left: coords.left }}
+            className="fixed z-9999 w-72 bg-white border border-gray-100 rounded-xl shadow-xl p-4"
           >
             {/* Month nav */}
             <div className="flex items-center justify-between mb-4">
@@ -161,7 +193,8 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
                 </button>
               </div>
             )}
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
     </div>

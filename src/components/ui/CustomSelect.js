@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
@@ -18,25 +18,19 @@ export default function CustomSelect({
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  const reposition = useCallback(() => {
-    if (!triggerRef.current) return;
-    const r = triggerRef.current.getBoundingClientRect();
-    setCoords({ top: r.bottom + 6, left: r.left, width: r.width });
-  }, []);
-
-  // Update position when open, close on scroll/resize
+  // Close on any scroll or resize so the dropdown doesn't float in wrong position
   useEffect(() => {
     if (!open) return;
-    reposition();
-    window.addEventListener("scroll", reposition, true);
-    window.addEventListener("resize", reposition);
+    const close = () => setOpen(false);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
     return () => {
-      window.removeEventListener("scroll", reposition, true);
-      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
     };
-  }, [open, reposition]);
+  }, [open]);
 
-  // Click-outside closes
+  // Click-outside: check both trigger and portal dropdown
   useEffect(() => {
     const handler = (e) => {
       if (!triggerRef.current?.contains(e.target) && !dropdownRef.current?.contains(e.target)) {
@@ -46,6 +40,16 @@ export default function CustomSelect({
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Compute position synchronously at click time so the portal renders at the
+  // correct coordinates on the very first frame — no useEffect delay / flash
+  const handleToggle = () => {
+    if (!open && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setCoords({ top: r.bottom + 6, left: r.left, width: r.width });
+    }
+    setOpen((v) => !v);
+  };
 
   const selected = options.find((o) => o.value === value);
   const triggerCls = compact
@@ -57,7 +61,7 @@ export default function CustomSelect({
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleToggle}
         className={`${triggerCls} flex items-center justify-between gap-2 focus:outline-none focus:border-gray-400 transition-colors select-none`}
       >
         <span className={selected ? "" : "text-gray-400"}>
