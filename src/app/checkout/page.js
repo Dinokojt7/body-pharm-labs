@@ -27,6 +27,11 @@ export default function CheckoutPage() {
   const [shippingCost, setShippingCost] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isMember, setIsMember] = useState(false);
+  const [promoInput, setPromoInput] = useState("");
+  const [promoCode, setPromoCode] = useState(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoError, setPromoError] = useState("");
+  const [promoApplying, setPromoApplying] = useState(false);
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -45,7 +50,38 @@ export default function CheckoutPage() {
 
   const memberDiscount = isMember ? subtotal * 0.1 : 0;
   const tax = subtotal * 0.15; // 15% VAT
-  const total = subtotal - memberDiscount + tax + shippingCost;
+  const total = subtotal - memberDiscount - promoDiscount + tax + shippingCost;
+
+  const applyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoApplying(true);
+    setPromoError("");
+    try {
+      const res = await fetch("/api/validate-discount", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoInput.trim(), subtotal }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setPromoCode(data.code);
+        setPromoDiscount(data.amount);
+        setPromoInput("");
+      } else {
+        setPromoError(data.error || "Invalid code.");
+      }
+    } catch {
+      setPromoError("Could not apply code. Please try again.");
+    }
+    setPromoApplying(false);
+  };
+
+  const removePromo = () => {
+    setPromoCode(null);
+    setPromoDiscount(0);
+    setPromoError("");
+    setPromoInput("");
+  };
 
   if (items.length === 0) return null;
 
@@ -119,6 +155,8 @@ export default function CheckoutPage() {
               shippingCost={shippingCost}
               total={total}
               memberDiscount={memberDiscount}
+              promoCode={promoCode}
+              promoDiscount={promoDiscount}
               onShippingChange={setShippingCost}
               loading={loading}
               setLoading={setLoading}
@@ -157,6 +195,37 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
+              {/* Promo Code */}
+              <div className="pt-4 border-t border-gray-200">
+                {promoCode ? (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-green-600 font-medium">Code: {promoCode}</span>
+                    <button onClick={removePromo} className="text-xs text-gray-400 hover:text-black transition-colors underline">Remove</button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoInput}
+                        onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError(""); }}
+                        onKeyDown={(e) => e.key === "Enter" && applyPromo()}
+                        placeholder="Promo code"
+                        className="flex-1 h-9 px-3 rounded border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 bg-white uppercase"
+                      />
+                      <button
+                        onClick={applyPromo}
+                        disabled={promoApplying || !promoInput.trim()}
+                        className="h-9 px-4 rounded bg-black text-white text-xs font-semibold hover:bg-gray-800 transition-colors disabled:opacity-40"
+                      >
+                        {promoApplying ? "…" : "Apply"}
+                      </button>
+                    </div>
+                    {promoError && <p className="text-xs text-red-500">{promoError}</p>}
+                  </div>
+                )}
+              </div>
+
               {/* Totals */}
               <div className="space-y-3 pt-4 border-t border-gray-200">
                 <div className="flex justify-between text-sm">
@@ -167,6 +236,12 @@ export default function CheckoutPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-blue-600 font-medium">Member Discount (10%)</span>
                     <span className="text-blue-600 font-medium">−{formatPrice(memberDiscount)}</span>
+                  </div>
+                )}
+                {promoDiscount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600 font-medium">Promo Code ({promoCode})</span>
+                    <span className="text-green-600 font-medium">−{formatPrice(promoDiscount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">

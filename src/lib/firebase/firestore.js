@@ -335,6 +335,86 @@ export const activateMembership = async (uid, { joinedAt, paystackRef }) => {
   }
 };
 
+// ─── Discounts ─────────────────────────────────────────────────────────────
+
+export const validateDiscount = async (code) => {
+  if (!db) return { discount: null, error: "Not available" };
+  try {
+    const q = query(collection(db, "discounts"), where("code", "==", code.toUpperCase().trim()));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return { discount: null, error: "Invalid discount code." };
+    const d = snapshot.docs[0];
+    const discount = { id: d.id, ...d.data() };
+    if (!discount.active) return { discount: null, error: "This code is no longer active." };
+    if (discount.expiresAt && discount.expiresAt.toMillis() < Date.now())
+      return { discount: null, error: "This code has expired." };
+    if (discount.maxUses !== null && discount.uses >= discount.maxUses)
+      return { discount: null, error: "This code has reached its maximum uses." };
+    return { discount, error: null };
+  } catch (error) {
+    return { discount: null, error: error.message };
+  }
+};
+
+export const incrementDiscountUses = async (code) => {
+  if (!db) return;
+  try {
+    const { increment } = await import("firebase/firestore");
+    const q = query(collection(db, "discounts"), where("code", "==", code.toUpperCase().trim()));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return;
+    await updateDoc(doc(db, "discounts", snapshot.docs[0].id), { uses: increment(1) });
+  } catch { /* silent */ }
+};
+
+export const adminGetDiscounts = async () => {
+  if (!db) return { discounts: [], error: "Not available" };
+  try {
+    const snapshot = await getDocs(collection(db, "discounts"));
+    const discounts = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+    return { discounts, error: null };
+  } catch (error) {
+    return { discounts: [], error: error.message };
+  }
+};
+
+export const adminCreateDiscount = async (data) => {
+  if (!db) return { id: null, error: "Not available" };
+  try {
+    const docRef = await addDoc(collection(db, "discounts"), {
+      ...data,
+      code: data.code.toUpperCase().trim(),
+      uses: 0,
+      createdAt: Timestamp.now(),
+    });
+    return { id: docRef.id, error: null };
+  } catch (error) {
+    return { id: null, error: error.message };
+  }
+};
+
+export const adminUpdateDiscount = async (id, data) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await updateDoc(doc(db, "discounts", id), data);
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const adminDeleteDiscount = async (id) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await deleteDoc(doc(db, "discounts", id));
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 // ─── Admin product CRUD ────────────────────────────────────────────────────
 
 export const adminCreateProduct = async (data) => {

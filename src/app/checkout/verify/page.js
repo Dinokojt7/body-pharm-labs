@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Loader2, XCircle } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
-import { updateOrderPayment, getOrderById } from "@/lib/firebase/firestore";
+import { updateOrderPayment, getOrderById, incrementDiscountUses } from "@/lib/firebase/firestore";
 
 export default function VerifyPage() {
   return (
@@ -51,6 +51,11 @@ function VerifyPageInner() {
             status: "paid",
             paystackReference: reference,
             paidAt: new Date().toISOString(),
+          });
+
+          // Increment discount uses if a promo code was applied (fire-and-forget)
+          getOrderById(orderId).then(({ order }) => {
+            if (order?.discountCode) incrementDiscountUses(order.discountCode).catch(() => {});
           });
 
           // Send confirmation email + owner WhatsApp notify (fire-and-forget)

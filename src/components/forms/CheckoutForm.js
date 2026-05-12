@@ -24,6 +24,8 @@ const CheckoutForm = ({
   shippingCost,
   total,
   memberDiscount = 0,
+  promoCode = null,
+  promoDiscount = 0,
   loading,
   setLoading,
 }) => {
@@ -137,6 +139,8 @@ const CheckoutForm = ({
       tax,
       shipping: shippingCost,
       memberDiscount,
+      discountCode: promoCode || null,
+      discountAmount: promoDiscount || 0,
       total,
       currency: selectedCurrency,
       notes: formData.notes.trim(),

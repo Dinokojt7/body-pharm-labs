@@ -189,6 +189,12 @@ export default function AdminOrders() {
                               <span>−{formatCurrency(order.memberDiscount, order.currency)}</span>
                             </div>
                           )}
+                          {order.discountCode && (
+                            <div className="flex justify-between text-xs text-green-600">
+                              <span>Promo ({order.discountCode})</span>
+                              <span>−{formatCurrency(order.discountAmount || 0, order.currency)}</span>
+                            </div>
+                          )}
                           <div className="flex justify-between text-xs text-gray-500">
                             <span>Shipping</span>
                             <span>{order.shipping === 0 ? "Free" : formatCurrency(order.shipping, order.currency)}</span>
