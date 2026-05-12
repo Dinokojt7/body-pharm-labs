@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -10,6 +11,13 @@ const SESSION_KEY = "wa_banner_dismissed";
 
 export default function WhatsAppFloat() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
+
+  // Hide banner on any navigation without dismissing to sessionStorage,
+  // so it can re-trigger if the user scrolls past About on the new page
+  useEffect(() => {
+    setVisible(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY)) return;

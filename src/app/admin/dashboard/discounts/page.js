@@ -173,7 +173,7 @@ export default function DiscountsPage() {
               exit={{ opacity: 0, y: -8, scaleY: 0.97 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               style={{ transformOrigin: "top" }}
-              className="bg-white rounded-xl border border-gray-200 p-6 mb-6 overflow-hidden"
+              className="bg-white rounded-xl border border-gray-200 p-6 mb-6"
             >
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wide">Create Discount Code</h2>
