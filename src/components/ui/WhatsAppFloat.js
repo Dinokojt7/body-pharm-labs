@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore } from "@/lib/stores/cart-store";
 
 const PHONE = "27624623288";
 const WA_URL = `https://wa.me/${PHONE}?text=${encodeURIComponent("Hi, I'd like to enquire about your products.")}`;
@@ -12,6 +13,7 @@ const SESSION_KEY = "wa_banner_dismissed";
 export default function WhatsAppFloat() {
   const [visible, setVisible] = useState(false);
   const pathname = usePathname();
+  const cartOpen = useCartStore((s) => s.isOpen);
 
   // Hide banner on any navigation without dismissing to sessionStorage,
   // so it can re-trigger if the user scrolls past About on the new page
@@ -57,7 +59,7 @@ export default function WhatsAppFloat() {
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !cartOpen && (
         <motion.div
           initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
