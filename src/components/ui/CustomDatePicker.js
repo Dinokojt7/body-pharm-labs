@@ -25,14 +25,17 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
   const selected = parseLocal(value);
   const today = new Date();
 
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
-  const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const [coords, setCoords] = useState({});
   const [view, setView] = useState(() => {
     const base = selected || today;
     return { year: base.getFullYear(), month: base.getMonth() };
   });
   const triggerRef = useRef(null);
   const calendarRef = useRef(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Close on any scroll or resize
   useEffect(() => {
@@ -57,11 +60,18 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Compute position synchronously at click time
+  // Compute position synchronously at click time — flip upward if not enough space below
   const handleToggle = () => {
     if (!open && triggerRef.current) {
       const r = triggerRef.current.getBoundingClientRect();
-      setCoords({ top: r.bottom + 6, left: r.left });
+      const CALENDAR_H = 320;
+      const spaceBelow = window.innerHeight - r.bottom;
+      if (spaceBelow < CALENDAR_H) {
+        // Open above the trigger: bottom edge of calendar sits 6px above trigger top
+        setCoords({ bottom: window.innerHeight - r.top + 6, left: r.left });
+      } else {
+        setCoords({ top: r.bottom + 6, left: r.left });
+      }
     }
     setOpen((v) => !v);
   };
@@ -128,75 +138,77 @@ export default function CustomDatePicker({ value, onChange, placeholder = "No ex
         </div>
       </button>
 
-      {/* Calendar — portaled to document.body, never clipped by any ancestor */}
-      <AnimatePresence>
-        {open && createPortal(
-          <motion.div
-            ref={calendarRef}
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.98 }}
-            transition={{ duration: 0.16 }}
-            style={{ top: coords.top, left: coords.left }}
-            className="fixed z-9999 w-72 bg-white border border-gray-100 rounded-xl shadow-xl p-4"
-          >
-            {/* Month nav */}
-            <div className="flex items-center justify-between mb-4">
-              <button type="button" onClick={prevMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-sm font-semibold text-gray-900">
-                {MONTHS[view.month]} {view.year}
-              </span>
-              <button type="button" onClick={nextMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Weekday headers */}
-            <div className="grid grid-cols-7 mb-2">
-              {DAYS.map((d) => (
-                <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
-              ))}
-            </div>
-
-            {/* Day grid */}
-            <div className="grid grid-cols-7 gap-y-1">
-              {cells.map((d, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => selectDay(d)}
-                  disabled={!d}
-                  className={`
-                    h-8 w-full flex items-center justify-center rounded-lg text-sm transition-colors
-                    ${!d ? "pointer-events-none" : ""}
-                    ${isSelected(d) ? "bg-black text-white font-semibold" : ""}
-                    ${!isSelected(d) && d ? "text-gray-700 hover:bg-gray-100" : ""}
-                    ${isToday(d) && !isSelected(d) ? "font-semibold text-black underline underline-offset-2" : ""}
-                  `}
-                >
-                  {d || ""}
+      {/* AnimatePresence must live INSIDE the portal so motion.div receives animation context */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={calendarRef}
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.98 }}
+              transition={{ duration: 0.16 }}
+              style={{ ...coords, zIndex: 9999, isolation: "isolate" }}
+              className="fixed w-72 bg-white border border-gray-100 rounded-xl shadow-xl p-4"
+            >
+              {/* Month nav */}
+              <div className="flex items-center justify-between mb-4">
+                <button type="button" onClick={prevMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-              ))}
-            </div>
-
-            {/* Clear */}
-            {value && (
-              <div className="mt-3 pt-3 border-t border-gray-100 text-center">
-                <button
-                  type="button"
-                  onClick={() => { onChange(""); setOpen(false); }}
-                  className="text-xs text-gray-400 hover:text-black transition-colors"
-                >
-                  Clear date
+                <span className="text-sm font-semibold text-gray-900">
+                  {MONTHS[view.month]} {view.year}
+                </span>
+                <button type="button" onClick={nextMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-            )}
-          </motion.div>,
-          document.body
-        )}
-      </AnimatePresence>
+
+              {/* Weekday headers */}
+              <div className="grid grid-cols-7 mb-2">
+                {DAYS.map((d) => (
+                  <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
+                ))}
+              </div>
+
+              {/* Day grid */}
+              <div className="grid grid-cols-7 gap-y-1">
+                {cells.map((d, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => selectDay(d)}
+                    disabled={!d}
+                    className={`
+                      h-8 w-full flex items-center justify-center rounded-lg text-sm transition-colors
+                      ${!d ? "pointer-events-none" : ""}
+                      ${isSelected(d) ? "bg-black text-white font-semibold" : ""}
+                      ${!isSelected(d) && d ? "text-gray-700 hover:bg-gray-100" : ""}
+                      ${isToday(d) && !isSelected(d) ? "font-semibold text-black underline underline-offset-2" : ""}
+                    `}
+                  >
+                    {d || ""}
+                  </button>
+                ))}
+              </div>
+
+              {/* Clear */}
+              {value && (
+                <div className="mt-3 pt-3 border-t border-gray-100 text-center">
+                  <button
+                    type="button"
+                    onClick={() => { onChange(""); setOpen(false); }}
+                    className="text-xs text-gray-400 hover:text-black transition-colors"
+                  >
+                    Clear date
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
