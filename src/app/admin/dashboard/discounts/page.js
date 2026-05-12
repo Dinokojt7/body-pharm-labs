@@ -33,12 +33,12 @@ function Tooltip({ text }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-52 bg-white border border-gray-100 rounded-xl shadow-lg px-3.5 py-3 pointer-events-none"
+            className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-white border border-gray-100 rounded-xl shadow-lg px-4 py-3.5 pointer-events-none"
           >
             <p className="text-xs text-gray-600 leading-relaxed">{text}</p>
             {/* caret */}
-            <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-white" />
-            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-100" style={{ marginTop: "1px" }} />
+            <span className="absolute top-full left-4 -mt-px border-4 border-transparent border-t-white" />
+            <span className="absolute top-full left-4 border-4 border-transparent border-t-gray-100" style={{ marginTop: "1px" }} />
           </motion.div>
         )}
       </AnimatePresence>
