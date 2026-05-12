@@ -345,9 +345,9 @@ export const validateDiscount = async (code) => {
     if (snapshot.empty) return { discount: null, error: "Invalid discount code." };
     const d = snapshot.docs[0];
     const discount = { id: d.id, ...d.data() };
-    if (!discount.active) return { discount: null, error: "This code is no longer active." };
+    if (!discount.active) return { discount: null, error: "Invalid or inactive code." };
     if (discount.expiresAt && discount.expiresAt.toMillis() < Date.now())
-      return { discount: null, error: "This code has expired." };
+      return { discount: null, error: "Expired." };
     if (discount.maxUses !== null && discount.uses >= discount.maxUses)
       return { discount: null, error: "This code has reached its maximum uses." };
     return { discount, error: null };

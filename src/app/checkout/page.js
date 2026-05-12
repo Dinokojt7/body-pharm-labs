@@ -11,7 +11,7 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
-import { getUserProfile } from "@/lib/firebase/firestore";
+import { getUserProfile, validateDiscount } from "@/lib/firebase/firestore";
 import CheckoutForm from "@/components/forms/CheckoutForm";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
@@ -57,18 +57,14 @@ export default function CheckoutPage() {
     setPromoApplying(true);
     setPromoError("");
     try {
-      const res = await fetch("/api/validate-discount", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: promoInput.trim(), subtotal }),
-      });
-      const data = await res.json();
-      if (data.valid) {
-        setPromoCode(data.code);
-        setPromoDiscount(data.amount);
+      const { discount, error } = await validateDiscount(promoInput.trim());
+      if (discount) {
+        const amount = parseFloat((subtotal * (discount.value / 100)).toFixed(2));
+        setPromoCode(discount.code);
+        setPromoDiscount(amount);
         setPromoInput("");
       } else {
-        setPromoError(data.error || "Invalid code.");
+        setPromoError(error || "Invalid code.");
       }
     } catch {
       setPromoError("Could not apply code. Please try again.");
