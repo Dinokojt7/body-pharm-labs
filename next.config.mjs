@@ -13,6 +13,7 @@ const nextConfig = {
     "@firebase/installations",
   ],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
