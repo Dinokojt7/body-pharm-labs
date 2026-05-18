@@ -13,6 +13,13 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q) setSearchQuery(q);
+  }, []);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -35,14 +42,24 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategory === "all") {
-      setFilteredProducts(products);
-    } else {
-      setFilteredProducts(
-        products.filter((p) => p.category === selectedCategory),
+    let filtered = products;
+
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((p) => p.category === selectedCategory);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.subtitle?.toLowerCase().includes(q) ||
+          p.category?.toLowerCase().includes(q),
       );
     }
-  }, [selectedCategory, products]);
+
+    setFilteredProducts(filtered);
+  }, [selectedCategory, products, searchQuery]);
 
   if (loading) {
     return (
@@ -77,6 +94,21 @@ export default function ShopPage() {
             peptides. All compounds are for laboratory use only.
           </p>
         </div>
+
+        {/* Active search query indicator */}
+        {searchQuery && (
+          <div className="flex items-center justify-center gap-2 mb-4 -mt-4 md:-mt-6">
+            <span className="text-sm text-gray-500">
+              Showing results for &quot;{searchQuery}&quot;
+            </span>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="text-xs text-gray-400 hover:text-gray-700 underline transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8 md:mb-12 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap md:justify-center">

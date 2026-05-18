@@ -27,6 +27,8 @@ export const useUIStore = create((set, get) => ({
       isSearchOpen: !state.isSearchOpen,
     })),
 
+  closeSearch: () => set({ isSearchOpen: false }),
+
   toggleCurrencyDropdown: () =>
     set((state) => ({
       isCurrencyDropdownOpen: !state.isCurrencyDropdownOpen,

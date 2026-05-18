@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShoppingBag } from "lucide-react";
+import { User, ShoppingBag, Search, X } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useUIStore } from "@/lib/stores/ui-store";
@@ -12,6 +13,8 @@ import CurrencySelector from "../ui/CurrencySelector";
 import CartSidebar from "./CartSidebar";
 import MobileMenu from "./MobileMenu";
 import AuthModal from "./AuthModal";
+import SearchBar from "./SearchBar";
+import SearchDropdown from "./SearchDropdown";
 
 const PREH = 36;
 
@@ -29,6 +32,10 @@ const BTN_SOLID = `${BTN} bg-transparent border-gray-200 hover:bg-gray-50`;
 const Header = () => {
   const [scrollY, setScrollY] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [query, setQuery] = useState("");
+  const [dropdownTop, setDropdownTop] = useState(null);
+  const headerRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const handler = () => {
@@ -40,21 +47,57 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  // Track header bottom edge for dropdown fixed positioning
+  useEffect(() => {
+    const update = () => {
+      if (headerRef.current) {
+        setDropdownTop(headerRef.current.getBoundingClientRect().bottom);
+      }
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   const { totalItems, toggleCart } = useCartStore();
-  const { toggleMobileMenu, openAuthModal } = useUIStore();
+  const { toggleMobileMenu, openAuthModal, isSearchOpen, toggleSearch, closeSearch } = useUIStore();
   const { isAuthenticated, getDisplayName } = useAuthStore();
   const pathname = usePathname();
 
   const initial = getDisplayName()?.slice(0, 1)?.toUpperCase() || "U";
   const headerTop = Math.max(0, PREH - scrollY);
 
-  const isTransparent = pathname === "/" && !scrolled;
+  // Force solid background when search is open
+  const isTransparent = pathname === "/" && !scrolled && !isSearchOpen;
   const btn = isTransparent ? BTN_TRANSPARENT : BTN_SOLID;
+
+  // Focus input when search opens; reset query when it closes
+  useEffect(() => {
+    if (isSearchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 50);
+    } else {
+      setQuery("");
+    }
+  }, [isSearchOpen]);
+
+  // ESC closes search
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape" && isSearchOpen) closeSearch();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isSearchOpen, closeSearch]);
 
   return (
     <>
       <header
-        className="fixed left-0 right-0 z-40 transition-[background,box-shadow,border-color] duration-300"
+        ref={headerRef}
+        className="fixed left-0 right-0 z-40 transition-[background,box-shadow] duration-300"
         style={{
           top: `${headerTop}px`,
           background: isTransparent ? "transparent" : "white",
@@ -74,56 +117,84 @@ const Header = () => {
               />
             </Link>
 
-            {/* CENTER — pill nav (desktop only) */}
-            <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2">
-              <div
-                className="flex items-center gap-0.5 rounded-lg px-2 py-1.5 transition-all duration-300"
-                style={{
-                  background: isTransparent ? "rgba(0,0,0,0.04)" : "rgba(0,0,0,0.03)",
-                }}
-              >
-                {NAV_LINKS.map(({ label, href }) => {
-                  const isActive = href === "/" ? pathname === "/" : pathname?.startsWith(href);
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={`px-4 py-1.5 rounded-md text-[11px] font-semibold tracking-wide transition-all duration-200 ${
-                        isActive
-                          ? "text-black bg-black/[0.07]"
-                          : "text-black/50 hover:text-black hover:bg-black/[0.06]"
-                      }`}
-                    >
-                      {label}
-                    </Link>
-                  );
-                })}
+            {/* CENTER — search input (when search open, fills available space) */}
+            {isSearchOpen && (
+              <div className="flex-1 mx-4 md:mx-8">
+                <SearchBar
+                  query={query}
+                  onChange={setQuery}
+                  inputRef={searchInputRef}
+                />
               </div>
-            </nav>
+            )}
+
+            {/* CENTER — pill nav (desktop only, hidden when search open) */}
+            {!isSearchOpen && (
+              <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2">
+                <div
+                  className="flex items-center gap-0.5 rounded-lg px-2 py-1.5 transition-all duration-300"
+                  style={{
+                    background: isTransparent ? "rgba(0,0,0,0.04)" : "rgba(0,0,0,0.03)",
+                  }}
+                >
+                  {NAV_LINKS.map(({ label, href }) => {
+                    const isActive = href === "/" ? pathname === "/" : pathname?.startsWith(href);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={`px-4 py-1.5 rounded-md text-[11px] font-semibold tracking-wide transition-all duration-200 ${
+                          isActive
+                            ? "text-black bg-black/[0.07]"
+                            : "text-black/50 hover:text-black hover:bg-black/[0.06]"
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </nav>
+            )}
 
             {/* RIGHT — action buttons */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <div className="hidden sm:block">
-                <CurrencySelector isTransparent={isTransparent} />
-              </div>
+              {!isSearchOpen && (
+                <div className="hidden sm:block">
+                  <CurrencySelector isTransparent={isTransparent} />
+                </div>
+              )}
 
-              {/* Account */}
-              <div className="relative">
-                {isAuthenticated ? (
-                  <Link href="/account" aria-label="My account" className={btn}>
-                    <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
-                  </Link>
-                ) : (
-                  <button onClick={openAuthModal} aria-label="Sign in" className={btn}>
-                    <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
-                  </button>
-                )}
-                {isAuthenticated && (
-                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-semibold bg-amber-500 text-white pointer-events-none leading-none">
-                    {initial}
-                  </span>
-                )}
-              </div>
+              {/* Account — hidden when search open */}
+              {!isSearchOpen && (
+                <div className="relative">
+                  {isAuthenticated ? (
+                    <Link href="/account" aria-label="My account" className={btn}>
+                      <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
+                    </Link>
+                  ) : (
+                    <button onClick={openAuthModal} aria-label="Sign in" className={btn}>
+                      <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
+                    </button>
+                  )}
+                  {isAuthenticated && (
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-semibold bg-amber-500 text-white pointer-events-none leading-none">
+                      {initial}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Search toggle */}
+              <button
+                onClick={isSearchOpen ? closeSearch : toggleSearch}
+                aria-label={isSearchOpen ? "Close search" : "Search"}
+                className={btn}
+              >
+                {isSearchOpen
+                  ? <X className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
+                  : <Search className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />}
+              </button>
 
               {/* Cart */}
               <button onClick={toggleCart} aria-label="Shopping cart" className={`relative ${btn}`}>
@@ -148,6 +219,17 @@ const Header = () => {
           </div>
         </div>
       </header>
+
+      {/* Search dropdown — fixed at header bottom edge */}
+      <AnimatePresence>
+        {isSearchOpen && dropdownTop !== null && (
+          <SearchDropdown
+            query={query}
+            top={dropdownTop}
+            onClose={closeSearch}
+          />
+        )}
+      </AnimatePresence>
 
       <CartSidebar />
       <MobileMenu />
