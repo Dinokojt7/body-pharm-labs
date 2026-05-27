@@ -13,12 +13,15 @@ export default function CustomSelect({
   className = "",
   compact = false,    // true → h-7 px-2 text-xs (admin inline use)
 }) {
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // Close on any scroll or resize so the dropdown doesn't float in wrong position
+  useEffect(() => { setMounted(true); }, []);
+
+  // Close on any scroll or resize
   useEffect(() => {
     if (!open) return;
     const close = () => setOpen(false);
@@ -41,8 +44,7 @@ export default function CustomSelect({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Compute position synchronously at click time so the portal renders at the
-  // correct coordinates on the very first frame — no useEffect delay / flash
+  // Compute position synchronously at click time
   const handleToggle = () => {
     if (!open && triggerRef.current) {
       const r = triggerRef.current.getBoundingClientRect();
@@ -72,34 +74,37 @@ export default function CustomSelect({
         </motion.span>
       </button>
 
-      <AnimatePresence>
-        {open && createPortal(
-          <motion.div
-            ref={dropdownRef}
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.98 }}
-            transition={{ duration: 0.15 }}
-            style={{ top: coords.top, left: coords.left, minWidth: coords.width }}
-            className="fixed z-9999 bg-white border border-gray-100 rounded-xl shadow-lg py-1 overflow-hidden"
-          >
-            {options.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => { onChange(opt.value); setOpen(false); }}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors"
-              >
-                <span className={opt.value === value ? "font-medium text-black" : "text-gray-700"}>
-                  {opt.label}
-                </span>
-                {opt.value === value && <Check className="w-3.5 h-3.5 text-black shrink-0 ml-2" />}
-              </button>
-            ))}
-          </motion.div>,
-          document.body
-        )}
-      </AnimatePresence>
+      {/* AnimatePresence must live INSIDE the portal so motion.div receives animation context */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.98 }}
+              transition={{ duration: 0.15 }}
+              style={{ top: coords.top, left: coords.left, minWidth: coords.width, zIndex: 9999, isolation: "isolate" }}
+              className="fixed bg-white border border-gray-100 rounded-xl shadow-lg py-1 overflow-hidden"
+            >
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => { onChange(opt.value); setOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors"
+                >
+                  <span className={opt.value === value ? "font-medium text-black" : "text-gray-700"}>
+                    {opt.label}
+                  </span>
+                  {opt.value === value && <Check className="w-3.5 h-3.5 text-black shrink-0 ml-2" />}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
