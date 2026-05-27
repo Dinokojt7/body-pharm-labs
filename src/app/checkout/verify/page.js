@@ -78,6 +78,7 @@ function VerifyPageInner() {
                 memberDiscount: order.memberDiscount,
                 total: order.total,
                 currency: order.currency,
+                exchangeRate: order.exchangeRate,
                 notes: order.notes,
                 paidAt: order.paidAt,
               }),

@@ -43,6 +43,12 @@ function formatCurrency(amount, currency = "ZAR") {
   return new Intl.NumberFormat("en-ZA", { style: "currency", currency }).format(amount ?? 0);
 }
 
+function displayAmount(amount, order) {
+  const rate = order?.exchangeRate || 1;
+  const currency = order?.currency || "ZAR";
+  return formatCurrency((amount ?? 0) * rate, currency);
+}
+
 export default function AdminOrders() {
   const router = useRouter();
   const { user, loading } = useAuthStore();
@@ -125,7 +131,7 @@ export default function AdminOrders() {
                     {/* Items count + total */}
                     <div className="hidden sm:block min-w-20 text-right">
                       <p className="text-xs text-gray-500">{(order.items || []).length} item{order.items?.length !== 1 ? "s" : ""}</p>
-                      <p className="text-xs font-bold text-gray-900 mt-0.5">{formatCurrency(order.total, order.currency)}</p>
+                      <p className="text-xs font-bold text-gray-900 mt-0.5">{displayAmount(order.total, order)}</p>
                     </div>
 
                     {/* Payment status */}
@@ -175,7 +181,7 @@ export default function AdminOrders() {
                               <span className="text-gray-700 font-medium">
                                 {item.name}{item.size ? ` — ${item.size}` : ""} <span className="text-gray-400">× {item.quantity}</span>
                               </span>
-                              <span className="text-gray-900 font-semibold">{formatCurrency(item.price * item.quantity, order.currency)}</span>
+                              <span className="text-gray-900 font-semibold">{displayAmount(item.price * item.quantity, order)}</span>
                             </div>
                           ))}
                         </div>
@@ -183,26 +189,26 @@ export default function AdminOrders() {
                           {order.memberDiscount > 0 && (
                             <div className="flex justify-between text-xs text-gray-500">
                               <span>Member discount</span>
-                              <span>−{formatCurrency(order.memberDiscount, order.currency)}</span>
+                              <span>−{displayAmount(order.memberDiscount, order)}</span>
                             </div>
                           )}
                           {order.discountCode && (
                             <div className="flex justify-between text-xs text-green-600">
                               <span>Promo ({order.discountCode})</span>
-                              <span>−{formatCurrency(order.discountAmount || 0, order.currency)}</span>
+                              <span>−{displayAmount(order.discountAmount || 0, order)}</span>
                             </div>
                           )}
                           <div className="flex justify-between text-xs text-gray-500">
                             <span>Shipping</span>
-                            <span>{order.shipping === 0 ? "Free" : formatCurrency(order.shipping, order.currency)}</span>
+                            <span>{order.shipping === 0 ? "Free" : displayAmount(order.shipping, order)}</span>
                           </div>
                           <div className="flex justify-between text-xs text-gray-500">
                             <span>VAT (15%)</span>
-                            <span>{formatCurrency(order.tax, order.currency)}</span>
+                            <span>{displayAmount(order.tax, order)}</span>
                           </div>
                           <div className="flex justify-between text-xs font-bold text-gray-900 pt-1">
                             <span>Total</span>
-                            <span>{formatCurrency(order.total, order.currency)}</span>
+                            <span>{displayAmount(order.total, order)}</span>
                           </div>
                         </div>
 

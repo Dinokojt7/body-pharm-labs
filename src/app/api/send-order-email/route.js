@@ -21,7 +21,7 @@ export async function POST(request) {
     const {
       orderNumber, email, firstName, lastName, phone,
       shippingAddress, items, subtotal, tax, shipping,
-      memberDiscount, total, currency, notes, paidAt,
+      memberDiscount, total, currency, exchangeRate, notes, paidAt,
     } = await request.json();
 
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -29,10 +29,10 @@ export async function POST(request) {
       return NextResponse.json({ success: true, skipped: true });
     }
 
-    const fmt = new Intl.NumberFormat("en-ZA", {
-      style: "currency",
-      currency: currency || "ZAR",
-    });
+    const rate = exchangeRate || 1;
+    const displayCurrency = currency || "ZAR";
+    const intlFmt = new Intl.NumberFormat("en-ZA", { style: "currency", currency: displayCurrency });
+    const fmt = { format: (amount) => intlFmt.format((amount ?? 0) * rate) };
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bodypharmlabs.com";
 

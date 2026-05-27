@@ -33,7 +33,7 @@ const CheckoutForm = ({
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const { user } = useAuthStore();
-  const { selectedCurrency, formatPrice } = useCurrency();
+  const { selectedCurrency, formatPrice, convertPrice } = useCurrency();
 
   const [isMounted, setIsMounted] = useState(false);
   const [validationError, setValidationError] = useState("");
@@ -144,6 +144,7 @@ const CheckoutForm = ({
       discountAmount: promoDiscount || 0,
       total,
       currency: selectedCurrency,
+      exchangeRate: convertPrice(1), // rate: 1 ZAR → selectedCurrency at time of order
       notes: formData.notes.trim(),
       userId: user?.uid || null,
       status: "pending_payment",
@@ -162,7 +163,7 @@ const CheckoutForm = ({
         body: JSON.stringify({
           amount: total,
           email: formData.email.toLowerCase().trim(),
-          currency: selectedCurrency,
+          currency: "ZAR",
           reference,
           metadata: {
             orderId,

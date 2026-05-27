@@ -14,6 +14,9 @@ function formatCurrency(amount, currency = "ZAR") {
 }
 
 export async function generateInvoicePdf(order) {
+  const rate = order.exchangeRate || 1;
+  const cur = order.currency || "ZAR";
+  const fmt = (amount) => formatCurrency((amount ?? 0) * rate, cur);
   const doc = await PDFDocument.create();
   const page = doc.addPage([595, 842]); // A4
   const { width, height } = page.getSize();
@@ -154,8 +157,8 @@ export async function generateInvoicePdf(order) {
 
     page.drawText(itemName, { x: cols.item, y: y + 2, size: 9, font: regular, color: BLACK });
     page.drawText(String(item.quantity), { x: cols.qty, y: y + 2, size: 9, font: regular, color: DARK_GRAY });
-    page.drawText(formatCurrency(item.price, order.currency), { x: cols.unit, y: y + 2, size: 9, font: regular, color: DARK_GRAY });
-    const lineTotalStr = formatCurrency(lineTotal, order.currency);
+    page.drawText(fmt(item.price), { x: cols.unit, y: y + 2, size: 9, font: regular, color: DARK_GRAY });
+    const lineTotalStr = fmt(lineTotal);
     page.drawText(lineTotalStr, {
       x: cols.total - regular.widthOfTextAtSize(lineTotalStr, 9),
       y: y + 2,
@@ -183,7 +186,7 @@ export async function generateInvoicePdf(order) {
   ];
 
   totalsRows.forEach(([label, amount]) => {
-    const valStr = amount === null ? "Free" : formatCurrency(amount, order.currency);
+    const valStr = amount === null ? "Free" : fmt(amount);
     page.drawText(label, { x: totalsX, y, size: 9, font: regular, color: DARK_GRAY });
     page.drawText(valStr, {
       x: valueX - regular.widthOfTextAtSize(valStr, 9),
@@ -199,7 +202,7 @@ export async function generateInvoicePdf(order) {
   page.drawRectangle({ x: totalsX, y, width: 180, height: 0.5, color: BLACK });
   y -= 14;
 
-  const totalStr = formatCurrency(order.total, order.currency);
+  const totalStr = fmt(order.total);
   page.drawText("TOTAL", { x: totalsX, y, size: 10, font: bold, color: BLACK });
   page.drawText(totalStr, {
     x: valueX - bold.widthOfTextAtSize(totalStr, 10),
