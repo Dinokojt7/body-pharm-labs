@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
       },
+      {
+        protocol: "https",
+        hostname: "pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev",
+      },
     ],
   },
   async rewrites() {
