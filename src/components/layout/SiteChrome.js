@@ -18,7 +18,9 @@ export default function SiteChrome({ children }) {
   const isCheckout = CHECKOUT_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + "/"));
   const isOrder = pathname?.startsWith("/orders/");
 
-  if (isAdmin) {
+  const isMaintenance = pathname === "/maintenance";
+
+  if (isAdmin || isMaintenance) {
     return <>{children}</>;
   }
 
