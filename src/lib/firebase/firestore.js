@@ -514,3 +514,16 @@ export const subscribeToOrder = (orderId, callback) => {
     (error) => callback({ order: null, error: error.message })
   );
 };
+
+
+// Site settings
+export const getMaintenanceMode = async () => {
+  if (!db) return false;
+  const snap = await getDoc(doc(db, "settings", "site"));
+  return snap.exists() ? snap.data().maintenanceMode === true : false;
+};
+
+export const setMaintenanceMode = async (value) => {
+  if (!db) return;
+  await setDoc(doc(db, "settings", "site"), { maintenanceMode: value }, { merge: true });
+};

@@ -12,15 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: "/((?!maintenance|_next|favicon|icons|images|manifest).*)",
-        destination: "/maintenance",
-        permanent: false,
-      },
-    ];
-  },
   async rewrites() {
     // Proxy Firebase Auth's /__/auth/* routes through our own domain.
     return [
