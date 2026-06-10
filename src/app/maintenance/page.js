@@ -11,7 +11,7 @@ export default function MaintenancePage() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 text-center">
       {/* Logo */}
-      <div className="relative w-48 h-16 mb-10">
+      <div className="relative w-72 h-24 mb-10">
         <Image
           src="/images/logo.png"
           alt="Body Pharm Labs"
