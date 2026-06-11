@@ -15,6 +15,9 @@ async function fetchMaintenanceMode() {
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
+  // Skip maintenance check entirely in local dev
+  if (process.env.NODE_ENV === "development") return NextResponse.next();
+
   // Admin always gets through
   if (ADMIN_BYPASS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
