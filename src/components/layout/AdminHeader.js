@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut } from "firebase/auth";
+import { signOut } from "@firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { LogOut, ArrowLeft } from "lucide-react";
 

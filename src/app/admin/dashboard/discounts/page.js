@@ -14,7 +14,7 @@ import {
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomDatePicker from "@/components/ui/CustomDatePicker";
 import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Info } from "lucide-react";
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "@firebase/firestore";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
 const emptyForm = { code: "", value: "", maxUses: "", expiresAt: "", active: true };
