@@ -36,19 +36,19 @@ export default function AboutPage() {
         <div className="absolute inset-0">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url(/images/hero-bg1.webp)" }}
+            style={{ backgroundImage: "url(/images/new-hero.png)" }}
           />
-          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-white/20" />
         </div>
 
-        <div className="relative h-full flex items-center justify-center text-center text-white px-4">
+        <div className="relative h-full flex items-center justify-center text-center px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-6xl font-black mb-4">ABOUT US</h1>
-            <p className="text-xl max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-black mb-4">About Us</h1>
+            <p className="text-base md:text-lg text-black/70 max-w-2xl mx-auto">
               Pioneering Research Peptides with Uncompromising Quality
             </p>
           </motion.div>

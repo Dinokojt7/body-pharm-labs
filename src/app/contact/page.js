@@ -40,11 +40,11 @@ export default function ContactPage() {
         <div className="absolute inset-0">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url(/images/hero-bg1.webp)" }}
+            style={{ backgroundImage: "url(/images/new-hero.png)" }}
           />
-          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-white/20" />
         </div>
-        <div className="relative h-full flex items-center justify-center text-center text-white px-4">
+        <div className="relative h-full flex items-center justify-center text-center px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -53,15 +53,15 @@ export default function ContactPage() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-black mb-4"
+              className="text-4xl md:text-5xl font-semibold tracking-tight text-black mb-4"
             >
-              CONTACT US
+              Contact Us
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-xl text-white/80 max-w-2xl mx-auto"
+              className="text-base md:text-lg text-black/70 max-w-2xl mx-auto"
             >
               Have questions about our products or need assistance with your
               order? Our team is here to help.
