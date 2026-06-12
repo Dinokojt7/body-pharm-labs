@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ["firebase-admin"],
+  serverExternalPackages: ["firebase-admin", "firebase-admin/app", "firebase-admin/firestore"],
+  transpilePackages: [
+    "firebase",
+    "@firebase/app",
+    "@firebase/auth",
+    "@firebase/firestore",
+    "@firebase/storage",
+    "@firebase/component",
+    "@firebase/util",
+    "@firebase/logger",
+    "@firebase/installations",
+  ],
   images: {
     remotePatterns: [
       {
