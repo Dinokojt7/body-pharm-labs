@@ -1,163 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
-const SLIDES = [
-  "/images/hero-bg.webp",
-  "/images/hero-bg1.webp",
-  "/images/hero-bg2.webp",
-];
-
-const DARK_SLIDE = 1;
-const INTERVAL = 5000;
-
-const Hero = () => {
-  const [current, setCurrent] = useState(0);
-  const prevRef = useRef(null);
-
-  // true whenever the dark slide is either entering or leaving
-  const useFade = current === DARK_SLIDE || prevRef.current === DARK_SLIDE;
-
-  const goTo = (next) => {
-    prevRef.current = current;
-    setCurrent(next);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      goTo((current + 1) % SLIDES.length);
-    }, INTERVAL);
-    return () => clearInterval(timer);
-  }, [current]);
-
-  const slideVariants = useFade
-    ? { initial: { opacity: 0, x: 0 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: 0 } }
-    : { initial: { opacity: 1, x: "100%" }, animate: { opacity: 1, x: "0%" }, exit: { opacity: 1, x: "-100%" } };
-
+export default function Hero() {
   return (
-    <section className="w-full">
-      <div className="relative w-full overflow-hidden h-[58vw] md:h-[clamp(500px,74vh,880px)]">
+    <section
+      className="relative w-full overflow-hidden -mt-28 md:-mt-32"
+      style={{
+        backgroundImage: "url('/images/new-hero.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Left-side gradient for text legibility */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to right, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 45%, transparent 70%)",
+        }}
+      />
 
-        {/* Background images — slide or dissolve depending on which slide */}
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={current}
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${SLIDES[current]})` }}
-            initial={slideVariants.initial}
-            animate={slideVariants.animate}
-            exit={slideVariants.exit}
-            transition={{ duration: useFade ? 1.0 : 0.75, ease: "easeInOut" }}
-          />
-        </AnimatePresence>
+      {/* Content */}
+      <div
+        className="relative z-10 flex items-center px-6 sm:px-8 md:pl-8 md:pr-16 lg:pl-12 lg:pr-24 pt-40 pb-16 md:pt-44 md:pb-0"
+        style={{ minHeight: "100vh" }}
+      >
+        <div className="w-full grid md:grid-cols-2 items-start gap-10 md:gap-0">
 
-        {/* Overlay */}
-        <div className="absolute inset-0" />
-
-        {/* Text + button — centered on mobile, left-aligned md+ */}
-        <div className="relative h-full flex items-center justify-center md:justify-start px-4 sm:px-10 md:px-16">
-          <div className="max-w-xs sm:max-w-sm text-center md:text-left">
-            {/* Pre-heading — amber accent */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-[10px] sm:text-xs font-semibold tracking-[0.28em] uppercase text-amber-400/90 mb-3"
-            >
-              Research-Grade Peptides
-            </motion.p>
-
-            {/* Heading — editorial split */}
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-5 md:mb-8"
-              style={{ textShadow: "0 2px 28px rgba(0,0,0,0.7)" }}
-            >
-              <span
-                className="block text-lg sm:text-2xl md:text-3xl font-semibold tracking-[0.12em] uppercase mb-1 md:mb-2 transition-colors duration-700"
-                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", color: current === DARK_SLIDE ? "rgba(255,255,255,0.75)" : "rgba(30,30,30,0.9)" }}
-              >
-                Where Science
-              </span>
-              <span className="block text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight leading-[1.0] text-white whitespace-nowrap">
-                Meets Results.
-              </span>
-            </motion.h1>
-
-            {/* CTA — white flat button, silver shimmer on hover */}
+          {/* LEFT — headline + CTA */}
+          <div className="flex flex-col items-center md:items-start justify-center text-center md:text-left">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              className="mb-8 w-full
+                bg-white/50 backdrop-blur-md border-y border-white/60 py-4
+                md:bg-transparent md:backdrop-blur-none md:border-0 md:py-0"
+              initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.22 }}
-              className="relative inline-block overflow-hidden cursor-pointer group"
+              transition={{ duration: 0.7, delay: 0.1 }}
+            >
+              <h1 className="leading-none text-center md:text-left">
+                <span className="text-3xl sm:text-4xl md:text-[2.75rem] lg:text-[3.25rem] font-semibold tracking-tight text-black leading-none">
+                  Cutting-Edge{' '}
+                  <br className="hidden md:block" />
+                  Peptides
+                </span>
+              </h1>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.28 }}
             >
               <Link
                 href="/shop"
-                className="relative flex h-10 px-8 md:h-12 md:px-12 bg-white hover:bg-gray-100 text-black text-xs font-semibold tracking-widest uppercase items-center justify-center cursor-pointer select-none transition-colors duration-200 rounded border border-gray-200 shadow-md"
+                className="inline-flex items-center gap-3 h-12 pl-6 pr-2 rounded-full text-white text-xs font-semibold tracking-widest uppercase transition-opacity duration-200 hover:opacity-90"
+                style={{ background: "linear-gradient(135deg, #C9960C 0%, #9A7010 50%, #7A5508 100%)" }}
               >
-                Shop Now
+                Open Shop
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white shrink-0">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style={{ transform: "rotate(-55deg)" }}>
+                    <line x1="1.5" y1="6.5" x2="11.5" y2="6.5" stroke="black" strokeWidth="1.6" strokeLinecap="round"/>
+                    <polyline points="7,2 11.5,6.5 7,11" stroke="black" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  </svg>
+                </span>
               </Link>
-              {/* Base shimmer */}
-              <motion.span
-                aria-hidden
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%)",
-                }}
-                initial={{ x: "-100%" }}
-                animate={{ x: "200%" }}
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  repeatDelay: 2.2,
-                  ease: "easeInOut",
-                }}
-              />
-              {/* Hover shimmer */}
-              <motion.span
-                aria-hidden
-                className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                style={{
-                  background:
-                    "linear-gradient(105deg, transparent 25%, rgba(190,190,190,0.65) 50%, transparent 75%)",
-                }}
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{
-                  duration: 0.85,
-                  repeat: Infinity,
-                  repeatDelay: 0.4,
-                  ease: "easeInOut",
-                }}
-              />
             </motion.div>
           </div>
-        </div>
 
-        {/* Rectangular slide indicators — centered bottom */}
-        <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-1.5">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className="h-[3px] transition-all duration-400"
-              style={{
-                width: i === current ? 28 : 14,
-                backgroundColor:
-                  i === current ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.4)",
-              }}
-            />
-          ))}
-        </div>
+          {/* RIGHT — sub-copy with glass container on mobile */}
+          <motion.div
+            className="flex justify-center md:block"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.38 }}
+          >
+            <p
+              className="text-sm text-black leading-relaxed
+                bg-white/50 backdrop-blur-md border border-white/70 rounded-2xl px-5 py-4 max-w-xs
+                md:bg-transparent md:backdrop-blur-none md:border-none md:rounded-none md:p-0 md:max-w-72 md:ml-auto md:-mr-10 lg:-mr-16"
+            >
+              Explore our full catalog, read verified reviews, and experience the power of advanced peptide industry - trusted by thousand worldwide.
+            </p>
+          </motion.div>
 
+        </div>
       </div>
+
     </section>
   );
-};
-
-export default Hero;
+}

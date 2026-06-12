@@ -28,7 +28,7 @@ export default function SiteChrome({ children }) {
     return (
       <>
         <CheckoutHeader />
-        <main className="min-h-screen pt-20 md:pt-24 bg-white">{children}</main>
+        <main className="min-h-screen pt-28 md:pt-32 bg-white">{children}</main>
         <AuthModal />
       </>
     );
@@ -38,7 +38,7 @@ export default function SiteChrome({ children }) {
     return (
       <>
         <OrderHeader />
-        <main className="min-h-screen pt-20 md:pt-24 bg-white">{children}</main>
+        <main className="min-h-screen pt-28 md:pt-32 bg-white">{children}</main>
       </>
     );
   }
@@ -47,7 +47,7 @@ export default function SiteChrome({ children }) {
     <>
       <PreHeader />
       <Header />
-      <main className="min-h-screen pt-20 md:pt-24">{children}</main>
+      <main className="min-h-screen pt-28 md:pt-32">{children}</main>
       <Footer />
       <MembershipModal />
       <WhatsAppFloat />

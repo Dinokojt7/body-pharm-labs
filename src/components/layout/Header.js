@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { User, ShoppingBag, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { User, ShoppingBag } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useUIStore } from "@/lib/stores/ui-store";
@@ -13,111 +13,140 @@ import CartSidebar from "./CartSidebar";
 import MobileMenu from "./MobileMenu";
 import AuthModal from "./AuthModal";
 
-// PreHeader height in px — used to shift Header up as it scrolls away
 const PREH = 36;
+
+const NAV_LINKS = [
+  { label: "Home",    href: "/"        },
+  { label: "Shop",    href: "/shop"    },
+  { label: "About",   href: "/about"   },
+  { label: "Contact", href: "/contact" },
+];
+
+const BTN = "w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-lg border transition-all duration-200";
+const BTN_TRANSPARENT = `${BTN} bg-black/[0.04] border-black/[0.10] hover:bg-black/[0.08]`;
+const BTN_SOLID = `${BTN} bg-transparent border-gray-200 hover:bg-gray-50`;
 
 const Header = () => {
   const [scrollY, setScrollY] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrollY(window.scrollY);
+    const handler = () => {
+      const y = window.scrollY;
+      setScrollY(y);
+      setScrolled(y > 40);
+    };
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
   const { totalItems, toggleCart } = useCartStore();
-  const { toggleMobileMenu, isMobileMenuOpen, openAuthModal } = useUIStore();
+  const { toggleMobileMenu, openAuthModal } = useUIStore();
   const { isAuthenticated, getDisplayName } = useAuthStore();
+  const pathname = usePathname();
 
-  const initials = getDisplayName()?.slice(0, 2)?.toUpperCase() || "U";
-
-  // Header slides up as PreHeader scrolls away
+  const initial = getDisplayName()?.slice(0, 1)?.toUpperCase() || "U";
   const headerTop = Math.max(0, PREH - scrollY);
+
+  const isTransparent = pathname === "/" && !scrolled;
+  const btn = isTransparent ? BTN_TRANSPARENT : BTN_SOLID;
 
   return (
     <>
       <header
-        className="fixed left-0 right-0 z-40 bg-white shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
-        style={{ top: `${headerTop}px` }}
+        className="fixed left-0 right-0 z-40 transition-[background,box-shadow,border-color] duration-300"
+        style={{
+          top: `${headerTop}px`,
+          background: isTransparent ? "transparent" : "white",
+          boxShadow: isTransparent ? "none" : "0 1px 8px rgba(0,0,0,0.06)",
+        }}
       >
-        {/* Nav row */}
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="relative flex items-center justify-between h-20 md:h-24">
+        <div className="px-5 sm:px-8 lg:px-12">
+          <div className="relative flex items-center justify-between h-28 md:h-32">
 
-            {/* Left — hamburger */}
-            <button
-              onClick={toggleMobileMenu}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors z-50"
-              aria-label="Menu"
-            >
-              {isMobileMenuOpen
-                ? <X className="w-6 h-6 text-black" />
-                : <Image src="/images/hamburger-v2.webp" alt="Menu" width={24} height={24} className="object-contain" />}
-            </button>
-
-            {/* Center — logo */}
-            <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-40">
-              <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
-                <Image
-                  src="/images/logo-header.png"
-                  alt="Body Pharm Labs"
-                  fill
-                  priority
-                  className="object-contain"
-                  sizes="(max-width: 768px) 288px, (max-width: 1024px) 384px, 448px"
-                />
-              </div>
+            {/* LEFT — logo */}
+            <Link href="/" className="shrink-0">
+              <img
+                src="/images/app-logo.png"
+                alt="Body Pharm Labs"
+                className="h-28 md:h-32 w-auto object-contain"
+                style={{ mixBlendMode: "multiply" }}
+              />
             </Link>
 
-            {/* Right — icons */}
-            <div className="flex items-center gap-2 sm:gap-4 z-50">
+            {/* CENTER — pill nav (desktop only) */}
+            <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2">
+              <div
+                className="flex items-center gap-0.5 rounded-lg px-2 py-1.5 transition-all duration-300"
+                style={{
+                  background: isTransparent ? "rgba(0,0,0,0.04)" : "rgba(0,0,0,0.03)",
+                }}
+              >
+                {NAV_LINKS.map(({ label, href }) => {
+                  const isActive = href === "/" ? pathname === "/" : pathname?.startsWith(href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={`px-4 py-1.5 rounded-md text-[11px] font-semibold tracking-wide transition-all duration-200 ${
+                        isActive
+                          ? "text-black bg-black/[0.07]"
+                          : "text-black/50 hover:text-black hover:bg-black/[0.06]"
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </nav>
+
+            {/* RIGHT — action buttons */}
+            <div className="flex items-center gap-1.5 shrink-0">
               <div className="hidden sm:block">
-                <CurrencySelector isTransparent={false} />
+                <CurrencySelector isTransparent={isTransparent} />
               </div>
 
+              {/* Account */}
               <div className="relative">
                 {isAuthenticated ? (
-                  <Link
-                    href="/account"
-                    className="p-2.5 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center"
-                    aria-label="My account"
-                  >
-                    <User className="w-5 h-5 md:w-6 md:h-6 text-black" />
+                  <Link href="/account" aria-label="My account" className={btn}>
+                    <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
                   </Link>
                 ) : (
-                  <button
-                    onClick={openAuthModal}
-                    className="p-2.5 rounded-full hover:bg-gray-100 transition-colors"
-                    aria-label="Sign in"
-                  >
-                    <User className="w-5 h-5 md:w-6 md:h-6 text-black" />
+                  <button onClick={openAuthModal} aria-label="Sign in" className={btn}>
+                    <User className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
                   </button>
                 )}
                 {isAuthenticated && (
-                  <span className="absolute -top-1 -right-1 h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-semibold border pointer-events-none bg-transparent border-amber-400/30 text-black shadow-[0_0_6px_rgba(251,191,36,0.4)]">
-                    {initials.charAt(0)}
+                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-[9px] font-semibold bg-amber-500 text-white pointer-events-none leading-none">
+                    {initial}
                   </span>
                 )}
               </div>
 
-              <button
-                onClick={toggleCart}
-                className="relative p-2.5 rounded-full hover:bg-gray-100 transition-colors"
-                aria-label="Shopping cart"
-              >
-                <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              {/* Cart */}
+              <button onClick={toggleCart} aria-label="Shopping cart" className={`relative ${btn}`}>
+                <ShoppingBag className="w-4 h-4 md:w-[18px] md:h-[18px] text-black" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 md:h-6 md:w-6 md:text-sm flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[9px] font-semibold rounded-full h-5 w-5 flex items-center justify-center leading-none">
                     {totalItems}
                   </span>
                 )}
               </button>
+
+              {/* Mobile hamburger */}
+              <button onClick={toggleMobileMenu} aria-label="Menu" className={`md:hidden ${btn}`}>
+                <div className="flex flex-col gap-[5px]">
+                  <span className="block h-px w-[18px] bg-black" />
+                  <span className="block h-px w-3 bg-black" />
+                  <span className="block h-px w-[18px] bg-black" />
+                </div>
+              </button>
             </div>
+
           </div>
         </div>
-
-        {/* Bottom border — slightly narrower than full-width but wider than hero margins */}
-        <div className="border-b border-gray-100 mx-2 md:mx-4" />
       </header>
 
       <CartSidebar />
