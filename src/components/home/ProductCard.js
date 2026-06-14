@@ -25,6 +25,9 @@ const ProductCard = ({ product }) => {
     (i) => i.id === product.id && i.selectedSize === product.size,
   );
 
+  const imgSrc = product.imageUrl || product.imageString || "";
+  const isPng = /\.png(\?|$)/i.test(imgSrc);
+
   const handleAdd = () => {
     setIsAdding(true);
     addItem(product, 1, product.size);
@@ -47,7 +50,11 @@ const ProductCard = ({ product }) => {
         {/* Image */}
         <div
           className="relative aspect-square border border-black/25 rounded-lg overflow-hidden mx-2"
-          style={{ background: "linear-gradient(135deg, #d0d0d0 0%, #e8e8e8 30%, #f8f8f8 50%, #e4e4e4 70%, #cccccc 100%)" }}
+          style={
+            isPng
+              ? { background: "#fff" }
+              : { background: "linear-gradient(135deg, #d0d0d0 0%, #e8e8e8 30%, #f8f8f8 50%, #e4e4e4 70%, #cccccc 100%)" }
+          }
         >
           <div
             className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
@@ -57,10 +64,10 @@ const ProductCard = ({ product }) => {
           </div>
 
           <Image
-            src={product.imageUrl || product.imageString || "/images/placeholder.jpg"}
+            src={imgSrc || "/images/placeholder.jpg"}
             alt={product.name}
             fill
-            className={`transition-transform duration-500 group-hover:scale-105 ${(product.imageUrl || product.imageString)?.match(/\.png(\?|$)/i) ? `object-contain ${product.imageFit === "large" ? "p-1" : "p-4"}` : "object-cover"}`}
+            className={`transition-transform duration-500 group-hover:scale-105 ${isPng ? `object-contain ${product.imageFit === "large" ? "p-1" : "p-4"}` : "object-cover"}`}
           />
 
           <AnimatePresence>

@@ -9,6 +9,8 @@ const ProductImageZoom = ({ product, activeImage }) => {
   const containerRef = useRef(null);
 
   const pillColor = product.customColor || "bg-black";
+  const imgSrc = activeImage || product.imageString || "";
+  const isPng = /\.png(\?|$)/i.test(imgSrc);
 
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
@@ -22,7 +24,7 @@ const ProductImageZoom = ({ product, activeImage }) => {
     <div
       ref={containerRef}
       className="relative aspect-square border border-black/25 rounded-lg overflow-hidden cursor-zoom-in select-none"
-      style={{ background: "linear-gradient(135deg, #d0d0d0 0%, #e8e8e8 30%, #f8f8f8 50%, #e4e4e4 70%, #cccccc 100%)" }}
+      style={isPng ? { background: "#fff" } : { background: "linear-gradient(135deg, #d0d0d0 0%, #e8e8e8 30%, #f8f8f8 50%, #e4e4e4 70%, #cccccc 100%)" }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -42,7 +44,7 @@ const ProductImageZoom = ({ product, activeImage }) => {
         src={activeImage || product.imageString || "/images/placeholder.jpg"}
         alt={product.name}
         fill
-        className={`transition-transform duration-200 ease-out pointer-events-none ${(activeImage || product.imageString)?.endsWith(".png") ? `object-contain ${product.imageFit === "large" ? "p-2" : "p-6"}` : "object-cover"}`}
+        className={`transition-transform duration-200 ease-out pointer-events-none ${isPng ? `object-contain ${product.imageFit === "large" ? "p-2" : "p-6"}` : "object-cover"}`}
         style={{
           transform: isHovered ? "scale(2)" : "scale(1)",
           transformOrigin: `${origin.x}% ${origin.y}%`,
