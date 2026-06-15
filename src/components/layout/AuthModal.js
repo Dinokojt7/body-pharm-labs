@@ -205,7 +205,7 @@ export default function AuthModal() {
 
               {/* Left panel — desktop only */}
               <div className="hidden md:block md:w-5/12 relative min-h-[500px] bg-black overflow-hidden">
-                <Image src="/images/hero-bg1.webp" alt="" fill className="object-cover object-center" />
+                <Image src="/images/new-hero.png" alt="" fill className="object-cover object-center" />
                 <div className="absolute top-6 left-0 right-0 z-10 flex justify-center">
                   <div className="relative w-24 h-24">
                     <Image src="/images/logomark.png" alt="Body Pharm Labs" fill className="object-contain brightness-0 invert" priority />
