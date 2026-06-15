@@ -1,212 +1,176 @@
 [
   {
     "id": "pep-001",
-    "slug": "re-cover",
-    "name": "RE:COVER",
-    "subtitle": "BPC 157",
+    "slug": "re-lease",
+    "name": "RE:LEASE",
+    "subtitle": "Ipamorelin",
     "type": "Research Peptide",
-    "description": "BPC 157 — Joint recovery and gut protection compound studied for tissue regeneration and resilience.",
-    "details": "Body Protection Compound 157 is a 15-amino acid peptide derived from human gastric juice. Extensively studied for its role in tissue protection, gut lining repair, and systemic recovery in research models.",
+    "description": "Ipamorelin — Selective GH secretagogue for clean growth hormone release and recovery research.",
+    "details": "A 5-amino acid pentapeptide and selective GHRP that stimulates GH secretion with minimal off-target effects. Studied for precise GH pulse induction without significant cortisol, prolactin, or insulin elevation in research models.",
     "benefits": [
-      "Joint Recovery and Flexibility",
-      "Gut Lining Protection and Repair",
-      "Muscles, Tendons, and Ligament Recovery",
-      "Inflammation Damage Reduction",
-      "Overall Tissue Regeneration and Resilience"
+      "Selective Growth Hormone Release",
+      "Lean Muscle Preservation and Growth",
+      "Fat Loss and Metabolic Improvement",
+      "Improved Sleep Quality and Recovery",
+      "Minimal Side Effect Profile in Research"
     ],
     "size": "5mg",
-    "sizes": [
-      "5mg",
-      "10mg"
-    ],
-    "sizePrices": {
-      "5mg": 89.99,
-      "10mg": 159.99
-    },
-    "price": 2.5,
-    "compareAtPrice": 119.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/bpc-157-5mg.png",
-    "customColor": "#6ab04c",
-    "category": "Recovery",
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 44.99, "10mg": 79.99 },
+    "price": 44.99,
+    "compareAtPrice": 59.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ipamorelin-5mg.png",
+    "customColor": "#2e7d32",
+    "category": "Performance",
     "purity": ">99%",
-    "stock": 45,
-    "featured": false,
-    "points": 45,
+    "stock": 28,
+    "featured": true,
+    "points": 22,
     "imageFit": "large"
   },
   {
     "id": "pep-002",
-    "slug": "re-pair",
-    "name": "RE:PAIR",
-    "subtitle": "TB 500",
-    "type": "Research Peptide",
-    "description": "TB 500 — Thymosin Beta-4 for muscle, tendon, and ligament repair research.",
-    "details": "Synthetic version of a naturally occurring 43-amino acid peptide that plays a crucial role in actin regulation, cell migration, and tissue regeneration. Studied extensively in recovery and healing research.",
-    "benefits": [
-      "Muscle, Tendon, and Ligament Repair",
-      "Faster Recovery from Injury or Strain",
-      "Inflammation & Oxidative Stress Reduction",
-      "New Blood Vessel and Tissue Growth",
-      "Overall Healing and Resilience"
-    ],
-    "size": "5mg",
-    "sizes": [
-      "5mg",
-      "10mg"
-    ],
-    "sizePrices": {
-      "5mg": 119.99,
-      "10mg": 209.99
-    },
-    "price": 119.99,
-    "compareAtPrice": 149.99,
-    "imageString": "/images/products/repair.png",
-    "customColor": "#6ab04c",
-    "category": "Recovery",
-    "purity": ">99%",
-    "stock": 32,
-    "featured": false,
-    "points": 60,
-    "imageFit": "large"
-  },
-  {
-    "id": "pep-003",
-    "slug": "re-build",
-    "name": "RE:BUILD",
-    "subtitle": "TB 500 + BPC 157",
-    "type": "Research Peptide",
-    "description": "TB 500 + BPC 157 combo — the ultimate recovery stack for advanced tissue repair research.",
-    "details": "A powerful research combination of TB-500 (Thymosin Beta-4) and BPC-157. Together these compounds are studied for synergistic effects on muscle, tendon, ligament repair, and systemic tissue regeneration.",
-    "benefits": [
-      "Muscle, Tendon, and Ligament Repair",
-      "Faster Recovery from Injury and Strain",
-      "Blood Vessel and Tissue Regeneration",
-      "Reduces Inflammation and Oxidative Stress",
-      "Advanced Healing and Resilience"
-    ],
-    "size": "10mg",
-    "sizes": [
-      "10mg",
-      "20mg"
-    ],
-    "sizePrices": {
-      "10mg": 149.99,
-      "20mg": 269.99
-    },
-    "price": 149.99,
-    "compareAtPrice": 199.99,
-    "imageString": "/images/products/rebuild.png",
-    "customColor": "#6ab04c",
-    "category": "Recovery",
-    "purity": ">99%",
-    "stock": 28,
-    "featured": false,
-    "points": 75
-  },
-  {
-    "id": "pep-004",
-    "slug": "re-zempic",
-    "name": "RE:ZEMPIC",
-    "subtitle": "Semaglutide",
-    "type": "Research Peptide",
-    "description": "Semaglutide — GLP-1 receptor agonist for metabolic and appetite regulation research.",
-    "details": "Synthetic analogue of the human glucagon-like peptide-1 (GLP-1). Used extensively in metabolic, appetite regulation, and insulin sensitivity studies.",
-    "benefits": [
-      "Weight Management",
-      "Appetite Regulation",
-      "Blood Sugar Control",
-      "Fat Metabolism & Energy Balance",
-      "Long-term Metabolic Health"
-    ],
-    "size": "5mg",
-    "sizes": [
-      "2mg",
-      "5mg",
-      "10mg"
-    ],
-    "sizePrices": {
-      "2mg": 89.99,
-      "5mg": 149.99,
-      "10mg": 269.99
-    },
-    "price": 149.99,
-    "compareAtPrice": 189.99,
-    "imageString": "/images/products/rezempic.png",
-    "customColor": "#00b5b5",
-    "category": "Metabolic",
-    "purity": ">99%",
-    "stock": 35,
-    "featured": false,
-    "points": 75,
-    "imageFit": "large"
-  },
-  {
-    "id": "pep-005",
-    "slug": "re-zepatide",
-    "name": "RE:ZEPATIDE",
-    "subtitle": "Tirzepatide",
-    "type": "Research Peptide",
-    "description": "Tirzepatide — Dual GIP/GLP-1 receptor agonist for advanced metabolic research.",
-    "details": "Novel synthetic peptide that activates both GIP and GLP-1 receptors simultaneously. A cutting-edge tool for metabolic, diabetes, and obesity research.",
-    "benefits": [
-      "Weight Management",
-      "Appetite Regulation",
-      "Blood Sugar Control",
-      "Fat Metabolism & Energy Balance",
-      "Long-term Metabolic Health"
-    ],
-    "size": "10mg",
-    "sizes": [
-      "10mg",
-      "30mg"
-    ],
-    "sizePrices": {
-      "10mg": 109.99,
-      "30mg": 179.99
-    },
-    "price": 109.99,
-    "compareAtPrice": 229.99,
-    "imageString": "/images/products/rezepatide.png",
-    "customColor": "#2980b9",
-    "category": "Metabolic",
-    "purity": ">99%",
-    "stock": 20,
-    "featured": false,
-    "points": 90,
-    "imageFit": "large"
-  },
-  {
-    "id": "pep-006",
     "slug": "re-tatrutide",
     "name": "RE:TATRUTIDE",
     "subtitle": "Retatrutide",
     "type": "Research Peptide",
-    "description": "Retatrutide — Triple receptor agonist (GIP/GLP-1/Glucagon) for advanced metabolic research.",
-    "details": "Next-generation synthetic peptide activating GIP, GLP-1, and glucagon receptors. Among the most potent research tools for studying metabolic regulation, appetite control, and energy expenditure.",
+    "description": "Retatrutide — Triple GIP/GLP-1/Glucagon receptor agonist for advanced metabolic and weight regulation research.",
+    "details": "Next-generation synthetic peptide activating GIP, GLP-1, and glucagon receptors simultaneously. Among the most potent research tools for metabolic regulation, appetite control, and energy expenditure. Available in high-dose 60mg lyophilised vial.",
     "benefits": [
+      "Triple Receptor Activation (GIP/GLP-1/Glucagon)",
       "Appetite Regulation and Satiety",
       "Healthy Weight Management",
       "Fat Metabolism and Energy Expenditure",
       "Glucose Control and Insulin Sensitivity"
     ],
-    "size": "10mg",
-    "sizes": [
-      "10mg",
-      "30mg"
-    ],
-    "sizePrices": {
-      "10mg": 129.99,
-      "30mg": 199.99
-    },
-    "price": 129.99,
-    "compareAtPrice": 259.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/retatrutide-30mg.png",
+    "size": "60mg",
+    "sizes": ["60mg"],
+    "sizePrices": { "60mg": 259.99 },
+    "price": 259.99,
+    "compareAtPrice": 329.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/retatrutide-60mg.png",
     "customColor": "#c0392b",
     "category": "Metabolic",
     "purity": ">99%",
+    "stock": 12,
+    "featured": true,
+    "points": 130,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-003",
+    "slug": "re-generate",
+    "name": "RE:GENERATE",
+    "subtitle": "IGF-1 LR3",
+    "type": "Research Peptide",
+    "description": "IGF-1 LR3 — Long-acting insulin-like growth factor for muscle growth and cellular regeneration research.",
+    "details": "Recombinant analogue of Insulin-Like Growth Factor 1 with an extended half-life via an Arg3 substitution. Studied for anabolic signalling, muscle satellite cell activation, and cellular hyperplasia in research models.",
+    "benefits": [
+      "Muscle Cell Growth and Hyperplasia",
+      "Anabolic Signalling and Protein Synthesis",
+      "Fat Metabolism and Glucose Uptake",
+      "Cellular Regeneration and Recovery",
+      "Extended Half-Life vs Standard IGF-1"
+    ],
+    "size": "100mcg",
+    "sizes": ["100mcg", "200mcg"],
+    "sizePrices": { "100mcg": 59.99, "200mcg": 109.99 },
+    "price": 59.99,
+    "compareAtPrice": 79.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/igf-1-lr3-100mcg.png",
+    "customColor": "#455a64",
+    "category": "Performance",
+    "purity": ">99%",
     "stock": 18,
     "featured": false,
-    "points": 100,
+    "points": 30,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-004",
+    "slug": "re-tan",
+    "name": "RE:TAN",
+    "subtitle": "Melanotan II",
+    "type": "Research Peptide",
+    "description": "Melanotan II — Melanocyte-stimulating hormone analogue for UV-independent tanning and pigmentation research.",
+    "details": "Synthetic analogue of alpha-melanocyte-stimulating hormone (α-MSH). Studied extensively for its role in melanogenesis, UV-independent skin pigmentation, and appetite modulation in research settings.",
+    "benefits": [
+      "UV-Independent Skin Tanning",
+      "Melanogenesis and Pigmentation Research",
+      "Appetite Modulation",
+      "Libido and Sexual Function Studies",
+      "Sun Sensitivity Reduction"
+    ],
+    "size": "10mg",
+    "sizes": ["10mg"],
+    "sizePrices": { "10mg": 69.99 },
+    "price": 69.99,
+    "compareAtPrice": 89.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/melanotan-ii-10mg.png",
+    "customColor": "#c8922a",
+    "category": "Tanning",
+    "purity": ">99%",
+    "stock": 25,
+    "featured": true,
+    "points": 35,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-005",
+    "slug": "re-lean",
+    "name": "RE:LEAN",
+    "subtitle": "HGH Fragment 176-191",
+    "type": "Research Peptide",
+    "description": "HGH Frag 176-191 — Truncated GH fragment for selective lipolysis and fat metabolism research.",
+    "details": "Stabilised analogue of the C-terminal fragment of human growth hormone. Studied for selective lipolytic activity without the growth-promoting effects of full-length GH — targeting abdominal and visceral fat in research models.",
+    "benefits": [
+      "Selective Lipolysis and Fat Burning",
+      "Metabolic Rate Enhancement",
+      "Abdominal and Visceral Fat Reduction",
+      "No Impact on Blood Glucose or IGF-1",
+      "Anti-Obesity Mechanism Research"
+    ],
+    "size": "2mg",
+    "sizes": ["2mg", "5mg"],
+    "sizePrices": { "2mg": 44.99, "5mg": 89.99 },
+    "price": 44.99,
+    "compareAtPrice": 59.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/hgh-frag-176-191-2mg.png",
+    "customColor": "#37474f",
+    "category": "Metabolic",
+    "purity": ">99%",
+    "stock": 22,
+    "featured": false,
+    "points": 22,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-006",
+    "slug": "re-glow",
+    "name": "RE:GLOW",
+    "subtitle": "GHK-Cu",
+    "type": "Research Peptide",
+    "description": "GHK-Cu — Copper peptide for skin regeneration, wound healing, and longevity research.",
+    "details": "Glycyl-L-histidyl-L-lysine copper complex. A naturally occurring tripeptide-copper complex studied extensively for its role in collagen synthesis, wound healing, and cellular regeneration throughout the body.",
+    "benefits": [
+      "Collagen and Elastin Production Stimulant",
+      "Wound Healing and Tissue Regeneration",
+      "Hair Growth and Scalp Health",
+      "Inflammation and Oxidative Stress Reduction",
+      "Overall Skin Repair and Rejuvenation"
+    ],
+    "size": "100mg",
+    "sizes": ["50mg", "100mg"],
+    "sizePrices": { "50mg": 99.99, "100mg": 179.99 },
+    "price": 99.99,
+    "compareAtPrice": 129.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ghk-cu-100mg.png",
+    "customColor": "#1e5fa8",
+    "category": "Longevity",
+    "purity": ">99%",
+    "stock": 30,
+    "featured": false,
+    "points": 50,
     "imageFit": "large"
   },
   {
@@ -215,24 +179,18 @@
     "name": "RE:SHAPE",
     "subtitle": "Tesamorelin",
     "type": "Research Peptide",
-    "description": "Tesamorelin — GHRH analogue for body composition and growth hormone research.",
-    "details": "Synthetic analogue of growth hormone-releasing hormone (GHRH). Studied for its effects on growth hormone secretion, body composition, and metabolic health in research settings.",
+    "description": "Tesamorelin — GHRH analogue for body composition and growth hormone release research.",
+    "details": "Synthetic analogue of growth hormone-releasing hormone (GHRH). Studied for its effects on growth hormone secretion, reduction of visceral adiposity, and metabolic health in research settings.",
     "benefits": [
       "Natural Growth Hormone Release",
       "Reduction of Visceral and Abdominal Fat",
       "Lean Muscle Development",
       "Healthy Metabolism and Energy Balance",
-      "Anti-aging and Body Composition"
+      "Anti-Aging and Body Composition"
     ],
     "size": "2mg",
-    "sizes": [
-      "2mg",
-      "5mg"
-    ],
-    "sizePrices": {
-      "2mg": 129.99,
-      "5mg": 219.99
-    },
+    "sizes": ["2mg", "5mg"],
+    "sizePrices": { "2mg": 129.99, "5mg": 219.99 },
     "price": 129.99,
     "compareAtPrice": 169.99,
     "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/tessamorelin-2mg.png",
@@ -246,209 +204,12 @@
   },
   {
     "id": "pep-008",
-    "slug": "re-taliate",
-    "name": "RE:TALIATE",
-    "subtitle": "MOTS-c",
+    "slug": "re-pulse",
+    "name": "RE:PULSE",
+    "subtitle": "CJC-1295 with DAC",
     "type": "Research Peptide",
-    "description": "MOTS-c — Mitochondrial-derived peptide for cellular energy and performance research.",
-    "details": "16-amino acid peptide encoded within the mitochondrial genome. Regulates metabolic homeostasis, cellular energy sensing, and mitochondrial function in research models.",
-    "benefits": [
-      "Mitochondrial Function and Energy",
-      "Endurance and Physical Performance",
-      "Glucose and Lipid Regulation",
-      "Cellular Health and Vitality"
-    ],
-    "size": "5mg",
-    "sizes": [
-      "5mg",
-      "10mg"
-    ],
-    "sizePrices": {
-      "5mg": 129.99,
-      "10mg": 229.99
-    },
-    "price": 129.99,
-    "compareAtPrice": 169.99,
-    "imageString": "/images/products/retaliate.png",
-    "customColor": "#e07820",
-    "category": "Mitochondrial",
-    "purity": ">99%",
-    "stock": 22,
-    "featured": false,
-    "points": 65,
-    "imageFit": "large"
-  },
-  {
-    "id": "pep-009",
-    "slug": "re-glow",
-    "name": "RE:GLOW",
-    "subtitle": "GHK-Cu",
-    "type": "Research Peptide",
-    "description": "GHK-Cu — Copper peptide for skin regeneration, wound healing, and longevity research.",
-    "details": "Glycyl-L-histidyl-L-lysine copper complex. A naturally occurring tripeptide-copper complex studied extensively for its role in collagen synthesis, wound healing, and cellular regeneration.",
-    "benefits": [
-      "Collagen and Elastin Production Stimulant",
-      "Wound Healing and Tissue Regeneration",
-      "Hair Growth and Scalp Health",
-      "Inflammation & Oxidative Stress Reduction",
-      "Overall Skin Repair and Rejuvenation"
-    ],
-    "size": "50mg",
-    "sizes": [
-      "50mg",
-      "100mg"
-    ],
-    "sizePrices": {
-      "50mg": 99.99,
-      "100mg": 179.99
-    },
-    "price": 99.99,
-    "compareAtPrice": 129.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ghk-cu-100mg.png",
-    "customColor": "#1e5fa8",
-    "category": "Longevity",
-    "purity": ">99%",
-    "stock": 30,
-    "featured": false,
-    "points": 50,
-    "imageFit": "large"
-  },
-  {
-    "id": "pep-010",
-    "slug": "platinum-melanotan-ii",
-    "name": "PLATINUM MELANOTAN II",
-    "subtitle": "Melanotan II — U.P.A",
-    "type": "Research Peptide",
-    "description": "Melanotan II — Melanocyte-stimulating hormone analogue for tanning and pigmentation research.",
-    "details": "Synthetic analogue of alpha-melanocyte-stimulating hormone (α-MSH). Studied extensively for its role in melanogenesis, UV-independent skin pigmentation, and appetite modulation. Kit includes 10mg MTII vial and 2ml bacteriostatic water.",
-    "benefits": [
-      "UV-Independent Skin Tanning",
-      "Melanogenesis and Pigmentation Research",
-      "Appetite Modulation",
-      "Libido and Sexual Function Studies",
-      "Sun Sensitivity Reduction"
-    ],
-    "size": "10mg",
-    "sizes": [
-      "10mg"
-    ],
-    "sizePrices": {
-      "10mg": 69.99
-    },
-    "price": 69.99,
-    "compareAtPrice": 89.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/melanotan-ii-10mg.png",
-    "customColor": "#c8922a",
-    "category": "Tanning",
-    "purity": ">99%",
-    "stock": 25,
-    "featured": false,
-    "points": 35
-  },
-  {
-    "id": "pep-011",
-    "slug": "bronzeup-melanotan-ii-nasal",
-    "name": "BRONZEUP MELANOTAN II",
-    "subtitle": "MT-II Nasal Spray — Healthy D Labs",
-    "type": "Research Peptide",
-    "description": "BronzeUp — Melanotan II nasal spray for needle-free tanning peptide research.",
-    "details": "Healthy D Labs BronzeUp delivers 10mg of Melanotan II (alpha-melanocyte stimulating hormone) in a 15ml nasal spray format. Studied for melanogenesis, UV-independent pigmentation, and skin tanning research without subcutaneous injection.",
-    "benefits": [
-      "UV-Independent Skin Tanning",
-      "Easy Needle-Free Delivery",
-      "Natural-Looking Golden Brown Tan",
-      "Melanogenesis Research",
-      "Year-Round Pigmentation Support"
-    ],
-    "size": "15ml",
-    "sizes": [
-      "15ml"
-    ],
-    "sizePrices": {
-      "15ml": 79.99
-    },
-    "price": 79.99,
-    "compareAtPrice": 99.99,
-    "imageString": "/images/products/wa02.png",
-    "customColor": "#b8860b",
-    "category": "Tanning",
-    "purity": ">99%",
-    "stock": 20,
-    "featured": true,
-    "points": 40
-  },
-  {
-    "id": "pep-012",
-    "slug": "nad-plus",
-    "name": "NAD+",
-    "subtitle": "Nicotinamide Adenine Dinucleotide — Healthy U Nutrition",
-    "type": "Research Peptide",
-    "description": "NAD+ 500mg — Optimal cellular health solution for longevity and energy metabolism research.",
-    "details": "Nicotinamide Adenine Dinucleotide is a critical coenzyme found in all living cells. Studied extensively for its role in cellular energy production, DNA repair, sirtuin activation, and mitochondrial function. Kit includes 500mg/5ml vial and bacteriostatic water.",
-    "benefits": [
-      "Cellular Energy Production and ATP Synthesis",
-      "DNA Repair and Genome Stability",
-      "Sirtuin Activation and Longevity Pathways",
-      "Mitochondrial Function and Biogenesis",
-      "Cognitive Performance and Neuroprotection"
-    ],
-    "size": "500mg",
-    "sizes": [
-      "500mg"
-    ],
-    "sizePrices": {
-      "500mg": 119.99
-    },
-    "price": 119.99,
-    "compareAtPrice": 149.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/nad-plus-500mg.png",
-    "customColor": "#8B6914",
-    "category": "Longevity",
-    "purity": ">99%",
-    "stock": 18,
-    "featured": true,
-    "points": 60
-  },
-  {
-    "id": "pep-013",
-    "slug": "platinum-bpc-157",
-    "name": "PLATINUM BPC-157",
-    "subtitle": "BPC 157 — U.P.A",
-    "type": "Research Peptide",
-    "description": "Platinum BPC-157 — 5mg regenerative pentadecapeptide kit for tissue healing and recovery research.",
-    "details": "U.P.A Platinum BPC-157 provides 5mg of Body Protection Compound 157, a 15-amino acid peptide derived from human gastric juice. Includes 2ml bacteriostatic water. Studied for gut lining repair, tendon healing, and systemic tissue regeneration.",
-    "benefits": [
-      "Joint and Tendon Recovery",
-      "Gut Lining Protection and Repair",
-      "Muscle and Ligament Regeneration",
-      "Inflammation Reduction",
-      "Systemic Healing and Resilience"
-    ],
-    "size": "5mg",
-    "sizes": [
-      "5mg"
-    ],
-    "sizePrices": {
-      "5mg": 59.99
-    },
-    "price": 59.99,
-    "compareAtPrice": 79.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/bpc-157-5mg.png",
-    "customColor": "#c8922a",
-    "category": "Recovery",
-    "purity": ">99%",
-    "stock": 30,
-    "featured": true,
-    "points": 30
-  },
-  {
-    "id": "pep-014",
-    "slug": "platinum-cjc-1295",
-    "name": "PLATINUM CJC-1295",
-    "subtitle": "CJC-1295 with DAC — U.P.A",
-    "type": "Research Peptide",
-    "description": "CJC-1295 with DAC — Long-acting GHRH analogue for growth hormone release and body composition research.",
-    "details": "U.P.A Platinum CJC-1295 with Drug Affinity Complex (DAC) is a modified GHRH analogue with an extended half-life. 2mg multi-dose vial with 2ml bacteriostatic water. Studied for sustained GH secretion, muscle growth, and fat metabolism.",
+    "description": "CJC-1295 with DAC — Long-acting GHRH analogue for sustained growth hormone release research.",
+    "details": "Modified GHRH analogue with a Drug Affinity Complex (DAC) extension, dramatically extending plasma half-life. Studied for sustained pulsatile GH secretion, lean muscle development, and fat metabolism over extended dosing intervals.",
     "benefits": [
       "Sustained Growth Hormone Release",
       "Lean Muscle Development",
@@ -457,12 +218,8 @@
       "Anti-Aging and Cellular Repair"
     ],
     "size": "2mg",
-    "sizes": [
-      "2mg"
-    ],
-    "sizePrices": {
-      "2mg": 49.99
-    },
+    "sizes": ["2mg", "5mg"],
+    "sizePrices": { "2mg": 49.99, "5mg": 109.99 },
     "price": 49.99,
     "compareAtPrice": 69.99,
     "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/cjc-1295-2mg.png",
@@ -470,177 +227,134 @@
     "category": "Performance",
     "purity": ">99%",
     "stock": 22,
-    "featured": true,
-    "points": 25
+    "featured": false,
+    "points": 25,
+    "imageFit": "large"
   },
   {
-    "id": "pep-015",
-    "slug": "platinum-ipamorelin",
-    "name": "PLATINUM IPAMORELIN",
-    "subtitle": "Ipamorelin — U.P.A",
+    "id": "pep-009",
+    "slug": "re-kindle",
+    "name": "RE:KINDLE",
+    "subtitle": "Kisspeptin-10",
     "type": "Research Peptide",
-    "description": "Ipamorelin — Selective growth hormone secretagogue for GH pulse and recovery research.",
-    "details": "U.P.A Platinum Ipamorelin is a 5-amino acid pentapeptide and selective GH secretagogue. 5mg vial with 2ml bacteriostatic water. Studied for clean GH release without significant cortisol or prolactin elevation, making it a precise research tool.",
+    "description": "Kisspeptin-10 — Neuropeptide for reproductive hormone axis and LH pulse research.",
+    "details": "Kisspeptin-10 is a 10-amino acid fragment of the kisspeptin family, encoded by the KISS1 gene. A critical regulator of the hypothalamic-pituitary-gonadal (HPG) axis, studied for its role in LH/FSH release, testosterone production, and reproductive function.",
     "benefits": [
-      "Selective Growth Hormone Release",
-      "Lean Muscle Preservation and Growth",
-      "Fat Loss and Metabolic Improvement",
-      "Improved Sleep and Recovery",
-      "Minimal Side Effect Profile in Research"
+      "LH and FSH Pulse Stimulation",
+      "Testosterone Production Research",
+      "Reproductive Hormone Axis Regulation",
+      "Fertility and Gonadal Function Studies",
+      "Libido and Sexual Health Research"
     ],
     "size": "5mg",
-    "sizes": [
-      "5mg"
-    ],
-    "sizePrices": {
-      "5mg": 44.99
-    },
-    "price": 44.99,
-    "compareAtPrice": 59.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ipamorelin-5mg.png",
-    "customColor": "#2e7d32",
-    "category": "Performance",
-    "purity": ">99%",
-    "stock": 28,
-    "featured": true,
-    "points": 22
-  },
-  {
-    "id": "pep-016",
-    "slug": "platinum-pt-141",
-    "name": "PLATINUM PT-141",
-    "subtitle": "Bremelanotide — U.P.A",
-    "type": "Research Peptide",
-    "description": "PT-141 — Melanocortin receptor agonist for sexual function and libido research.",
-    "details": "U.P.A Platinum PT-141 (Bremelanotide) is a synthetic melanocortin analogue derived from Melanotan II. 10mg vial with 2ml bacteriostatic water. Studied for its central nervous system action on sexual arousal and libido modulation in research models.",
-    "benefits": [
-      "Sexual Arousal and Libido Modulation",
-      "Melanocortin Receptor Activation",
-      "Central Nervous System Research",
-      "Male and Female Sexual Function Studies",
-      "Non-Hormonal Mechanism of Action"
-    ],
-    "size": "10mg",
-    "sizes": [
-      "10mg"
-    ],
-    "sizePrices": {
-      "10mg": 79.99
-    },
-    "price": 79.99,
-    "compareAtPrice": 99.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/pt-141-10mg.png",
-    "customColor": "#ad1457",
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 89.99, "10mg": 159.99 },
+    "price": 89.99,
+    "compareAtPrice": 119.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/kisspeptin-5mg.png",
+    "customColor": "#c2185b",
     "category": "Performance",
     "purity": ">99%",
     "stock": 20,
-    "featured": true,
-    "points": 40
+    "featured": false,
+    "points": 45,
+    "imageFit": "large"
   },
   {
-    "id": "pep-017",
-    "slug": "platinum-hcg-5000",
-    "name": "PLATINUM HCG 5000 IU",
-    "subtitle": "Human Chorionic Gonadotropin — U.P.A",
+    "id": "pep-010",
+    "slug": "re-taliate",
+    "name": "RE:TALIATE",
+    "subtitle": "MOTS-c",
     "type": "Research Peptide",
-    "description": "HCG 5000 IU — Gonadotropin hormone for testosterone, fertility, and hormonal regulation research.",
-    "details": "U.P.A Platinum HCG provides 5000 International Units of Human Chorionic Gonadotropin with 2ml bacteriostatic water. Studied for its role in testosterone production stimulation, testicular function, and fertility regulation in research models.",
+    "description": "MOTS-c — Mitochondrial-derived peptide for cellular energy, metabolism, and endurance research.",
+    "details": "16-amino acid peptide encoded within the mitochondrial genome. Regulates metabolic homeostasis, cellular energy sensing, and mitochondrial function. Studied for its role in exercise capacity, glucose regulation, and longevity signalling.",
     "benefits": [
-      "Testosterone Production Stimulation",
-      "Testicular Function and Fertility Research",
-      "Hormonal Axis Regulation",
-      "Post-Cycle Hormonal Restoration Studies",
-      "LH Mimicking and Gonadotropin Research"
+      "Mitochondrial Function and Energy Production",
+      "Endurance and Physical Performance",
+      "Glucose and Lipid Regulation",
+      "Cellular Health and Vitality",
+      "Longevity Pathway Activation"
     ],
-    "size": "5000IU",
-    "sizes": [
-      "5000IU"
-    ],
-    "sizePrices": {
-      "5000IU": 54.99
-    },
-    "price": 54.99,
-    "compareAtPrice": 74.99,
-    "imageString": "/images/products/wa08.png",
-    "customColor": "#c62828",
-    "category": "Performance",
+    "size": "20mg",
+    "sizes": ["10mg", "20mg"],
+    "sizePrices": { "10mg": 229.99, "20mg": 389.99 },
+    "price": 229.99,
+    "compareAtPrice": 299.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/mots-c-20mg.png",
+    "customColor": "#e07820",
+    "category": "Mitochondrial",
     "purity": ">99%",
     "stock": 15,
-    "featured": true,
-    "points": 27
-  },
-  {
-    "id": "pep-018",
-    "slug": "platinum-igf-1-lr3",
-    "name": "PLATINUM IGF-1 LR3",
-    "subtitle": "Insulin-Like Growth Factor Long R3 — U.P.A",
-    "type": "Research Peptide",
-    "description": "IGF-1 LR3 — Long-acting insulin-like growth factor for muscle growth and cellular regeneration research.",
-    "details": "U.P.A Platinum IGF-1 LR3 is a recombinant analogue of Insulin-Like Growth Factor 1 with an extended half-life. 100mcg multi-dose vial with 2ml bacteriostatic water. Studied for anabolic signalling, muscle satellite cell activation, and cellular hyperplasia.",
-    "benefits": [
-      "Muscle Cell Growth and Hyperplasia",
-      "Anabolic Signalling and Protein Synthesis",
-      "Fat Metabolism and Glucose Uptake",
-      "Cellular Regeneration and Recovery",
-      "Extended Half-Life vs Standard IGF-1"
-    ],
-    "size": "100mcg",
-    "sizes": [
-      "100mcg"
-    ],
-    "sizePrices": {
-      "100mcg": 59.99
-    },
-    "price": 59.99,
-    "compareAtPrice": 79.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/igf-1-lr3-100mcg.png",
-    "customColor": "#455a64",
-    "category": "Performance",
-    "purity": ">99%",
-    "stock": 18,
-    "featured": true,
-    "points": 30
-  },
-  {
-    "id": "pep-019",
-    "slug": "platinum-peg-mgf",
-    "name": "PLATINUM PEG MGF",
-    "subtitle": "PEGylated Mechano Growth Factor — U.P.A",
-    "type": "Research Peptide",
-    "description": "PEG MGF — PEGylated Mechano Growth Factor for muscle repair, hypertrophy, and satellite cell research.",
-    "details": "U.P.A Platinum PEG MGF is a pegylated form of Mechano Growth Factor, an IGF-1 splice variant. 5000mcg lyophilised vial with 2ml bacteriostatic water. PEGylation extends half-life significantly. Studied for muscle fibre repair, satellite cell activation, and hypertrophy signalling.",
-    "benefits": [
-      "Muscle Satellite Cell Activation",
-      "Muscle Repair and Hypertrophy Signalling",
-      "Extended Plasma Half-Life via PEGylation",
-      "Post-Exercise Recovery Research",
-      "Localised Muscle Growth Studies"
-    ],
-    "size": "5000mcg",
-    "sizes": [
-      "5000mcg"
-    ],
-    "sizePrices": {
-      "5000mcg": 64.99
-    },
-    "price": 64.99,
-    "compareAtPrice": 84.99,
-    "imageString": "/images/products/wa10.png",
-    "customColor": "#2e7d32",
-    "category": "Performance",
-    "purity": ">99%",
-    "stock": 16,
     "featured": false,
-    "points": 32
+    "points": 115,
+    "imageFit": "large"
   },
   {
-    "id": "pep-020",
-    "slug": "platinum-ghrp-6",
-    "name": "PLATINUM GHRP-6",
-    "subtitle": "Growth Hormone Releasing Peptide-6 — U.P.A",
+    "id": "pep-011",
+    "slug": "re-sculpt",
+    "name": "RE:SCULPT",
+    "subtitle": "AOD9604",
     "type": "Research Peptide",
-    "description": "GHRP-6 — Hexapeptide growth hormone secretagogue for GH pulse amplification and appetite research.",
-    "details": "U.P.A Platinum GHRP-6 is a synthetic hexapeptide that stimulates GH release by acting on ghrelin receptors. 5mg vial with 2ml bacteriostatic water. Studied for strong GH pulse amplification, appetite stimulation, and anabolic signalling in research models.",
+    "description": "AOD9604 — Modified HGH fragment for targeted lipolysis and body composition research.",
+    "details": "Anti-obesity drug peptide derived from the C-terminus of human growth hormone (amino acids 176-191), with a Tyr0 addition. Studied for selective fat cell stimulation, lipolysis induction, and metabolic rate enhancement without impacting IGF-1 or insulin levels.",
+    "benefits": [
+      "Targeted Fat Cell Lipolysis",
+      "Body Composition Improvement",
+      "Metabolic Rate Enhancement",
+      "No Impact on Blood Glucose or IGF-1",
+      "Appetite Modulation Research"
+    ],
+    "size": "5mg",
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 54.99, "10mg": 99.99 },
+    "price": 54.99,
+    "compareAtPrice": 74.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/aod9604-5mg.png",
+    "customColor": "#37474f",
+    "category": "Metabolic",
+    "purity": ">99%",
+    "stock": 20,
+    "featured": false,
+    "points": 27,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-012",
+    "slug": "re-lieve",
+    "name": "RE:LIEVE",
+    "subtitle": "KPV",
+    "type": "Research Peptide",
+    "description": "KPV — Anti-inflammatory tripeptide for gut health, wound healing, and systemic inflammation research.",
+    "details": "Lysine-Proline-Valine (KPV) is a C-terminal tripeptide of alpha-MSH with potent anti-inflammatory properties. Studied for its role in gastrointestinal inflammation, wound healing, and cytokine modulation without the immunosuppressive risks of steroids.",
+    "benefits": [
+      "Systemic and Gut Inflammation Reduction",
+      "Wound Healing and Tissue Repair",
+      "Cytokine and Immune Modulation",
+      "IBD and Colitis Research",
+      "Skin Condition and Barrier Research"
+    ],
+    "size": "10mg",
+    "sizes": ["10mg", "20mg"],
+    "sizePrices": { "10mg": 89.99, "20mg": 159.99 },
+    "price": 89.99,
+    "compareAtPrice": 119.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/kpv-10mg.png",
+    "customColor": "#388e3c",
+    "category": "Recovery",
+    "purity": ">99%",
+    "stock": 20,
+    "featured": false,
+    "points": 45,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-013",
+    "slug": "re-surge",
+    "name": "RE:SURGE",
+    "subtitle": "GHRP-6",
+    "type": "Research Peptide",
+    "description": "GHRP-6 — Hexapeptide GH secretagogue for GH pulse amplification and appetite research.",
+    "details": "Synthetic hexapeptide that stimulates GH release by acting on ghrelin receptors. Studied for strong GH pulse amplification, appetite stimulation, and anabolic signalling in research models. Synergistic with GHRH analogues.",
     "benefits": [
       "Growth Hormone Pulse Amplification",
       "Ghrelin Receptor Activation",
@@ -649,12 +363,8 @@
       "Synergistic with GHRH Analogues"
     ],
     "size": "5mg",
-    "sizes": [
-      "5mg"
-    ],
-    "sizePrices": {
-      "5mg": 39.99
-    },
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 39.99, "10mg": 69.99 },
     "price": 39.99,
     "compareAtPrice": 54.99,
     "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ghrp-6-5mg.png",
@@ -663,48 +373,17 @@
     "purity": ">99%",
     "stock": 25,
     "featured": false,
-    "points": 20
+    "points": 20,
+    "imageFit": "large"
   },
   {
-    "id": "pep-021",
-    "slug": "platinum-hgh-frag-176-191",
-    "name": "PLATINUM HGH FRAG 176-191",
-    "subtitle": "HGH Fragment 176-191 — U.P.A",
+    "id": "pep-014",
+    "slug": "re-pair",
+    "name": "RE:PAIR",
+    "subtitle": "TB-500",
     "type": "Research Peptide",
-    "description": "HGH Frag 176-191 — Truncated GH fragment for lipolysis and fat metabolism research.",
-    "details": "U.P.A Platinum HGH Fragment 176-191 is a stabilised analogue of the C-terminal fragment of human growth hormone. 2mg vial with 2ml bacteriostatic water. Studied for selective lipolytic activity without the growth-promoting effects of full-length GH.",
-    "benefits": [
-      "Selective Lipolysis and Fat Burning",
-      "Metabolic Rate Enhancement",
-      "Abdominal and Visceral Fat Reduction",
-      "No Impact on Blood Glucose or IGF-1",
-      "Anti-Obesity Mechanism Research"
-    ],
-    "size": "2mg",
-    "sizes": [
-      "2mg"
-    ],
-    "sizePrices": {
-      "2mg": 44.99
-    },
-    "price": 44.99,
-    "compareAtPrice": 59.99,
-    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/hgh-frag-176-191-2mg.png",
-    "customColor": "#37474f",
-    "category": "Metabolic",
-    "purity": ">99%",
-    "stock": 22,
-    "featured": false,
-    "points": 22
-  },
-  {
-    "id": "pep-022",
-    "slug": "platinum-tb500",
-    "name": "PLATINUM TB500",
-    "subtitle": "Thymosin Beta-4 — U.P.A",
-    "type": "Research Peptide",
-    "description": "TB500 — Thymosin Beta-4 for muscle, tendon, and ligament repair and recovery research.",
-    "details": "U.P.A Platinum TB500 provides 5mg of Thymosin Beta-4, a 43-amino acid peptide with key roles in actin regulation and cell migration. 5mg vial with 2ml bacteriostatic water. Studied for tissue regeneration, inflammation reduction, and wound healing.",
+    "description": "TB-500 — Thymosin Beta-4 for muscle, tendon, and ligament repair and recovery research.",
+    "details": "Synthetic version of a naturally occurring 43-amino acid peptide that plays a crucial role in actin regulation, cell migration, and tissue regeneration. Studied extensively for wound healing, inflammation reduction, and systemic tissue repair.",
     "benefits": [
       "Muscle, Tendon, and Ligament Repair",
       "Faster Recovery from Injury",
@@ -713,20 +392,278 @@
       "Overall Healing and Tissue Resilience"
     ],
     "size": "5mg",
-    "sizes": [
-      "5mg"
-    ],
-    "sizePrices": {
-      "5mg": 59.99
-    },
-    "price": 59.99,
-    "compareAtPrice": 79.99,
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 119.99, "10mg": 209.99 },
+    "price": 119.99,
+    "compareAtPrice": 149.99,
     "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/tb500-5mg.png",
     "customColor": "#546e7a",
     "category": "Recovery",
     "purity": ">99%",
     "stock": 28,
+    "featured": true,
+    "points": 60,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-015",
+    "slug": "re-cover",
+    "name": "RE:COVER",
+    "subtitle": "BPC-157",
+    "type": "Research Peptide",
+    "description": "BPC-157 — Body Protection Compound for joint recovery, gut protection, and tissue regeneration research.",
+    "details": "15-amino acid peptide derived from human gastric juice. Extensively studied for its role in tissue protection, gut lining repair, tendon healing, and systemic recovery. One of the most researched regenerative peptides available.",
+    "benefits": [
+      "Joint Recovery and Flexibility",
+      "Gut Lining Protection and Repair",
+      "Muscles, Tendons, and Ligament Recovery",
+      "Inflammation Damage Reduction",
+      "Overall Tissue Regeneration and Resilience"
+    ],
+    "size": "5mg",
+    "sizes": ["5mg", "10mg"],
+    "sizePrices": { "5mg": 89.99, "10mg": 159.99 },
+    "price": 89.99,
+    "compareAtPrice": 119.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/bpc-157-5mg.png",
+    "customColor": "#6ab04c",
+    "category": "Recovery",
+    "purity": ">99%",
+    "stock": 45,
+    "featured": true,
+    "points": 45,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-016",
+    "slug": "re-charge",
+    "name": "RE:CHARGE",
+    "subtitle": "NAD+",
+    "type": "Research Peptide",
+    "description": "NAD+ 500mg — Cellular energy and longevity coenzyme for DNA repair, sirtuin activation, and mitochondrial research.",
+    "details": "Nicotinamide Adenine Dinucleotide is a critical coenzyme found in all living cells. Studied for its role in cellular energy production, DNA repair, sirtuin activation, and mitochondrial function — a cornerstone of longevity research.",
+    "benefits": [
+      "Cellular Energy Production and ATP Synthesis",
+      "DNA Repair and Genome Stability",
+      "Sirtuin Activation and Longevity Pathways",
+      "Mitochondrial Function and Biogenesis",
+      "Cognitive Performance and Neuroprotection"
+    ],
+    "size": "500mg",
+    "sizes": ["500mg"],
+    "sizePrices": { "500mg": 119.99 },
+    "price": 119.99,
+    "compareAtPrice": 149.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/nad-plus-500mg.png",
+    "customColor": "#8B6914",
+    "category": "Longevity",
+    "purity": ">99%",
+    "stock": 18,
+    "featured": true,
+    "points": 60,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-017",
+    "slug": "re-volt",
+    "name": "RE:VOLT",
+    "subtitle": "KLow",
+    "type": "Research Peptide",
+    "description": "KLow — Mitochondrial support peptide for cellular energy, metabolic resilience, and longevity research.",
+    "details": "KLow is a high-concentration mitochondrial performance peptide studied for its role in cellular energy regulation and metabolic homeostasis. At 80mg, this formulation supports deep-level mitochondrial research and bioenergetic pathway modulation.",
+    "benefits": [
+      "Mitochondrial Energy and Function",
+      "Metabolic Resilience and Homeostasis",
+      "Cellular Stress Response Research",
+      "Longevity and Anti-Aging Pathways",
+      "ATP Production Enhancement"
+    ],
+    "size": "80mg",
+    "sizes": ["80mg", "160mg"],
+    "sizePrices": { "80mg": 149.99, "160mg": 269.99 },
+    "price": 149.99,
+    "compareAtPrice": 199.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/klow-80mg.png",
+    "customColor": "#5e35b1",
+    "category": "Mitochondrial",
+    "purity": ">99%",
+    "stock": 16,
     "featured": false,
-    "points": 30
+    "points": 75,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-018",
+    "slug": "re-ignite",
+    "name": "RE:IGNITE",
+    "subtitle": "Human Growth Hormone",
+    "type": "Research Peptide",
+    "description": "HGH 200IU — Recombinant human growth hormone for body composition, recovery, and anti-aging research.",
+    "details": "Recombinant Human Growth Hormone (somatropin) provided at 200 International Units. Studied for its role in anabolism, fat metabolism, tissue repair, bone density, and cellular regeneration. A cornerstone research compound for body composition and longevity studies.",
+    "benefits": [
+      "Lean Muscle Growth and Anabolism",
+      "Fat Metabolism and Body Composition",
+      "Tissue Repair and Recovery",
+      "Bone Density and Joint Health",
+      "Anti-Aging and Cellular Regeneration"
+    ],
+    "size": "200IU",
+    "sizes": ["200IU"],
+    "sizePrices": { "200IU": 299.99 },
+    "price": 299.99,
+    "compareAtPrice": 379.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/hgh-200iu.png",
+    "customColor": "#d32f2f",
+    "category": "Performance",
+    "purity": ">99%",
+    "stock": 10,
+    "featured": true,
+    "points": 150,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-019",
+    "slug": "re-shield",
+    "name": "RE:SHIELD",
+    "subtitle": "Glutathione",
+    "type": "Research Peptide",
+    "description": "Glutathione 600mg — Master antioxidant tripeptide for oxidative stress, detoxification, and immune research.",
+    "details": "Glutathione (GSH) is a naturally occurring tripeptide (Glu-Cys-Gly) and the body's primary endogenous antioxidant. Studied for its role in neutralising free radicals, supporting liver detoxification, immune modulation, and mitochondrial protection at the cellular level.",
+    "benefits": [
+      "Master Antioxidant and Free Radical Neutralisation",
+      "Liver Detoxification and Cleansing",
+      "Immune System Modulation",
+      "Skin Brightening and Anti-Aging Research",
+      "Mitochondrial Protection"
+    ],
+    "size": "600mg",
+    "sizes": ["600mg", "1200mg"],
+    "sizePrices": { "600mg": 99.99, "1200mg": 179.99 },
+    "price": 99.99,
+    "compareAtPrice": 129.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/glutathione-600mg.png",
+    "customColor": "#1976d2",
+    "category": "Longevity",
+    "purity": ">99%",
+    "stock": 22,
+    "featured": false,
+    "points": 50,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-020",
+    "slug": "re-desire",
+    "name": "RE:DESIRE",
+    "subtitle": "PT-141 (Bremelanotide)",
+    "type": "Research Peptide",
+    "description": "PT-141 — Melanocortin receptor agonist for sexual function, libido, and arousal research.",
+    "details": "Bremelanotide (PT-141) is a synthetic melanocortin analogue acting on the central nervous system via MC3R and MC4R receptors. Studied for its non-hormonal mechanism of action on sexual arousal and libido modulation in both male and female research models.",
+    "benefits": [
+      "Sexual Arousal and Libido Modulation",
+      "Melanocortin Receptor Activation",
+      "Central Nervous System Research",
+      "Male and Female Sexual Function Studies",
+      "Non-Hormonal Mechanism of Action"
+    ],
+    "size": "10mg",
+    "sizes": ["10mg", "20mg"],
+    "sizePrices": { "10mg": 79.99, "20mg": 139.99 },
+    "price": 79.99,
+    "compareAtPrice": 99.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/pt-141-10mg.png",
+    "customColor": "#ad1457",
+    "category": "Performance",
+    "purity": ">99%",
+    "stock": 20,
+    "featured": true,
+    "points": 40,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-021",
+    "slug": "re-centre",
+    "name": "RE:CENTRE",
+    "subtitle": "Selank",
+    "type": "Research Peptide",
+    "description": "Selank — Anxiolytic nootropic peptide for stress modulation, cognitive clarity, and neuroprotection research.",
+    "details": "Selank is a synthetic heptapeptide analogue of the immunomodulatory peptide tuftsin. Studied for anxiolytic, nootropic, and neuroprotective properties in research models — modulating GABA, serotonin, and BDNF pathways without sedation or dependency.",
+    "benefits": [
+      "Anxiety and Stress Reduction",
+      "Cognitive Enhancement and Mental Clarity",
+      "Neuroprotection and BDNF Upregulation",
+      "Mood Stabilisation Research",
+      "Memory and Learning Enhancement"
+    ],
+    "size": "10mg",
+    "sizes": ["10mg", "20mg"],
+    "sizePrices": { "10mg": 89.99, "20mg": 159.99 },
+    "price": 89.99,
+    "compareAtPrice": 119.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/selank-10mg.png",
+    "customColor": "#303f9f",
+    "category": "Cognitive",
+    "purity": ">99%",
+    "stock": 18,
+    "featured": false,
+    "points": 45,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-022",
+    "slug": "re-vive",
+    "name": "RE:VIVE",
+    "subtitle": "SS-31 (Elamipretide)",
+    "type": "Research Peptide",
+    "description": "SS-31 — Mitochondria-targeted tetrapeptide for cardioprotection, energy, and longevity research.",
+    "details": "Elamipretide (SS-31) is a cell-permeable, mitochondria-targeted tetrapeptide that concentrates at the inner mitochondrial membrane. Studied for its role in protecting cardiolipin structure, reducing ROS production, restoring ATP synthesis, and extending cellular lifespan.",
+    "benefits": [
+      "Mitochondrial Membrane Stabilisation",
+      "ROS Reduction and Oxidative Stress Protection",
+      "ATP Synthesis Restoration",
+      "Cardioprotection and Heart Function Research",
+      "Cellular Longevity and Aging Research"
+    ],
+    "size": "10mg",
+    "sizes": ["10mg", "20mg"],
+    "sizePrices": { "10mg": 169.99, "20mg": 299.99 },
+    "price": 169.99,
+    "compareAtPrice": 219.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/ss31-10mg.png",
+    "customColor": "#2e7d32",
+    "category": "Mitochondrial",
+    "purity": ">99%",
+    "stock": 12,
+    "featured": false,
+    "points": 85,
+    "imageFit": "large"
+  },
+  {
+    "id": "pep-023",
+    "slug": "re-radiance",
+    "name": "RE:RADIANCE",
+    "subtitle": "GLOW Peptide Complex",
+    "type": "Research Peptide",
+    "description": "GLOW — Skin-focused peptide complex for radiance, collagen synthesis, and cellular skin regeneration research.",
+    "details": "GLOW is a high-concentration skin peptide complex formulated at 80mg for advanced dermal regeneration research. Studied for its role in collagen and elastin stimulation, melanin regulation, and oxidative stress reduction at the skin cellular level.",
+    "benefits": [
+      "Collagen and Elastin Stimulation",
+      "Skin Radiance and Brightening Research",
+      "Melanin Regulation and Pigmentation",
+      "Oxidative Stress Reduction in Skin",
+      "Cellular Skin Regeneration"
+    ],
+    "size": "80mg",
+    "sizes": ["80mg", "160mg"],
+    "sizePrices": { "80mg": 129.99, "160mg": 229.99 },
+    "price": 129.99,
+    "compareAtPrice": 169.99,
+    "imageString": "https://pub-6163bfa012dd4bb59df6fe3c087d1bd0.r2.dev/products/glow-80mg.png",
+    "customColor": "#b07d4a",
+    "category": "Longevity",
+    "purity": ">99%",
+    "stock": 16,
+    "featured": false,
+    "points": 65,
+    "imageFit": "large"
   }
 ]
