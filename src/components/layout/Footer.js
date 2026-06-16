@@ -186,12 +186,6 @@ const Footer = () => {
               © {new Date().getFullYear()} {business.name}. All rights reserved.
             </p>
 
-            <div className="flex items-center gap-4">
-              <p className="text-gray-400 text-xs">Research Use Only</p>
-              <span className="text-gray-300 text-xs">|</span>
-              <p className="text-gray-400 text-xs">Not for human consumption</p>
-            </div>
-
             {/* Payment Methods */}
             <div className="flex items-center gap-2">
               {[
