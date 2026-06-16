@@ -59,11 +59,13 @@ export default function ProductForm({ productId }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
+  const [galleryEntries, setGalleryEntries] = useState([]); // [{ url, file }]
   const [fetching, setFetching] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
   const sizeImageInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
   const activeSizeIndexRef = useRef(null);
 
   // Auth guard
@@ -108,6 +110,7 @@ export default function ProductForm({ productId }) {
       });
       setExistingImageUrl(product.imageUrl || product.imageString || null);
       setImagePreview(product.imageUrl || product.imageString || null);
+      setGalleryEntries((product.images || []).map((url) => ({ url, file: null })));
       setFetching(false);
     })();
   }, [productId, isNew, loading, user]);
@@ -156,6 +159,20 @@ export default function ProductForm({ productId }) {
     setSizeEntries(updated);
   };
 
+  const handleGalleryImageChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setGalleryEntries((prev) => [
+      ...prev,
+      ...files.map((file) => ({ url: URL.createObjectURL(file), file })),
+    ]);
+    e.target.value = "";
+  };
+
+  const removeGalleryImage = (i) => {
+    setGalleryEntries((prev) => prev.filter((_, j) => j !== i));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) { setError("Name is required."); return; }
@@ -190,6 +207,19 @@ export default function ProductForm({ productId }) {
         }
       }
 
+      // Upload gallery images
+      const galleryUrls = [];
+      for (let gi = 0; gi < galleryEntries.length; gi++) {
+        const entry = galleryEntries[gi];
+        if (entry.file) {
+          const { url, error: uploadErr } = await uploadProductImage(entry.file, `${docId}-gallery-${gi}`);
+          if (uploadErr) { setError("Gallery image upload failed: " + uploadErr); setSaving(false); return; }
+          galleryUrls.push(url);
+        } else if (entry.url && !entry.url.startsWith("blob:")) {
+          galleryUrls.push(entry.url);
+        }
+      }
+
       const payload = {
         name: form.name.trim(),
         slug: form.slug.trim() || slugify(form.name),
@@ -213,6 +243,7 @@ export default function ProductForm({ productId }) {
         imageUrl: imageUrl || null,
         imageString: imageUrl || null,
         sizeImages,
+        images: galleryUrls,
       };
 
       if (isNew) {
@@ -274,6 +305,45 @@ export default function ProductForm({ productId }) {
               <p className="text-xs text-gray-400 mt-2">PNG recommended for transparent backgrounds.</p>
             </div>
           </div>
+        </Section>
+
+        {/* Gallery Images */}
+        <Section title="Gallery Images">
+          <p className="text-xs text-gray-400 -mt-2">
+            Additional images shown as thumbnails below the main product image on the product page.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {galleryEntries.map((entry, i) => (
+              <div key={i} className="relative w-20 h-20 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden shrink-0">
+                {entry.url && (
+                  <Image src={entry.url} alt="" fill className="object-contain p-2" unoptimized />
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeGalleryImage(i)}
+                  className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-red-50 z-10"
+                >
+                  <X className="w-3 h-3 text-gray-500" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => galleryInputRef.current?.click()}
+              className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gray-400 transition-colors shrink-0"
+            >
+              <Plus className="w-5 h-5 text-gray-300" />
+              <span className="text-xs text-gray-400">Add</span>
+            </button>
+          </div>
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleGalleryImageChange}
+            className="hidden"
+          />
         </Section>
 
         {/* Basic info */}

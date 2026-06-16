@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Check, Award } from "lucide-react";
-
 import Link from "next/link";
+
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import ProductImageZoom from "./ProductImageZoom";
@@ -17,42 +18,89 @@ const ProductDetail = ({ product }) => {
     product.size || (hasSizes ? product.sizes[0] : "")
   );
   const [isAdding, setIsAdding] = useState(false);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
 
   const { addItem, items } = useCartStore();
   const { formatPrice } = useCurrency();
 
-  // Price for the currently selected size (falls back to product.price)
   const activePrice =
     (product.sizePrices && selectedSize && product.sizePrices[selectedSize]) ||
     product.price;
 
-  // Image for the currently selected size (falls back to product image)
-  const activeImage =
+  // Size-specific image (null if none defined for this size)
+  const sizeImage =
     (product.sizeImages && selectedSize && product.sizeImages[selectedSize]) ||
-    product.imageString ||
-    product.imageUrl ||
     null;
 
-  // Total qty of this product currently in cart (all sizes combined)
+  // Gallery selection overrides size image; size image overrides primary
+  const displayImage =
+    selectedGalleryImage ??
+    sizeImage ??
+    product.imageString ??
+    product.imageUrl ??
+    null;
+
+  // Thumbnail strip: primary image + any extra gallery images
+  const thumbnails = [
+    product.imageString || product.imageUrl,
+    ...(product.images || []),
+  ].filter(Boolean);
+  const showThumbnails = thumbnails.length > 1;
+
+  const isThumbActive = (url) => {
+    if (selectedGalleryImage) return url === selectedGalleryImage;
+    if (sizeImage) return url === sizeImage;
+    return url === (product.imageString || product.imageUrl);
+  };
+
   const cartQty = items
     .filter((item) => item.id === product.id)
     .reduce((sum, item) => sum + item.quantity, 0);
 
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+    setSelectedGalleryImage(null);
+  };
+
   const handleAddToCart = () => {
     setIsAdding(true);
-    // Pass the size-specific price so cart totals are correct
     addItem({ ...product, price: activePrice }, quantity, selectedSize);
-    setQuantity(1); // reset local counter after adding
+    setQuantity(1);
     setTimeout(() => setIsAdding(false), 800);
   };
 
   return (
     <div className="grid md:grid-cols-2 gap-12">
       {/* Left Column - Image */}
-      <div className="space-y-4">
-        <ProductImageZoom product={product} activeImage={activeImage} />
+      <div className="space-y-3">
+        <ProductImageZoom product={product} activeImage={displayImage} />
 
-        {/* Thumbnails - Add if needed */}
+        {/* Thumbnail strip */}
+        {showThumbnails && (
+          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+            {thumbnails.map((url, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setSelectedGalleryImage(url)}
+                className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-150 ${
+                  isThumbActive(url)
+                    ? "border-black"
+                    : "border-gray-200 hover:border-gray-400"
+                }`}
+              >
+                <Image
+                  src={url}
+                  alt={`${product.name} view ${i + 1}`}
+                  fill
+                  className="object-contain p-1"
+                  sizes="64px"
+                  unoptimized
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Right Column - Details */}
@@ -99,13 +147,13 @@ const ProductDetail = ({ product }) => {
           </span>
         </p>
 
-        {/* Size Selection — only shown if product has sizes */}
+        {/* Size Selection */}
         {hasSizes && (
           <div>
             <h3 className="font-bold text-black mb-2">Select Mg</h3>
             <CustomSelect
               value={selectedSize}
-              onChange={setSelectedSize}
+              onChange={handleSizeChange}
               options={product.sizes.map((size) => ({
                 value: size,
                 label: `${size} — ${formatPrice(product.sizePrices?.[size] ?? product.price)}`,
