@@ -33,7 +33,7 @@ const PreHeader = () => {
               </span>
               <span className="mx-3 text-black">·</span>
               <span className="mx-8 font-semibold tracking-wide">
-                Trusted by Researchers in 40+ Countries
+                Trusted by Professionals in 40+ Countries
               </span>
               <span className="mx-4 text-black">•</span>
             </span>

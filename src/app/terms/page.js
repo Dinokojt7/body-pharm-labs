@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 
 const sections = [
   {
-    title: "1. Research Use Only",
-    body: `All products sold by Body Pharm Labs are intended strictly for laboratory and in-vitro research purposes. They are not approved for human or veterinary use, consumption, or any clinical application. By purchasing from us, you confirm that you are a qualified researcher and will use the products accordingly.`,
+    title: "1. Intended Use",
+    body: `All products sold by Body Pharm Labs are intended for professional use only. By purchasing from us, you confirm that you are at least 18 years of age and will use the products responsibly and in accordance with all applicable laws in your country.`,
   },
   {
     title: "2. Eligibility",

@@ -136,7 +136,7 @@ export default function AboutPage() {
               </h3>
               <p className="text-gray-600">
                 Full batch traceability ensures complete transparency from
-                synthesis to your laboratory.
+                synthesis to your door.
               </p>
             </div>
           </div>

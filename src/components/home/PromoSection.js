@@ -12,7 +12,7 @@ const PromoSection = () => {
           viewport={{ once: true }}
           className="text-gray-500 text-sm tracking-wider mb-4"
         >
-          TRUSTED BY THOUSANDS OF RESEARCHERS
+          TRUSTED BY THOUSANDS OF CUSTOMERS
         </motion.h3>
 
         <motion.h2

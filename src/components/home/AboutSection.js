@@ -28,7 +28,7 @@ const AboutSection = () => {
         >
           {/* Eyebrow */}
           <p className="text-[10px] font-semibold tracking-[0.3em] uppercase text-black/35">
-            Trusted by Thousands of Researchers
+            Trusted by Thousands of Customers
           </p>
 
           {/* Main headline */}

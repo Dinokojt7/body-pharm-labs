@@ -130,7 +130,7 @@ export async function POST(request) {
               Questions? <a href="mailto:info@bodypharmlabs.com" style="color:#000;text-decoration:underline;">info@bodypharmlabs.com</a>
             </p>
             <p style="margin:8px 0 0;color:#d1d5db;font-size:10px;text-align:center;">
-              All products are for research and laboratory use only.
+              Thank you for choosing Body Pharm Labs.
             </p>
           </td>
         </tr>

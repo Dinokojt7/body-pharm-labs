@@ -7,7 +7,7 @@ import { Star, Quote } from "lucide-react";
 const testimonials = [
   {
     name: "Dr. Aisha Patel",
-    role: "Research Scientist, Neuroscience Lab",
+    role: "Health & Wellness Professional",
     country: "UK",
     rating: 5,
     text: "Body Pharm Labs has been our go-to supplier for over two years. The purity consistently exceeds our expectations, and the detailed CoA reports give our team full confidence. Delivery to the UK is remarkably fast.",
@@ -21,7 +21,7 @@ const testimonials = [
   },
   {
     name: "Dr. Zanele Mokoena",
-    role: "Biochemistry Researcher",
+    role: "Wellness Professional",
     country: "South Africa",
     rating: 5,
     text: "Same-day dispatch is a game changer for our lab workflow. Ordered on a Tuesday and had our RE:BUILD compound in hand by Wednesday. Quality is outstanding, always above 99% purity.",
@@ -35,14 +35,14 @@ const testimonials = [
   },
   {
     name: "Dr. Fatima Al-Rashid",
-    role: "Senior Peptide Researcher",
+    role: "Senior Health Professional",
     country: "UAE",
     rating: 5,
     text: "International shipping was seamless and arrived well within the promised window. Packaging is discreet and professional. Our research team is incredibly satisfied with RE:PAIR compound results.",
   },
   {
     name: "Thomas van der Berg",
-    role: "Endocrinology Research Fellow",
+    role: "Health & Fitness Professional",
     country: "Netherlands",
     rating: 5,
     text: "I was skeptical at first but the CoA matched independent testing we conducted in-house. That level of transparency is rare. Body Pharm Labs has earned our long-term business.",
@@ -66,7 +66,7 @@ export default function TestimonialsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3"
         >
-          What Researchers Say
+          What Our Customers Say
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -74,7 +74,7 @@ export default function TestimonialsPage() {
           transition={{ delay: 0.05 }}
           className="text-3xl md:text-4xl font-bold text-black mb-4"
         >
-          Trusted by Scientists Worldwide
+          Trusted by Professionals Worldwide
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 16 }}

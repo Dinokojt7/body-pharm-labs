@@ -90,8 +90,8 @@ export default function ShopPage() {
             Research Peptides
           </h1>
           <p className="text-gray-500 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
-            Browse our catalog of &gt;99% pure, third-party tested research
-            peptides. All compounds are for laboratory use only.
+            Browse our catalog of &gt;99% pure, third-party tested peptides
+            delivered straight to your door.
           </p>
         </div>
 

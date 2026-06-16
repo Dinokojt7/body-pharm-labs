@@ -223,7 +223,7 @@ export async function generateInvoicePdf(order) {
   // ── Footer ───────────────────────────────────────────────────────────────────
   const footerY = 36;
   page.drawRectangle({ x: 0, y: footerY - 4, width, height: 0.5, color: LIGHT_GRAY });
-  page.drawText("All products are for research and laboratory use only.  ·  info@bodypharmlabs.com", {
+  page.drawText("Thank you for your order.  ·  info@bodypharmlabs.com", {
     x: margin,
     y: footerY - 18,
     size: 7,

@@ -213,7 +213,7 @@ export default function AuthModal() {
                 </div>
                 <div className="absolute bottom-8 left-8 right-8 z-10">
                   <p className="text-black text-xl font-semibold leading-tight">Research-Grade<br />Peptides.</p>
-                  <p className="text-black/50 text-xs mt-2">Trusted by scientists worldwide.</p>
+                  <p className="text-black/50 text-xs mt-2">Trusted by professionals worldwide.</p>
                 </div>
               </div>
 
