@@ -61,6 +61,7 @@ export default function AdminOrders() {
   const [confirmOrder, setConfirmOrder] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [page, setPage] = useState(1);
+  const [paymentFilter, setPaymentFilter] = useState("all");
 
   useEffect(() => {
     if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
@@ -93,8 +94,11 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
-  const totalPages = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
-  const pagedOrders = orders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const filteredOrders = paymentFilter === "all"
+    ? orders
+    : orders.filter((o) => paymentFilter === "paid" ? o.paymentStatus === "paid" : o.paymentStatus !== "paid");
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  const pagedOrders = filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
 
@@ -106,9 +110,27 @@ export default function AdminOrders() {
         <div className="mb-6">
           <h1 className="text-xl font-bold text-gray-900">Orders</h1>
           <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
-          {totalPages > 1 && (
-            <p className="text-xs text-gray-400 mt-0.5">Page {page} of {totalPages}</p>
-          )}
+        </div>
+
+        {/* Payment filter tabs */}
+        <div className="flex gap-2 mb-5">
+          {[
+            { key: "all",    label: "All",    count: orders.length },
+            { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
+            { key: "unpaid", label: "Unpaid", count: orders.filter(o => o.paymentStatus !== "paid").length },
+          ].map(({ key, label, count }) => (
+            <button
+              key={key}
+              onClick={() => { setPaymentFilter(key); setPage(1); setExpandedId(null); }}
+              className={`h-8 px-4 rounded-lg text-xs font-medium transition-colors border ${
+                paymentFilter === key
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {label} <span className={`ml-1 ${paymentFilter === key ? "text-white/60" : "text-gray-400"}`}>({count})</span>
+            </button>
+          ))}
         </div>
 
         {fetching ? (
@@ -302,7 +324,7 @@ export default function AdminOrders() {
         {!fetching && totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-xs text-gray-400">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, orders.length)} of {orders.length} orders
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredOrders.length)} of {filteredOrders.length} orders
             </p>
             <div className="flex items-center gap-1">
               <button
