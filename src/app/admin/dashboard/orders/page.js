@@ -113,8 +113,8 @@ export default function AdminOrders() {
           <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
         </div>
 
-        {/* Payment filter tabs */}
-        <div className="flex gap-2 mb-3">
+        {/* Filters row */}
+        <div className="flex items-center gap-2 mb-5">
           {[
             { key: "all",    label: "All",    count: orders.length },
             { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
@@ -132,29 +132,18 @@ export default function AdminOrders() {
               {label} <span className={`ml-1 ${paymentFilter === key ? "text-white/60" : "text-gray-400"}`}>({count})</span>
             </button>
           ))}
-        </div>
 
-        {/* Fulfillment status filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          {[{ value: "all", label: "All Statuses" }, ...FULFILLMENT_STATUSES].map(({ value, label }) => {
-            const count = value === "all"
-              ? orders.length
-              : orders.filter(o => (o.status || "pending") === value).length;
-            const active = statusFilter === value;
-            return (
-              <button
-                key={value}
-                onClick={() => { setStatusFilter(value); setPage(1); setExpandedId(null); }}
-                className={`h-7 px-3 rounded-lg text-[11px] font-medium transition-colors border ${
-                  active
-                    ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-                }`}
-              >
-                {label} <span className={`ml-0.5 ${active ? "text-white/60" : "text-gray-400"}`}>({count})</span>
-              </button>
-            );
-          })}
+          <div className="ml-auto w-48">
+            <CustomSelect
+              compact
+              value={statusFilter}
+              onChange={(val) => { setStatusFilter(val); setPage(1); setExpandedId(null); }}
+              options={[
+                { value: "all", label: "All Statuses" },
+                ...FULFILLMENT_STATUSES.map(s => ({ value: s.value, label: s.label })),
+              ]}
+            />
+          </div>
         </div>
 
         {fetching ? (
