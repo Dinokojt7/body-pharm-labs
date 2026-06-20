@@ -62,6 +62,7 @@ export default function AdminOrders() {
   const [deletingId, setDeletingId] = useState(null);
   const [page, setPage] = useState(1);
   const [paymentFilter, setPaymentFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
@@ -94,9 +95,9 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
-  const filteredOrders = paymentFilter === "all"
-    ? orders
-    : orders.filter((o) => paymentFilter === "paid" ? o.paymentStatus === "paid" : o.paymentStatus !== "paid");
+  const filteredOrders = orders
+    .filter((o) => paymentFilter === "all" ? true : paymentFilter === "paid" ? o.paymentStatus === "paid" : o.paymentStatus !== "paid")
+    .filter((o) => statusFilter === "all" ? true : (o.status || "pending") === statusFilter);
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
   const pagedOrders = filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -113,7 +114,7 @@ export default function AdminOrders() {
         </div>
 
         {/* Payment filter tabs */}
-        <div className="flex gap-2 mb-5">
+        <div className="flex gap-2 mb-3">
           {[
             { key: "all",    label: "All",    count: orders.length },
             { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
@@ -131,6 +132,29 @@ export default function AdminOrders() {
               {label} <span className={`ml-1 ${paymentFilter === key ? "text-white/60" : "text-gray-400"}`}>({count})</span>
             </button>
           ))}
+        </div>
+
+        {/* Fulfillment status filter tabs */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          {[{ value: "all", label: "All Statuses" }, ...FULFILLMENT_STATUSES].map(({ value, label }) => {
+            const count = value === "all"
+              ? orders.length
+              : orders.filter(o => (o.status || "pending") === value).length;
+            const active = statusFilter === value;
+            return (
+              <button
+                key={value}
+                onClick={() => { setStatusFilter(value); setPage(1); setExpandedId(null); }}
+                className={`h-7 px-3 rounded-lg text-[11px] font-medium transition-colors border ${
+                  active
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {label} <span className={`ml-0.5 ${active ? "text-white/60" : "text-gray-400"}`}>({count})</span>
+              </button>
+            );
+          })}
         </div>
 
         {fetching ? (
