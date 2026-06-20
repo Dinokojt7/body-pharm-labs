@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
-import { ChevronDown, ChevronUp, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 
 const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+const PAGE_SIZE = 20;
 
 const FULFILLMENT_STATUSES = [
   { value: "pending",          label: "Pending",           color: "bg-yellow-50 text-yellow-700" },
@@ -59,6 +60,7 @@ export default function AdminOrders() {
   const [updatingId, setUpdatingId] = useState(null);
   const [confirmOrder, setConfirmOrder] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
@@ -70,6 +72,7 @@ export default function AdminOrders() {
     const unsubscribe = adminSubscribeToAllOrders(({ orders }) => {
       setOrders(orders);
       setFetching(false);
+      setPage(1);
     });
     return unsubscribe;
   }, [user, loading]);
@@ -90,6 +93,9 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
+  const totalPages = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
+  const pagedOrders = orders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
 
   return (
@@ -100,6 +106,9 @@ export default function AdminOrders() {
         <div className="mb-6">
           <h1 className="text-xl font-bold text-gray-900">Orders</h1>
           <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
+          {totalPages > 1 && (
+            <p className="text-xs text-gray-400 mt-0.5">Page {page} of {totalPages}</p>
+          )}
         </div>
 
         {fetching ? (
@@ -108,7 +117,7 @@ export default function AdminOrders() {
           <div className="text-center py-20 text-gray-400 text-sm">No orders yet.</div>
         ) : (
           <div className="space-y-2">
-            {orders.map((order) => {
+            {pagedOrders.map((order) => {
               const isExpanded = expandedId === order.id;
               return (
                 <div key={order.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -286,6 +295,46 @@ export default function AdminOrders() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!fetching && totalPages > 1 && (
+          <div className="flex items-center justify-between mt-6">
+            <p className="text-xs text-gray-400">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, orders.length)} of {orders.length} orders
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => { setPage(p => p - 1); setExpandedId(null); }}
+                disabled={page === 1}
+                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" /> Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => { setPage(p); setExpandedId(null); }}
+                  className={`h-8 w-8 rounded-lg text-xs font-medium transition-colors ${
+                    p === page
+                      ? "bg-gray-900 text-white"
+                      : "border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                onClick={() => { setPage(p => p + 1); setExpandedId(null); }}
+                disabled={page === totalPages}
+                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         )}
       </div>
