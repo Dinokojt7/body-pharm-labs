@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
-      if (cred.user.uid !== ADMIN_UID) {
+      if (!ADMIN_UIDS.includes(cred.user.uid)) {
         await signOut(auth);
         setError("Access denied.");
         setSubmitting(false);
