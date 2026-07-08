@@ -13,7 +13,7 @@ import {
 } from "@/lib/firebase/firestore";
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomDatePicker from "@/components/ui/CustomDatePicker";
-import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Info } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Info, Pencil } from "lucide-react";
 import { Timestamp } from "@firebase/firestore";
 
 const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
@@ -67,10 +67,11 @@ export default function DiscountsPage() {
   const [discounts, setDiscounts] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
-  const [confirmDelete, setConfirmDelete] = useState(null); // discount id to delete
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
     if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
@@ -88,7 +89,22 @@ export default function DiscountsPage() {
     setFetching(false);
   };
 
-  const handleCreate = async (e) => {
+  const openEdit = (d) => {
+    setEditingId(d.id);
+    setForm({
+      code: d.code,
+      value: String(d.value),
+      maxUses: d.maxUses !== null && d.maxUses !== undefined ? String(d.maxUses) : "",
+      expiresAt: d.expiresAt ? new Date(d.expiresAt.toMillis()).toISOString().split("T")[0] : "",
+      active: d.active,
+    });
+    setFormError("");
+    setShowForm(true);
+  };
+
+  const closeForm = () => { setShowForm(false); setEditingId(null); setForm(emptyForm); setFormError(""); };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.code.trim()) { setFormError("Code is required."); return; }
     if (!form.value || isNaN(Number(form.value)) || Number(form.value) <= 0 || Number(form.value) > 100) {
@@ -104,10 +120,14 @@ export default function DiscountsPage() {
       maxUses: form.maxUses ? parseInt(form.maxUses) : null,
       expiresAt: form.expiresAt ? Timestamp.fromDate(new Date(form.expiresAt)) : null,
     };
-    const { error } = await adminCreateDiscount(payload);
-    if (error) { setFormError(error); setSaving(false); return; }
-    setForm(emptyForm);
-    setShowForm(false);
+    if (editingId) {
+      const { error } = await adminUpdateDiscount(editingId, payload);
+      if (error) { setFormError(error); setSaving(false); return; }
+    } else {
+      const { error } = await adminCreateDiscount(payload);
+      if (error) { setFormError(error); setSaving(false); return; }
+    }
+    closeForm();
     setSaving(false);
     load();
   };
@@ -155,7 +175,7 @@ export default function DiscountsPage() {
           </div>
           <motion.button
             whileTap={{ scale: 0.96 }}
-            onClick={() => { setShowForm(true); setFormError(""); setForm(emptyForm); }}
+            onClick={() => { setEditingId(null); setForm(emptyForm); setFormError(""); setShowForm(true); }}
             className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -176,13 +196,13 @@ export default function DiscountsPage() {
               className="bg-white rounded-xl border border-gray-200 p-6 mb-6"
             >
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wide">Create Discount Code</h2>
-                <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-black transition-colors">
+                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wide">{editingId ? "Edit Discount Code" : "Create Discount Code"}</h2>
+                <button onClick={closeForm} className="text-gray-400 hover:text-black transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleCreate} className="grid sm:grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4">
                 {/* Code */}
                 <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="space-y-0">
                   <FieldLabel>Code *</FieldLabel>
@@ -260,11 +280,11 @@ export default function DiscountsPage() {
                 )}
 
                 <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="sm:col-span-2 flex justify-end gap-3">
-                  <button type="button" onClick={() => setShowForm(false)} className="h-9 px-4 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                  <button type="button" onClick={closeForm} className="h-9 px-4 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">
                     Cancel
                   </button>
                   <button type="submit" disabled={saving} className="h-9 px-5 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50">
-                    {saving ? "Creating…" : "Create Code"}
+                    {saving ? (editingId ? "Saving…" : "Creating…") : (editingId ? "Save Changes" : "Create Code")}
                   </button>
                 </motion.div>
               </form>
@@ -338,6 +358,13 @@ export default function DiscountsPage() {
                               {d.active
                                 ? <ToggleRight className="w-5 h-5 text-green-500" />
                                 : <ToggleLeft className="w-5 h-5" />}
+                            </button>
+                            <button
+                              onClick={() => openEdit(d)}
+                              className="text-gray-300 hover:text-gray-700 transition-colors"
+                              title="Edit"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => setConfirmDelete(d.id)}
