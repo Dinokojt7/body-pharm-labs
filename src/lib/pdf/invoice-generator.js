@@ -182,7 +182,6 @@ export async function generateInvoicePdf(order) {
     ["Subtotal", order.subtotal],
     ...(order.memberDiscount > 0 ? [["Member Discount (10%)", -order.memberDiscount]] : []),
     ["Shipping", order.shipping === 0 ? null : order.shipping],
-    ["VAT (15%)", order.tax],
   ];
 
   totalsRows.forEach(([label, amount]) => {

@@ -221,9 +221,6 @@ export default function OrderDetailPage() {
                   <span>Subtotal</span><span>{fmt(order.subtotal, order.currency)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-500">
-                  <span>Tax (15% VAT)</span><span>{fmt(order.tax, order.currency)}</span>
-                </div>
-                <div className="flex justify-between text-xs text-gray-500">
                   <span>Shipping</span>
                   <span>{order.shipping === 0 ? "Free" : fmt(order.shipping, order.currency)}</span>
                 </div>

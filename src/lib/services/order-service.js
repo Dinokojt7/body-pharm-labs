@@ -46,8 +46,8 @@ export const calculateOrderTotals = (items, shippingCost = 0) => {
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
-  const tax = subtotal * 0.15;
-  const total = subtotal + tax + shippingCost;
+  const tax = 0;
+  const total = subtotal + shippingCost;
   return { subtotal, tax, shipping: shippingCost, total };
 };
 

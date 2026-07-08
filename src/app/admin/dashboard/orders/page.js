@@ -246,10 +246,6 @@ export default function AdminOrders() {
                             <span>Shipping</span>
                             <span>{order.shipping === 0 ? "Free" : displayAmount(order.shipping, order)}</span>
                           </div>
-                          <div className="flex justify-between text-xs text-gray-500">
-                            <span>VAT (15%)</span>
-                            <span>{displayAmount(order.tax, order)}</span>
-                          </div>
                           <div className="flex justify-between text-xs font-bold text-gray-900 pt-1">
                             <span>Total</span>
                             <span>{displayAmount(order.total, order)}</span>

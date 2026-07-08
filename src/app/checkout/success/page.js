@@ -124,10 +124,6 @@ function SuccessPageInner() {
                 <span>{formatPrice(order.subtotal, order.currency)}</span>
               </div>
               <div className="flex justify-between text-xs text-gray-500">
-                <span>Tax (15% VAT)</span>
-                <span>{formatPrice(order.tax, order.currency)}</span>
-              </div>
-              <div className="flex justify-between text-xs text-gray-500">
                 <span>Shipping</span>
                 <span>{order.shipping === 0 ? "Free" : formatPrice(order.shipping, order.currency)}</span>
               </div>

@@ -65,7 +65,6 @@ export async function POST(request) {
       `Subtotal: ${formatter.format(subtotal)}`,
       ...(memberDiscount > 0 ? [`Member Discount: −${formatter.format(memberDiscount)}`] : []),
       `Shipping: ${shipping === 0 ? "Free" : formatter.format(shipping)}`,
-      `VAT (15%): ${formatter.format(tax)}`,
       `*Total: ${formatter.format(total)}*`,
       ...(notes ? [``, `Notes: ${notes}`] : []),
     ];

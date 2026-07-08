@@ -106,10 +106,6 @@ export async function POST(request) {
                   <td colspan="2" style="padding-top:14px;font-size:12px;color:#6b7280;">Shipping</td>
                   <td style="padding-top:14px;font-size:12px;color:#6b7280;text-align:right;">${shipping === 0 ? "Free" : fmt.format(shipping)}</td>
                 </tr>
-                <tr>
-                  <td colspan="2" style="padding-top:6px;font-size:12px;color:#6b7280;">VAT (15%)</td>
-                  <td style="padding-top:6px;font-size:12px;color:#6b7280;text-align:right;">${fmt.format(tax)}</td>
-                </tr>
                 ${memberDiscount > 0 ? `<tr>
                   <td colspan="2" style="padding-top:6px;font-size:12px;color:#6b7280;">Member Discount</td>
                   <td style="padding-top:6px;font-size:12px;color:#6b7280;text-align:right;">−${fmt.format(memberDiscount)}</td>
@@ -185,8 +181,6 @@ export async function POST(request) {
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr><td style="font-size:12px;color:#6b7280;padding-top:6px;">Shipping</td>
                 <td style="font-size:12px;color:#6b7280;text-align:right;padding-top:6px;">${shipping === 0 ? "Free" : fmt.format(shipping)}</td></tr>
-            <tr><td style="font-size:12px;color:#6b7280;padding-top:4px;">VAT (15%)</td>
-                <td style="font-size:12px;color:#6b7280;text-align:right;padding-top:4px;">${fmt.format(tax)}</td></tr>
             ${memberDiscount > 0 ? `<tr><td style="font-size:12px;color:#6b7280;padding-top:4px;">Member Discount</td>
                 <td style="font-size:12px;color:#6b7280;text-align:right;padding-top:4px;">−${fmt.format(memberDiscount)}</td></tr>` : ""}
             <tr><td style="font-size:14px;font-weight:700;color:#000;padding-top:10px;border-top:1px solid #e5e7eb;">Total</td>

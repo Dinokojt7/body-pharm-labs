@@ -22,8 +22,8 @@ export default function CartPage() {
   const remainingForFree = Math.max(0, shippingThreshold - subtotal);
   const progress = Math.min((subtotal / shippingThreshold) * 100, 100);
   const shippingCost = subtotal >= shippingThreshold ? 0 : 15;
-  const tax = subtotal * 0.15;
-  const total = subtotal + tax + shippingCost;
+  const tax = 0;
+  const total = subtotal + shippingCost;
 
   return (
     <main className="min-h-screen bg-white pb-20">
@@ -176,10 +176,7 @@ export default function CartPage() {
                       {shippingCost === 0 ? "Free" : formatPrice(shippingCost)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Tax (15% VAT)</span>
-                    <span className="font-medium">{formatPrice(tax)}</span>
-                  </div>
+
                   <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-200">
                     <span>Total</span>
                     <span>{formatPrice(total)}</span>

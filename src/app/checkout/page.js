@@ -49,8 +49,8 @@ export default function CheckoutPage() {
   }, [user?.uid]);
 
   const memberDiscount = isMember ? subtotal * 0.1 : 0;
-  const tax = subtotal * 0.15; // 15% VAT
-  const total = subtotal - memberDiscount - promoDiscount + tax + shippingCost;
+  const tax = 0;
+  const total = subtotal - memberDiscount - promoDiscount + shippingCost;
 
   const applyPromo = async () => {
     if (!promoInput.trim()) return;
@@ -245,10 +245,6 @@ export default function CheckoutPage() {
                   <span>
                     {shippingCost === 0 ? "Free" : formatPrice(shippingCost)}
                   </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax (15% VAT)</span>
-                  <span>{formatPrice(tax)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg pt-3 border-t border-gray-200">
                   <span>Total</span>
