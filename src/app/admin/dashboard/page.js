@@ -92,7 +92,7 @@ export default function AdminDashboard() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (user?.uid === ADMIN_UID) getMaintenanceMode().then(setMaintenance);
+    if (ADMIN_UIDS.includes(user?.uid)) getMaintenanceMode().then(setMaintenance);
   }, [user]);
 
   const handleConfirm = async () => {

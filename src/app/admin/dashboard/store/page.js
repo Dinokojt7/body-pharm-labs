@@ -26,7 +26,7 @@ export default function AdminStore() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (!loading && user?.uid === ADMIN_UID) loadProducts();
+    if (!loading && ADMIN_UIDS.includes(user?.uid)) loadProducts();
   }, [user, loading]);
 
   const loadProducts = async () => {
