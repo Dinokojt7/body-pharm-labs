@@ -9,7 +9,7 @@ import { Package, ShoppingBag, Tag, Info } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import { getMaintenanceMode, setMaintenanceMode } from "@/lib/firebase/firestore";
 
-const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 // ── Tooltip — matches discounts page exactly ──────────────────────────────────
 function Tooltip({ text }) {
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
-    if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
+    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
     setToggling(false);
   };
 
-  if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
+  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -10,7 +10,7 @@ import { deleteProductImage } from "@/lib/firebase/storage";
 import { Plus, Pencil, Trash2, AlertTriangle } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 
-const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 export default function AdminStore() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function AdminStore() {
   const [confirmProduct, setConfirmProduct] = useState(null);
 
   useEffect(() => {
-    if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
+    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function AdminStore() {
     setDeletingId(null);
   };
 
-  if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
+  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

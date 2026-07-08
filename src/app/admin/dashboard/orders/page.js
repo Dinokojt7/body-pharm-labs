@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangl
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 
-const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 const PAGE_SIZE = 20;
 
 const FULFILLMENT_STATUSES = [
@@ -65,11 +65,11 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    if (!loading && user?.uid !== ADMIN_UID) router.replace("/admin");
+    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (loading || user?.uid !== ADMIN_UID) return;
+    if (loading || !ADMIN_UIDS.includes(user?.uid)) return;
     setFetching(true);
     const unsubscribe = adminSubscribeToAllOrders(({ orders }) => {
       setOrders(orders);
@@ -101,7 +101,7 @@ export default function AdminOrders() {
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
   const pagedOrders = filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  if (loading || (!loading && user?.uid !== ADMIN_UID)) return null;
+  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

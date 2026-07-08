@@ -7,7 +7,7 @@ import { auth } from "@/lib/firebase/config";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import Image from "next/image";
 
-const ADMIN_UID = process.env.NEXT_PUBLIC_ADMIN_UID;
+const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
 
   // Already logged in as admin — go straight to dashboard
   useEffect(() => {
-    if (!loading && user?.uid === ADMIN_UID) {
+    if (!loading && ADMIN_UIDS.includes(user?.uid)) {
       router.replace("/admin/dashboard");
     }
   }, [user, loading, router]);
