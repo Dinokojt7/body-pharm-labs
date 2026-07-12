@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ProductCard from "@/components/home/ProductCard";
 import { fetchProducts } from "@/lib/services/product-service";
+import { getCategories } from "@/lib/firebase/firestore";
 import ProductCardSkeleton from "@/components/ui/ProductCardSkeleton";
 
 export default function ShopPage() {
@@ -22,23 +23,19 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const load = async () => {
       setLoading(true);
-      const { products } = await fetchProducts();
+      const [{ products }, { categories: activeCats }] = await Promise.all([
+        fetchProducts(),
+        getCategories({ activeOnly: true }),
+      ]);
       setProducts(products);
       setFilteredProducts(products);
-
-      // Extract unique categories
-      const uniqueCategories = [
-        "all",
-        ...new Set(products.map((p) => p.category)),
-      ];
-      setCategories(uniqueCategories);
-
+      setCategories(["all", ...activeCats.map((c) => c.name)]);
       setLoading(false);
     };
 
-    loadProducts();
+    load();
   }, []);
 
   useEffect(() => {
