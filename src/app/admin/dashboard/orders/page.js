@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { isAdmin } from "@/lib/utils/admin";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
-
-const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 const PAGE_SIZE = 20;
 
 const FULFILLMENT_STATUSES = [
@@ -65,11 +64,11 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
+    if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (loading || !ADMIN_UIDS.includes(user?.uid)) return;
+    if (loading || !isAdmin(user?.uid)) return;
     setFetching(true);
     const unsubscribe = adminSubscribeToAllOrders(({ orders }) => {
       setOrders(orders);
@@ -101,7 +100,7 @@ export default function AdminOrders() {
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
   const pagedOrders = filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
+  if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -245,6 +244,10 @@ export default function AdminOrders() {
                           <div className="flex justify-between text-xs text-gray-500">
                             <span>Shipping</span>
                             <span>{order.shipping === 0 ? "Free" : displayAmount(order.shipping, order)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>VAT (15%)</span>
+                            <span>{displayAmount(order.tax, order)}</span>
                           </div>
                           <div className="flex justify-between text-xs font-bold text-gray-900 pt-1">
                             <span>Total</span>

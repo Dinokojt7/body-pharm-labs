@@ -16,7 +16,6 @@ import CustomDatePicker from "@/components/ui/CustomDatePicker";
 import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Info, Pencil } from "lucide-react";
 import { Timestamp } from "@firebase/firestore";
 
-const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 const emptyForm = { code: "", value: "", maxUses: "", expiresAt: "", active: true };
 
 // ── Tooltip ──────────────────────────────────────────────────────────────────
@@ -74,11 +73,11 @@ export default function DiscountsPage() {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
-    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
+    if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (loading || !ADMIN_UIDS.includes(user?.uid)) return;
+    if (loading || !isAdmin(user?.uid)) return;
     load();
   }, [loading, user]);
 
@@ -153,7 +152,7 @@ export default function DiscountsPage() {
     return { text: "Active", cls: "bg-green-50 text-green-600" };
   };
 
-  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
+  if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

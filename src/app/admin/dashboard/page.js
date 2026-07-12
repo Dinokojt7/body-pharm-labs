@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { isAdmin } from "@/lib/utils/admin";
 import { Package, ShoppingBag, Tag, Info } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import { getMaintenanceMode, setMaintenanceMode } from "@/lib/firebase/firestore";
-
-const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 // ── Tooltip — matches discounts page exactly ──────────────────────────────────
 function Tooltip({ text }) {
@@ -88,11 +87,11 @@ export default function AdminDashboard() {
   const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
-    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
+    if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (ADMIN_UIDS.includes(user?.uid)) getMaintenanceMode().then(setMaintenance);
+    if (isAdmin(user?.uid)) getMaintenanceMode().then(setMaintenance);
   }, [user]);
 
   const handleConfirm = async () => {
@@ -104,7 +103,7 @@ export default function AdminDashboard() {
     setToggling(false);
   };
 
-  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
+  if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

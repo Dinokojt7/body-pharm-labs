@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { isAdmin } from "@/lib/utils/admin";
 import { getProducts, adminCreateProduct, adminUpdateProduct } from "@/lib/firebase/firestore";
 import { uploadProductImage } from "@/lib/firebase/storage";
 import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomSelect";
-
-const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 const CATEGORIES = ["Recovery", "Weight Management", "Performance", "Tanning", "Wellness", "Other"];
 
@@ -70,12 +69,12 @@ export default function ProductForm({ productId }) {
 
   // Auth guard
   useEffect(() => {
-    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
+    if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   // Load existing product
   useEffect(() => {
-    if (isNew || loading || !ADMIN_UIDS.includes(user?.uid)) return;
+    if (isNew || loading || !isAdmin(user?.uid)) return;
     (async () => {
       setFetching(true);
       const { products } = await getProducts();
@@ -261,7 +260,7 @@ export default function ProductForm({ productId }) {
     }
   };
 
-  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
+  if (loading || (!loading && !isAdmin(user?.uid))) return null;
   if (fetching) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center text-sm text-gray-400">Loading…</div>
   );

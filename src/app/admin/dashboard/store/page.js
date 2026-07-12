@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { isAdmin } from "@/lib/utils/admin";
 import { getProducts, adminDeleteProduct } from "@/lib/firebase/firestore";
 import { deleteProductImage } from "@/lib/firebase/storage";
 import { Plus, Pencil, Trash2, AlertTriangle } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
-
-const ADMIN_UIDS = [process.env.NEXT_PUBLIC_ADMIN_UID, process.env.NEXT_PUBLIC_CO_ADMIN_UID].filter(Boolean);
 
 export default function AdminStore() {
   const router = useRouter();
@@ -22,11 +21,11 @@ export default function AdminStore() {
   const [confirmProduct, setConfirmProduct] = useState(null);
 
   useEffect(() => {
-    if (!loading && !ADMIN_UIDS.includes(user?.uid)) router.replace("/admin");
+    if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (!loading && ADMIN_UIDS.includes(user?.uid)) loadProducts();
+    if (!loading && isAdmin(user?.uid)) loadProducts();
   }, [user, loading]);
 
   const loadProducts = async () => {
@@ -46,7 +45,7 @@ export default function AdminStore() {
     setDeletingId(null);
   };
 
-  if (loading || (!loading && !ADMIN_UIDS.includes(user?.uid))) return null;
+  if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
