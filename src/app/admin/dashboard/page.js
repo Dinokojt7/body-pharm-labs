@@ -6,7 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { Package, ShoppingBag, Tag, Info } from "lucide-react";
+import { Package, ShoppingBag, Tag, Layers, Info } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import { getMaintenanceMode, setMaintenanceMode } from "@/lib/firebase/firestore";
 
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
 
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-65px)] px-4 gap-10">
         {/* Nav cards */}
-        <div className="grid sm:grid-cols-3 gap-6 w-full max-w-3xl">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
           <Link
             href="/admin/dashboard/store"
             className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
@@ -154,6 +154,17 @@ export default function AdminDashboard() {
             </div>
             <h2 className="text-base font-bold text-gray-900 mb-1">Discounts</h2>
             <p className="text-xs text-gray-400">Create &amp; manage promo codes</p>
+          </Link>
+
+          <Link
+            href="/admin/dashboard/categories"
+            className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+          >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-5 group-hover:bg-gray-200 transition-colors">
+              <Layers className="w-6 h-6 text-gray-600" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 mb-1">Categories</h2>
+            <p className="text-xs text-gray-400">Manage product categories</p>
           </Link>
         </div>
 

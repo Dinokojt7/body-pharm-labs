@@ -6,12 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { getProducts, adminCreateProduct, adminUpdateProduct } from "@/lib/firebase/firestore";
+import { getProducts, adminCreateProduct, adminUpdateProduct, getCategories } from "@/lib/firebase/firestore";
 import { uploadProductImage } from "@/lib/firebase/storage";
 import { ArrowLeft, Upload, X, Plus } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomSelect";
-
-const CATEGORIES = ["Recovery", "Weight Management", "Performance", "Tanning", "Wellness", "Other"];
 
 const emptyForm = {
   name: "", slug: "", subtitle: "", type: "Research Peptide",
@@ -62,6 +60,7 @@ export default function ProductForm({ productId }) {
   const [fetching, setFetching] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState([]);
   const fileInputRef = useRef(null);
   const sizeImageInputRef = useRef(null);
   const galleryInputRef = useRef(null);
@@ -71,6 +70,13 @@ export default function ProductForm({ productId }) {
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
+
+  // Load active categories for dropdown
+  useEffect(() => {
+    getCategories({ activeOnly: true }).then(({ categories }) => {
+      setCategoryOptions(categories.map((c) => ({ value: c.name, label: c.name })));
+    });
+  }, []);
 
   // Load existing product
   useEffect(() => {
@@ -356,7 +362,7 @@ export default function ProductForm({ productId }) {
               <CustomSelect
                 value={form.category}
                 onChange={(val) => setForm((p) => ({ ...p, category: val }))}
-                options={[{ value: "", label: "Select…" }, ...CATEGORIES.map((c) => ({ value: c, label: c }))]}
+                options={[{ value: "", label: "Select…" }, ...categoryOptions]}
               />
             </Field>
             <Field label="Purity"><input type="text" value={form.purity} onChange={set("purity")} className={inputCls} /></Field>

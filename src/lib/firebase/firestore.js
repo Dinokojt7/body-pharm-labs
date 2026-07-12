@@ -415,6 +415,54 @@ export const adminDeleteDiscount = async (id) => {
   }
 };
 
+// ─── Category CRUD ────────────────────────────────────────────────────────────
+
+export const getCategories = async ({ activeOnly = false } = {}) => {
+  if (!db) return { categories: [], error: "Not available" };
+  try {
+    const snapshot = await getDocs(query(collection(db, "categories"), orderBy("name")));
+    let categories = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    if (activeOnly) categories = categories.filter((c) => c.active);
+    return { categories, error: null };
+  } catch (error) {
+    return { categories: [], error: error.message };
+  }
+};
+
+export const adminCreateCategory = async (name) => {
+  if (!db) return { id: null, error: "Not available" };
+  try {
+    const docRef = await addDoc(collection(db, "categories"), {
+      name: name.trim(),
+      active: true,
+      createdAt: Timestamp.now(),
+    });
+    return { id: docRef.id, error: null };
+  } catch (error) {
+    return { id: null, error: error.message };
+  }
+};
+
+export const adminUpdateCategory = async (id, data) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await updateDoc(doc(db, "categories", id), data);
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const adminDeleteCategory = async (id) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await deleteDoc(doc(db, "categories", id));
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
 // ─── Admin product CRUD ────────────────────────────────────────────────────
 
 export const adminCreateProduct = async (data) => {
