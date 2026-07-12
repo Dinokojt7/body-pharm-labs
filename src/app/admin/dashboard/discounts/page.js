@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { isAdmin } from "@/lib/utils/admin";
 import {
   adminGetDiscounts,
   adminCreateDiscount,
