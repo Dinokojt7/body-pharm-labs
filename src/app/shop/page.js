@@ -1,14 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import ProductCard from "@/components/home/ProductCard";
 import { fetchProducts } from "@/lib/services/product-service";
 import { getCategories } from "@/lib/firebase/firestore";
+import { searchProducts } from "@/lib/utils/search";
 import ProductCardSkeleton from "@/components/ui/ProductCardSkeleton";
 
 export default function ShopPage() {
+  return (
+    <Suspense>
+      <ShopPageContent />
+    </Suspense>
+  );
+}
+
+function ShopPageContent() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,11 +27,11 @@ export default function ShopPage() {
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Reactive to the URL so navigating here again with a different ?q=
+  // (e.g. from the navbar dropdown while already on /shop) actually updates.
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("q");
-    if (q) setSearchQuery(q);
-  }, []);
+    setSearchQuery(searchParams.get("q") || "");
+  }, [searchParams]);
 
   useEffect(() => {
     const load = async () => {
@@ -46,17 +57,21 @@ export default function ShopPage() {
     }
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.subtitle?.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q),
-      );
+      filtered = searchProducts(filtered, searchQuery);
     }
 
     setFilteredProducts(filtered);
   }, [selectedCategory, products, searchQuery]);
+
+  // If a category + search combo comes up empty, check whether the search
+  // term actually matches something outside the selected category so we can
+  // point the user there instead of just saying "not found".
+  const matchesOutsideCategory =
+    selectedCategory !== "all" &&
+    searchQuery.trim() &&
+    filteredProducts.length === 0
+      ? searchProducts(products, searchQuery).length
+      : 0;
 
   if (loading) {
     return (
@@ -140,7 +155,21 @@ export default function ShopPage() {
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-gray-500">No products found in this category.</p>
+            <p className="text-gray-500">
+              {searchQuery.trim()
+                ? `No products found for "${searchQuery}" in ${selectedCategory}.`
+                : "No products found in this category."}
+            </p>
+            {matchesOutsideCategory > 0 && (
+              <button
+                onClick={() => setSelectedCategory("all")}
+                className="mt-3 text-sm text-gray-700 underline hover:text-black transition-colors"
+              >
+                {matchesOutsideCategory === 1
+                  ? "1 match found outside this category — view it"
+                  : `${matchesOutsideCategory} matches found outside this category — view them`}
+              </button>
+            )}
           </div>
         )}
       </div>

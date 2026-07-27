@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import products from "@/lib/data/products.json";
+import { searchProducts } from "@/lib/utils/search";
 
 const QUICK_LINKS = [
   { label: "Shop All Products", href: "/shop" },
@@ -13,19 +13,11 @@ const QUICK_LINKS = [
   { label: "Shipping Policy", href: "/shipping-policy" },
 ];
 
-export default function SearchDropdown({ query, top, onClose }) {
+export default function SearchDropdown({ query, products, top, onClose }) {
   const trimmed = query.trim();
 
   const results = trimmed.length > 0
-    ? products.filter((p) => {
-        const q = trimmed.toLowerCase();
-        return (
-          p.name.toLowerCase().includes(q) ||
-          p.subtitle?.toLowerCase().includes(q) ||
-          p.category?.toLowerCase().includes(q) ||
-          p.type?.toLowerCase().includes(q)
-        );
-      }).slice(0, 6)
+    ? searchProducts(products, trimmed).slice(0, 6)
     : [];
 
   const noResults = trimmed.length > 0 && results.length === 0;

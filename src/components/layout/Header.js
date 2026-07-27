@@ -9,6 +9,8 @@ import { AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { fetchProducts } from "@/lib/services/product-service";
+import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import CurrencySelector from "../ui/CurrencySelector";
 import CartSidebar from "./CartSidebar";
 import MobileMenu from "./MobileMenu";
@@ -34,8 +36,16 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const [dropdownTop, setDropdownTop] = useState(null);
+  const [searchProducts, setSearchProducts] = useState([]);
   const headerRef = useRef(null);
   const searchInputRef = useRef(null);
+  const debouncedQuery = useDebouncedValue(query, 200);
+
+  // Load the live product catalog once so quick-search always reflects
+  // what's actually in Firestore, not a stale bundled snapshot.
+  useEffect(() => {
+    fetchProducts().then(({ products }) => setSearchProducts(products));
+  }, []);
 
   useEffect(() => {
     const handler = () => {
@@ -224,7 +234,8 @@ const Header = () => {
       <AnimatePresence>
         {isSearchOpen && dropdownTop !== null && (
           <SearchDropdown
-            query={query}
+            query={debouncedQuery}
+            products={searchProducts}
             top={dropdownTop}
             onClose={closeSearch}
           />
