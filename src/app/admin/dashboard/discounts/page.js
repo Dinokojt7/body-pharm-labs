@@ -72,6 +72,8 @@ export default function DiscountsPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
@@ -139,10 +141,19 @@ export default function DiscountsPage() {
 
   const handleDelete = async () => {
     if (!confirmDelete) return;
-    await adminDeleteDiscount(confirmDelete);
+    setDeleting(true);
+    setDeleteError("");
+    const { success, error } = await adminDeleteDiscount(confirmDelete);
+    setDeleting(false);
+    if (!success) {
+      setDeleteError(error || "Failed to delete this code. Please try again.");
+      return;
+    }
     setDiscounts((prev) => prev.filter((d) => d.id !== confirmDelete));
     setConfirmDelete(null);
   };
+
+  const closeDeleteModal = () => { setConfirmDelete(null); setDeleteError(""); };
 
   const isExpired = (d) => d.expiresAt && d.expiresAt.toMillis() < Date.now();
 
@@ -367,7 +378,7 @@ export default function DiscountsPage() {
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
-                              onClick={() => setConfirmDelete(d.id)}
+                              onClick={() => { setConfirmDelete(d.id); setDeleteError(""); }}
                               className="text-gray-300 hover:text-red-500 transition-colors"
                               title="Delete"
                             >
@@ -394,7 +405,7 @@ export default function DiscountsPage() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0"
           >
-            <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmDelete(null)} />
+            <div className="absolute inset-0 bg-black/40" onClick={closeDeleteModal} />
             <motion.div
               initial={{ y: 24, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -406,12 +417,15 @@ export default function DiscountsPage() {
                 <p className="text-sm font-semibold text-gray-900">Delete discount code?</p>
                 <p className="text-xs text-gray-500 mt-1">This action cannot be undone. The code will stop working immediately.</p>
               </div>
+              {deleteError && (
+                <p className="text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2">{deleteError}</p>
+              )}
               <div className="flex gap-2 justify-end pt-1">
-                <button onClick={() => setConfirmDelete(null)} className="h-10 px-5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+                <button onClick={closeDeleteModal} className="h-10 px-5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>
-                <button onClick={handleDelete} className="h-10 px-5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
-                  Delete
+                <button onClick={handleDelete} disabled={deleting} className="h-10 px-5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
+                  {deleting ? "Deleting…" : "Delete"}
                 </button>
               </div>
             </motion.div>
