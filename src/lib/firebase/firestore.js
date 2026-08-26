@@ -150,6 +150,24 @@ export const getUserProfile = async (uid) => {
   }
 };
 
+// Everyone with an active lifetime membership (paid the once-off fee for
+// automatic 10% off). membership.joinedAt is a plain ISO string (not a
+// Firestore Timestamp — see activateMembership below), so it's sorted and
+// formatted as a date string, not via .toMillis().
+export const adminGetMembers = async () => {
+  if (!db) return { members: [], error: "Not available" };
+  try {
+    const q = query(collection(db, "users"), where("membership.active", "==", true));
+    const snapshot = await getDocs(q);
+    const members = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => new Date(b.membership?.joinedAt ?? 0).getTime() - new Date(a.membership?.joinedAt ?? 0).getTime());
+    return { members, error: null };
+  } catch (error) {
+    return { members: [], error: error.message };
+  }
+};
+
 export const saveUserProfile = async (uid, data) => {
   if (!db) return { success: false, error: "Not available server-side" };
   try {
