@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.uid == "Flm4gI994QbGVus0hAPnzitT3Eb2" ||
+        request.auth.uid == "OuYlRbBeHqZYzuALwJ7qyfTYy8j1"
+      );
+    }
+
+    // An affiliate is anyone with a doc at affiliates/{their own uid}.
+    // Doc ID = the affiliate's Firebase Auth UID, so this is a direct
+    // lookup rather than a query.
+    function isAffiliate() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/affiliates/$(request.auth.uid));
+    }
+
+    function affiliateCode() {
+      return get(/databases/$(database)/documents/affiliates/$(request.auth.uid)).data.discountCode;
+    }
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /orders/{orderId} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        isAdmin() ||
+        (isAffiliate() && resource.data.discountCode == affiliateCode())
+      );
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if request.auth != null &&
+        (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /discounts/{discountId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Affiliate accounts are created/deleted only via the Admin-SDK-backed
+    // API routes (src/app/api/admin/affiliates/*), which mint the Firebase
+    // Auth login and bypass these rules entirely. Client-side writes here
+    // are admin-only edits (name, active) — never account creation/deletion.
+    match /affiliates/{affiliateId} {
+      allow get: if request.auth != null && (request.auth.uid == affiliateId || isAdmin());
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+  }
+}
