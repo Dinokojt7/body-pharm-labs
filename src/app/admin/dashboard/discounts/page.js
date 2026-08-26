@@ -169,30 +169,28 @@ export default function DiscountsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminHeader />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="flex items-center justify-between mb-6"
-        >
+      {/* Sticky sub-header — pinned right below AdminHeader; only the content
+          below (forms, table) scrolls underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/admin/dashboard" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <h1 className="text-sm font-semibold text-gray-900">Discount Codes</h1>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.96 }}
+          <button
             onClick={() => { setEditingId(null); setForm(emptyForm); setFormError(""); setShowForm(true); }}
             className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             New Code
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Create form */}
         <AnimatePresence>

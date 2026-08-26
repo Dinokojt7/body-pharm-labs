@@ -106,45 +106,51 @@ export default function AdminOrders() {
     <div className="min-h-screen bg-gray-50">
       <AdminHeader backHref="/admin/dashboard" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-xl font-bold text-gray-900">Orders</h1>
-          <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
-        </div>
+      {/* Sticky sub-header — title + filters pinned right below AdminHeader;
+          only the order list below scrolls underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="mb-3">
+            <h1 className="text-sm font-semibold text-gray-900">Orders</h1>
+            <p className="text-xs text-gray-400 mt-0.5">{orders.length} total</p>
+          </div>
 
-        {/* Filters row */}
-        <div className="flex flex-wrap items-center gap-2 mb-5">
-          {[
-            { key: "all",    label: "All",    count: orders.length },
-            { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
-            { key: "unpaid", label: "Unpaid", count: orders.filter(o => o.paymentStatus !== "paid").length },
-          ].map(({ key, label, count }) => (
-            <button
-              key={key}
-              onClick={() => { setPaymentFilter(key); setPage(1); setExpandedId(null); }}
-              className={`h-8 px-4 rounded-lg text-xs font-medium transition-colors border ${
-                paymentFilter === key
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              {label} <span className={`ml-1 ${paymentFilter === key ? "text-white/60" : "text-gray-400"}`}>({count})</span>
-            </button>
-          ))}
+          {/* Filters row */}
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { key: "all",    label: "All",    count: orders.length },
+              { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
+              { key: "unpaid", label: "Unpaid", count: orders.filter(o => o.paymentStatus !== "paid").length },
+            ].map(({ key, label, count }) => (
+              <button
+                key={key}
+                onClick={() => { setPaymentFilter(key); setPage(1); setExpandedId(null); }}
+                className={`h-8 px-4 rounded-lg text-xs font-medium transition-colors border ${
+                  paymentFilter === key
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {label} <span className={`ml-1 ${paymentFilter === key ? "text-white/60" : "text-gray-400"}`}>({count})</span>
+              </button>
+            ))}
 
-          <div className="ml-auto w-48">
-            <CustomSelect
-              compact
-              value={statusFilter}
-              onChange={(val) => { setStatusFilter(val); setPage(1); setExpandedId(null); }}
-              options={[
-                { value: "all", label: "All Statuses" },
-                ...FULFILLMENT_STATUSES.map(s => ({ value: s.value, label: s.label })),
-              ]}
-            />
+            <div className="ml-auto w-48">
+              <CustomSelect
+                compact
+                value={statusFilter}
+                onChange={(val) => { setStatusFilter(val); setPage(1); setExpandedId(null); }}
+                options={[
+                  { value: "all", label: "All Statuses" },
+                  ...FULFILLMENT_STATUSES.map(s => ({ value: s.value, label: s.label })),
+                ]}
+              />
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-6xl mx-auto px-6 py-6">
         {fetching ? (
           <div className="text-center py-20 text-gray-400 text-sm">Loading…</div>
         ) : orders.length === 0 ? (

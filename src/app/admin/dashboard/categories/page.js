@@ -103,14 +103,18 @@ export default function CategoriesPage() {
     <div className="min-h-screen bg-gray-50">
       <AdminHeader backHref="/admin/dashboard" />
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
+      {/* Sticky sub-header — pinned right below AdminHeader; only the content
+          below (form, list) scrolls underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 h-16 flex items-center">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Categories</h1>
+            <h1 className="text-sm font-semibold text-gray-900">Categories</h1>
             <p className="text-xs text-gray-400 mt-0.5">{categories.length} total</p>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
         {/* Add new */}
         <form onSubmit={handleAdd} className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex gap-2">
           <div className="flex-1">

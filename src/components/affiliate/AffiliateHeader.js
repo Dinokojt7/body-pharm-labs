@@ -20,7 +20,7 @@ export default function AffiliateHeader() {
   return (
     <>
       <header
-        className="relative overflow-hidden border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between"
+        className="sticky top-0 z-30 overflow-hidden border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between"
         style={{
           backgroundImage: "url('/images/new-hero.png')",
           backgroundSize: "cover",

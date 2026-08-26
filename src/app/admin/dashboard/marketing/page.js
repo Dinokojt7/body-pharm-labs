@@ -77,38 +77,38 @@ export default function MarketingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminHeader />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="flex items-center justify-between mb-6"
-        >
-          <div className="flex items-center gap-3">
+      {/* Sticky sub-header — title + date filters pinned right below AdminHeader;
+          only the report table below scrolls underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center gap-3 mb-3">
             <Link href="/admin/dashboard" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <h1 className="text-sm font-semibold text-gray-900">Marketing — UTM Tracking</h1>
           </div>
-        </motion.div>
 
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <div className="w-[calc(50%-6px)] sm:w-40">
-            <CustomDatePicker value={fromDate} onChange={setFromDate} placeholder="From" />
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="w-[calc(50%-6px)] sm:w-40">
+              <CustomDatePicker value={fromDate} onChange={setFromDate} placeholder="From" />
+            </div>
+            <div className="w-[calc(50%-6px)] sm:w-40">
+              <CustomDatePicker value={toDate} onChange={setToDate} placeholder="To" />
+            </div>
+            {(fromDate || toDate) && (
+              <button
+                onClick={() => { setFromDate(""); setToDate(""); }}
+                className="text-xs text-gray-400 hover:text-gray-700 underline transition-colors"
+              >
+                Clear
+              </button>
+            )}
           </div>
-          <div className="w-[calc(50%-6px)] sm:w-40">
-            <CustomDatePicker value={toDate} onChange={setToDate} placeholder="To" />
-          </div>
-          {(fromDate || toDate) && (
-            <button
-              onClick={() => { setFromDate(""); setToDate(""); }}
-              className="text-xs text-gray-400 hover:text-gray-700 underline transition-colors"
-            >
-              Clear
-            </button>
-          )}
         </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}

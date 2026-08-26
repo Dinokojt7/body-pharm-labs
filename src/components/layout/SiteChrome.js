@@ -14,7 +14,7 @@ const CHECKOUT_ROUTES = ["/checkout", "/checkout/success", "/checkout/verify"];
 
 export default function SiteChrome({ children }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isAdmin = pathname?.startsWith("/admin") || pathname?.startsWith("/affiliate");
   const isCheckout = CHECKOUT_ROUTES.some((r) => pathname === r || pathname?.startsWith(r + "/"));
   const isOrder = pathname?.startsWith("/orders/");
 

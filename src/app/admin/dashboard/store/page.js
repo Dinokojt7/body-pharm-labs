@@ -51,10 +51,12 @@ export default function AdminStore() {
     <div className="min-h-screen bg-gray-50">
       <AdminHeader backHref="/admin/dashboard" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
+      {/* Sticky sub-header — pinned right below AdminHeader; only the product
+          table below scrolls underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Products</h1>
+            <h1 className="text-sm font-semibold text-gray-900">Products</h1>
             <p className="text-xs text-gray-400 mt-0.5">{products.length} total</p>
           </div>
           <Link
@@ -65,7 +67,9 @@ export default function AdminStore() {
             Add Product
           </Link>
         </div>
+      </div>
 
+      <div className="max-w-6xl mx-auto px-6 py-6">
         {fetching ? (
           <div className="text-center py-20 text-gray-400 text-sm">Loading…</div>
         ) : (

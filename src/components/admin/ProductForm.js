@@ -273,7 +273,7 @@ export default function ProductForm({ productId }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
+      <header className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
         <Link href="/admin/dashboard/store" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </Link>

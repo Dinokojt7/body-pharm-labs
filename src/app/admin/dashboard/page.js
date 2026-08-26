@@ -123,13 +123,47 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-65px)] px-4 gap-10">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-black text-center mt-4 mb-4">
-          Dashboard
-        </h1>
+      {/* Sticky sub-header — page label + maintenance toggle. Pinned right below
+          AdminHeader (top offset matches its height exactly) so only the tiles
+          below scroll underneath it. */}
+      <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-3">
+          <h1 className="text-sm font-semibold text-gray-700 inline-flex items-center">
+            Admin Dashboard
+          </h1>
 
+          {/* Maintenance toggle — fixed dimensions so layout never shifts */}
+          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 py-2 shadow-sm">
+            <span className="text-sm font-semibold text-gray-700 hidden sm:inline">Maintenance Mode</span>
+
+            <Tooltip text="When switched on, visitors see a maintenance page with a WhatsApp contact button. Use during inventory updates, image uploads, holiday closures, or any planned downtime. Toggle off when the store is ready." />
+
+            {/* Toggle switch */}
+            <button
+              onClick={() => !toggling && setConfirm(true)}
+              disabled={toggling}
+              className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+                maintenance ? "bg-black" : "bg-gray-200"
+              } ${toggling ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
+            >
+              <span
+                className={`inline-block h-4 w-4 shrink-0 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                  maintenance ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+
+            {/* Fixed-width status label so it never shifts the container */}
+            <span className={`text-xs font-semibold w-10 ${maintenance ? "text-red-500" : "text-gray-400"}`}>
+              {toggling ? "…" : maintenance ? "ON" : "OFF"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Nav cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/admin/dashboard/store"
             className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
@@ -197,33 +231,6 @@ export default function AdminDashboard() {
             <h2 className="text-base font-bold text-gray-900 mb-1">Marketing</h2>
             <p className="text-xs text-gray-400">UTM source &amp; campaign performance</p>
           </Link>
-        </div>
-
-        {/* Maintenance toggle — fixed dimensions so layout never shifts */}
-        <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-5 py-3.5 shadow-sm">
-          <span className="text-sm font-semibold text-gray-700">Maintenance Mode</span>
-
-          <Tooltip text="When switched on, visitors see a maintenance page with a WhatsApp contact button. Use during inventory updates, image uploads, holiday closures, or any planned downtime. Toggle off when the store is ready." />
-
-          {/* Toggle switch */}
-          <button
-            onClick={() => !toggling && setConfirm(true)}
-            disabled={toggling}
-            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-              maintenance ? "bg-black" : "bg-gray-200"
-            } ${toggling ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
-          >
-            <span
-              className={`inline-block h-4 w-4 shrink-0 transform rounded-full bg-white shadow transition-transform duration-200 ${
-                maintenance ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-
-          {/* Fixed-width status label so it never shifts the container */}
-          <span className={`text-xs font-semibold w-10 ${maintenance ? "text-red-500" : "text-gray-400"}`}>
-            {toggling ? "…" : maintenance ? "ON" : "OFF"}
-          </span>
         </div>
       </div>
     </div>
