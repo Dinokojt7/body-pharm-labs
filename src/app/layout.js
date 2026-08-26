@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { Poppins, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import SiteChrome from "@/components/layout/SiteChrome";
 import RouteLoader from "@/components/ui/RouteLoader";
 import ServiceWorkerRegistration from "@/components/ui/ServiceWorkerRegistration";
+import UtmCapture from "@/components/utm/UtmCapture";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import siteData from "@/lib/data/site-data.json";
@@ -66,6 +68,9 @@ export default function RootLayout({ children }) {
           <CurrencyProvider>
             <RouteLoader />
             <ServiceWorkerRegistration />
+            <Suspense fallback={null}>
+              <UtmCapture />
+            </Suspense>
             <SiteChrome>{children}</SiteChrome>
           </CurrencyProvider>
         </AuthProvider>

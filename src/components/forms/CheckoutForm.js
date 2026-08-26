@@ -9,6 +9,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { useCurrency } from "@/lib/hooks/useCurrency";
 import { processOrder, generateOrderNumber } from "@/lib/services/order-service";
 import { getUserProfile } from "@/lib/firebase/firestore";
+import { getStoredUtm } from "@/lib/utils/utm";
 import CustomSelect from "@/components/ui/CustomSelect";
 import productsData from "@/lib/data/products.json";
 
@@ -146,6 +147,7 @@ const CheckoutForm = ({
       currency: selectedCurrency,
       exchangeRate: convertPrice(1), // rate: 1 ZAR → selectedCurrency at time of order
       notes: formData.notes.trim(),
+      utm: getStoredUtm() || null,
       userId: user?.uid || null,
       status: "pending_payment",
       paystackReference: null,
