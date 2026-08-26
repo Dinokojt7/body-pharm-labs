@@ -124,6 +124,10 @@ export default function AdminDashboard() {
       </AnimatePresence>
 
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-65px)] px-4 gap-10">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-black text-center mt-4 mb-4">
+          Dashboard
+        </h1>
+
         {/* Nav cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
           <Link

@@ -20,9 +20,19 @@ export default function AdminHeader({ backHref = null }) {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between">
+      <header
+        className="relative overflow-hidden border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between"
+        style={{
+          backgroundImage: "url('/images/new-hero.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Overlay for contrast — keeps the logo/button legible over the image */}
+        <div className="absolute inset-0 bg-white/75" />
+
         {/* Left — logo (+ back arrow on sub-pages) */}
-        <div className="flex items-center gap-3">
+        <div className="relative z-10 flex items-center gap-3">
           {backHref && (
             <Link href={backHref} className="p-1 rounded hover:bg-gray-100 transition-colors inline-flex shrink-0">
               <ArrowLeft className="w-4 h-4 text-gray-400" />
@@ -40,14 +50,11 @@ export default function AdminHeader({ backHref = null }) {
           </div>
         </div>
 
-        {/* Right — label + sign out */}
-        <div className="flex items-center gap-4">
-          <span className="text-xs font-semibold text-gray-400 tracking-wide uppercase hidden sm:block">
-            Admin Dashboard
-          </span>
+        {/* Right — sign out */}
+        <div className="relative z-10 flex items-center gap-4">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-black/5 border border-black/10 hover:bg-black/10 text-xs font-medium text-gray-700 hover:text-gray-900 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign out
