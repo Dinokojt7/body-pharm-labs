@@ -338,7 +338,7 @@ export const activateMembership = async (uid, { joinedAt, paystackRef }) => {
         plan: "lifetime",
         joinedAt: joinedAt || new Date().toISOString(),
         paystackRef: paystackRef || null,
-        fee: 199,
+        fee: 0,
       },
       updatedAt: Timestamp.now(),
     };

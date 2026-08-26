@@ -29,6 +29,7 @@ const goldBg = {
 export default function MembershipModal() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { user, authLoading } = useAuthStore();
   const { openAuthModal } = useUIStore();
   usePreventScroll(open);
@@ -62,10 +63,20 @@ export default function MembershipModal() {
       return;
     }
     setLoading(true);
+    setError("");
     try {
-      await activateMembership(user.uid, { joinedAt: new Date().toISOString(), paystackRef: null });
+      const { success, error: err } = await activateMembership(user.uid, {
+        joinedAt: new Date().toISOString(),
+        paystackRef: null,
+      });
+      if (!success) {
+        setError(err || "Something went wrong. Please try again.");
+        setLoading(false);
+        return;
+      }
       setOpen(false);
     } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   };
@@ -164,6 +175,10 @@ export default function MembershipModal() {
                     "Sign in to Join"
                   )}
                 </button>
+
+                {error && (
+                  <p className="text-xs text-red-500 mt-2.5 leading-relaxed">{error}</p>
+                )}
               </div>
 
             </div>
