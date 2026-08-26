@@ -309,6 +309,76 @@ export default function AffiliatesPage() {
               <p className="text-xs text-gray-400">Click &quot;New Affiliate&quot; to add your first one.</p>
             </div>
           ) : (
+            <>
+            {/* Mobile — stacked cards */}
+            <ul className="sm:hidden divide-y divide-gray-100">
+              <AnimatePresence initial={false}>
+                {affiliates.map((a, i) => {
+                  const stats = statsByCode[a.discountCode] || { orders: 0, revenue: 0 };
+                  return (
+                    <motion.li
+                      key={a.id}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.18, delay: i * 0.04 }}
+                      className="p-4 space-y-3"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-900 text-sm truncate">{a.name}</p>
+                          <p className="text-xs text-gray-400 truncate">{a.email}</p>
+                        </div>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0 ${a.active ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"}`}>
+                          {a.active ? "Active" : "Inactive"}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-0.5">Code</p>
+                          <p className="text-xs font-mono font-semibold text-gray-900 tracking-wider">{a.discountCode}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-0.5">Orders</p>
+                          <p className="text-xs text-gray-700 font-medium">{stats.orders}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mb-0.5">Revenue</p>
+                          <p className="text-xs text-gray-700 font-medium">{currencyFmt.format(stats.revenue)}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          onClick={() => toggleActive(a)}
+                          className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                          {a.active
+                            ? <ToggleRight className="w-4 h-4 text-green-500" />
+                            : <ToggleLeft className="w-4 h-4" />}
+                          {a.active ? "Deactivate" : "Activate"}
+                        </button>
+                        <button
+                          onClick={() => openEdit(a)}
+                          className="flex items-center justify-center h-9 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => { setConfirmDelete(a.id); setDeleteError(""); }}
+                          className="ml-auto flex items-center justify-center h-9 w-9 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </motion.li>
+                  );
+                })}
+              </AnimatePresence>
+            </ul>
+
+            {/* Tablet/desktop — table */}
+            <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
@@ -373,6 +443,8 @@ export default function AffiliatesPage() {
                 </AnimatePresence>
               </tbody>
             </table>
+            </div>
+            </>
           )}
         </motion.div>
       </div>

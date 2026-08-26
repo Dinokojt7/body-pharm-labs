@@ -93,11 +93,11 @@ export default function MarketingPage() {
           </div>
         </motion.div>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-40">
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="w-[calc(50%-6px)] sm:w-40">
             <CustomDatePicker value={fromDate} onChange={setFromDate} placeholder="From" />
           </div>
-          <div className="w-40">
+          <div className="w-[calc(50%-6px)] sm:w-40">
             <CustomDatePicker value={toDate} onChange={setToDate} placeholder="To" />
           </div>
           {(fromDate || toDate) && (
@@ -121,11 +121,12 @@ export default function MarketingPage() {
           ) : bySource.length === 0 ? (
             <div className="py-16 text-center text-sm text-gray-400">No orders in this range.</div>
           ) : (
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
                   {["Source", "Top Campaign", "Orders", "Paid", "Revenue"].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -134,16 +135,17 @@ export default function MarketingPage() {
                   const topCampaign = Array.from(row.campaigns.entries()).sort((a, b) => b[1] - a[1])[0];
                   return (
                     <tr key={row.source} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-4 font-semibold text-gray-900 capitalize">{row.source}</td>
-                      <td className="px-5 py-4 text-gray-500">{topCampaign && topCampaign[0] !== "—" ? topCampaign[0] : "—"}</td>
-                      <td className="px-5 py-4 text-gray-500">{row.orders}</td>
-                      <td className="px-5 py-4 text-gray-500">{row.paidOrders}</td>
-                      <td className="px-5 py-4 font-semibold text-gray-900">{currencyFmt.format(row.revenue)}</td>
+                      <td className="px-5 py-4 font-semibold text-gray-900 capitalize whitespace-nowrap">{row.source}</td>
+                      <td className="px-5 py-4 text-gray-500 whitespace-nowrap">{topCampaign && topCampaign[0] !== "—" ? topCampaign[0] : "—"}</td>
+                      <td className="px-5 py-4 text-gray-500 whitespace-nowrap">{row.orders}</td>
+                      <td className="px-5 py-4 text-gray-500 whitespace-nowrap">{row.paidOrders}</td>
+                      <td className="px-5 py-4 font-semibold text-gray-900 whitespace-nowrap">{currencyFmt.format(row.revenue)}</td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
+            </div>
           )}
         </motion.div>
       </div>

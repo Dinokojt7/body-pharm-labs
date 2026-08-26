@@ -85,11 +85,12 @@ export default function AffiliateDashboard() {
               <p className="text-sm text-gray-400">No sales with your code yet.</p>
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
                   {["Order", "Date", "Amount", "Status"].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -98,10 +99,10 @@ export default function AffiliateDashboard() {
               <tbody className="divide-y divide-gray-50">
                 {orders.map((o) => (
                   <tr key={o.id}>
-                    <td className="px-5 py-4 font-mono font-semibold text-gray-900">{o.orderNumber || o.id.slice(0, 8).toUpperCase()}</td>
-                    <td className="px-5 py-4 text-gray-500">{formatDate(o.createdAt)}</td>
-                    <td className="px-5 py-4 text-gray-700">{currencyFmt.format(o.total || 0)}</td>
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-4 font-mono font-semibold text-gray-900 whitespace-nowrap">{o.orderNumber || o.id.slice(0, 8).toUpperCase()}</td>
+                    <td className="px-5 py-4 text-gray-500 whitespace-nowrap">{formatDate(o.createdAt)}</td>
+                    <td className="px-5 py-4 text-gray-700 whitespace-nowrap">{currencyFmt.format(o.total || 0)}</td>
+                    <td className="px-5 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         o.paymentStatus === "paid" ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"
                       }`}>
@@ -112,6 +113,7 @@ export default function AffiliateDashboard() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

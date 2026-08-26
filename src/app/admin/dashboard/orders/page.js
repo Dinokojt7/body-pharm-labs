@@ -113,7 +113,7 @@ export default function AdminOrders() {
         </div>
 
         {/* Filters row */}
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex flex-wrap items-center gap-2 mb-5">
           {[
             { key: "all",    label: "All",    count: orders.length },
             { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
