@@ -1,6 +1,5 @@
 # Affiliate Tracking & UTM Attribution — How It Works
 
-Rules are deployed in the Firebase Console as of this writing (`firestore.rules` / `storage.rules` in the repo root are the source of truth going forward).
 
 ## 1. Admin side
 
