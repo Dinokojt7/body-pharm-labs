@@ -6,9 +6,9 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { Package, ShoppingBag, Tag, Layers, Info } from "lucide-react";
+import { Package, ShoppingBag, Tag, Layers, Info, Users, TrendingUp } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
-import { getMaintenanceMode, setMaintenanceMode } from "@/lib/firebase/firestore";
+import { getMaintenanceMode, setMaintenanceMode, adminGetAffiliates } from "@/lib/firebase/firestore";
 
 // ── Tooltip — matches discounts page exactly ──────────────────────────────────
 function Tooltip({ text }) {
@@ -85,13 +85,16 @@ export default function AdminDashboard() {
   const [maintenance, setMaintenance] = useState(false);
   const [toggling, setToggling] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [affiliateCount, setAffiliateCount] = useState(null);
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (isAdmin(user?.uid)) getMaintenanceMode().then(setMaintenance);
+    if (!isAdmin(user?.uid)) return;
+    getMaintenanceMode().then(setMaintenance);
+    adminGetAffiliates().then(({ affiliates }) => setAffiliateCount(affiliates.length));
   }, [user]);
 
   const handleConfirm = async () => {
@@ -165,6 +168,30 @@ export default function AdminDashboard() {
             </div>
             <h2 className="text-base font-bold text-gray-900 mb-1">Categories</h2>
             <p className="text-xs text-gray-400">Manage product categories</p>
+          </Link>
+
+          <Link
+            href="/admin/dashboard/affiliates"
+            className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+          >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-5 group-hover:bg-gray-200 transition-colors">
+              <Users className="w-6 h-6 text-gray-600" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 mb-1">Affiliates</h2>
+            <p className="text-xs text-gray-400">
+              {affiliateCount === null ? "Track affiliate sales" : `${affiliateCount} affiliate${affiliateCount === 1 ? "" : "s"}`}
+            </p>
+          </Link>
+
+          <Link
+            href="/admin/dashboard/marketing"
+            className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+          >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-5 group-hover:bg-gray-200 transition-colors">
+              <TrendingUp className="w-6 h-6 text-gray-600" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 mb-1">Marketing</h2>
+            <p className="text-xs text-gray-400">UTM source &amp; campaign performance</p>
           </Link>
         </div>
 
