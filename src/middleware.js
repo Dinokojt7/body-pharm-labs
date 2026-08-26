@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const ADMIN_BYPASS = ["/admin", "/_next", "/api", "/favicon", "/icons", "/images", "/manifest"];
+const ADMIN_BYPASS = ["/admin", "/affiliate", "/_next", "/api", "/favicon", "/icons", "/images", "/manifest"];
 
 async function fetchMaintenanceMode() {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;

@@ -564,6 +564,67 @@ export const subscribeToOrder = (orderId, callback) => {
 };
 
 
+// ─── Affiliates ─────────────────────────────────────────────────────────────
+// Doc ID = the affiliate's Firebase Auth UID, so security rules can do a
+// direct get()/exists() lookup instead of a query. Account creation/deletion
+// happen via Admin-SDK API routes (src/app/api/admin/affiliates/*) since they
+// mint real Firebase Auth login credentials — only edits go through here.
+
+export const adminGetAffiliates = async () => {
+  if (!db) return { affiliates: [], error: "Not available" };
+  try {
+    const snapshot = await getDocs(collection(db, "affiliates"));
+    const affiliates = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+    return { affiliates, error: null };
+  } catch (error) {
+    return { affiliates: [], error: error.message };
+  }
+};
+
+export const adminUpdateAffiliate = async (uid, data) => {
+  if (!db) return { success: false, error: "Not available" };
+  try {
+    await updateDoc(doc(db, "affiliates", uid), data);
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const getAffiliateByUid = async (uid) => {
+  if (!db) return { affiliate: null, error: "Not available server-side" };
+  try {
+    const snap = await getDoc(doc(db, "affiliates", uid));
+    if (!snap.exists()) return { affiliate: null, error: null };
+    return { affiliate: { id: snap.id, ...snap.data() }, error: null };
+  } catch (error) {
+    return { affiliate: null, error: error.message };
+  }
+};
+
+// No orderBy here — avoids requiring a composite Firestore index, and lets
+// the security rules statically prove the query matches the caller's own
+// affiliate code. Sort client-side instead (same convention as getUserOrders).
+export const getOrdersByDiscountCode = async (code) => {
+  if (!db) return { orders: [], error: "Not available server-side" };
+  try {
+    const q = query(collection(db, "orders"), where("discountCode", "==", code));
+    const snapshot = await getDocs(q);
+    const orders = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => {
+        const aMs = a.createdAt?.toMillis?.() ?? new Date(a.createdAt ?? 0).getTime();
+        const bMs = b.createdAt?.toMillis?.() ?? new Date(b.createdAt ?? 0).getTime();
+        return bMs - aMs;
+      });
+    return { orders, error: null };
+  } catch (error) {
+    return { orders: [], error: error.message };
+  }
+};
+
 // Site settings
 export const getMaintenanceMode = async () => {
   if (!db) return false;
