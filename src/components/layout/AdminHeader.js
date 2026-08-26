@@ -28,8 +28,14 @@ export default function AdminHeader({ backHref = null }) {
           backgroundPosition: "center",
         }}
       >
-        {/* Overlay for contrast — keeps the logo/button legible over the image */}
-        <div className="absolute inset-0 bg-white/75" />
+        {/* Overlay for contrast — solid over the logo (which isn't a transparent PNG),
+            fading out toward the right so the hero image shows through near the sign-out button */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 28%, rgba(255,255,255,0) 85%)",
+          }}
+        />
 
         {/* Left — logo (+ back arrow on sub-pages) */}
         <div className="relative z-10 flex items-center gap-3">
@@ -54,7 +60,7 @@ export default function AdminHeader({ backHref = null }) {
         <div className="relative z-10 flex items-center gap-4">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-black/5 border border-black/10 hover:bg-black/10 text-xs font-medium text-gray-700 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-red-500/10 backdrop-blur-md border border-red-400/50 hover:bg-red-500/20 text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign out

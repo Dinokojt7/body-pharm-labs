@@ -19,8 +19,24 @@ export default function AffiliateHeader() {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between">
-        <div className="relative w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
+      <header
+        className="relative overflow-hidden border-b border-gray-200 px-4 md:px-8 lg:px-12 h-20 md:h-24 flex items-center justify-between"
+        style={{
+          backgroundImage: "url('/images/new-hero.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Overlay for contrast — solid over the logo (which isn't a transparent PNG),
+            fading out toward the right so the hero image shows through near the sign-out button */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 28%, rgba(255,255,255,0) 85%)",
+          }}
+        />
+
+        <div className="relative z-10 w-40 h-12 sm:w-52 sm:h-14 md:w-64 md:h-18">
           <Image
             src="/images/logo-header.png"
             alt="Body Pharm Labs"
@@ -31,13 +47,10 @@ export default function AffiliateHeader() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-xs font-semibold text-gray-400 tracking-wide uppercase hidden sm:block">
-            Affiliate Portal
-          </span>
+        <div className="relative z-10 flex items-center gap-4">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-red-500/10 backdrop-blur-md border border-red-400/50 hover:bg-red-500/20 text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign out
