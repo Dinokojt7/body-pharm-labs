@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText } from "lucide-react";
+import { sendAbandonedOrderReminders } from "@/lib/services/order-reminder-service";
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText, Send, Check } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 const PAGE_SIZE = 20;
+const ABANDONED_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 const FULFILLMENT_STATUSES = [
   { value: "pending",          label: "Pending",           color: "bg-yellow-50 text-yellow-700" },
@@ -62,6 +64,9 @@ export default function AdminOrders() {
   const [page, setPage] = useState(1);
   const [paymentFilter, setPaymentFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedEmails, setSelectedEmails] = useState(new Set());
+  const [sending, setSending] = useState(false);
+  const [sendResults, setSendResults] = useState(new Map());
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
@@ -94,11 +99,87 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
+  // Abandoned = never paid AND old enough that they're not just mid-payment
+  // right now. Grouped by customer email since a repeat-abandoner creates a
+  // fresh order doc every attempt — the most recent one per customer is the
+  // representative (drives display, reminder status, and what gets emailed).
+  const abandonedGroups = useMemo(() => {
+    const cutoff = Date.now() - ABANDONED_THRESHOLD_MS;
+    const candidates = orders.filter((o) => {
+      if (o.paymentStatus === "paid") return false;
+      const createdMs = o.createdAt?.toMillis?.() ?? new Date(o.createdAt ?? 0).getTime();
+      return createdMs > 0 && createdMs < cutoff;
+    });
+
+    const byEmail = new Map();
+    for (const o of candidates) {
+      const email = (o.customer?.email || o.email || "").toLowerCase();
+      if (!email) continue;
+      if (!byEmail.has(email)) byEmail.set(email, []);
+      byEmail.get(email).push(o);
+    }
+
+    return Array.from(byEmail.entries())
+      .map(([email, ordersForEmail]) => {
+        const sorted = ordersForEmail
+          .slice()
+          .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
+        return { email, representative: sorted[0], orders: sorted };
+      })
+      .sort((a, b) => (b.representative.createdAt?.toMillis?.() ?? 0) - (a.representative.createdAt?.toMillis?.() ?? 0));
+  }, [orders]);
+
+  const isAbandonedView = paymentFilter === "abandoned";
+
+  // Default the selection to never-reminded customers each time the tab is
+  // opened — doesn't fight with live updates the rest of the time.
+  useEffect(() => {
+    if (!isAbandonedView) return;
+    setSelectedEmails(new Set(abandonedGroups.filter((g) => !g.representative.reminderSentAt).map((g) => g.email)));
+    setSendResults(new Map());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAbandonedView]);
+
+  const toggleSelected = (email) => {
+    setSelectedEmails((prev) => {
+      const next = new Set(prev);
+      if (next.has(email)) next.delete(email); else next.add(email);
+      return next;
+    });
+  };
+
+  const handleSendReminders = async () => {
+    const targets = abandonedGroups.filter((g) => selectedEmails.has(g.email));
+    if (targets.length === 0) return;
+
+    setSending(true);
+    const { success, results, error } = await sendAbandonedOrderReminders(targets.map((g) => g.representative.id));
+    setSending(false);
+
+    // Never assume success — map real per-order results back onto rows, and
+    // only clear the checkbox for ones that actually sent.
+    const resultsByOrderId = new Map((results || []).map((r) => [r.orderId, r]));
+    const newResults = new Map();
+    const stillSelected = new Set(selectedEmails);
+    for (const g of targets) {
+      const r = success ? resultsByOrderId.get(g.representative.id) : null;
+      const outcome = r || { success: false, error: error || "Request failed" };
+      newResults.set(g.email, outcome);
+      if (outcome.success) stillSelected.delete(g.email);
+    }
+    setSendResults(newResults);
+    setSelectedEmails(stillSelected);
+  };
+
   const filteredOrders = orders
-    .filter((o) => paymentFilter === "all" ? true : paymentFilter === "paid" ? o.paymentStatus === "paid" : o.paymentStatus !== "paid")
+    .filter((o) => paymentFilter === "all" ? true : paymentFilter === "paid" ? o.paymentStatus === "paid" : paymentFilter === "unpaid" ? o.paymentStatus !== "paid" : true)
     .filter((o) => statusFilter === "all" ? true : (o.status || "pending") === statusFilter);
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
-  const pagedOrders = filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const totalPages = isAbandonedView
+    ? Math.max(1, Math.ceil(abandonedGroups.length / PAGE_SIZE))
+    : Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  const pagedOrders = isAbandonedView ? [] : filteredOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pagedGroups = isAbandonedView ? abandonedGroups.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : [];
 
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
@@ -118,9 +199,10 @@ export default function AdminOrders() {
           {/* Filters row */}
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { key: "all",    label: "All",    count: orders.length },
-              { key: "paid",   label: "Paid",   count: orders.filter(o => o.paymentStatus === "paid").length },
-              { key: "unpaid", label: "Unpaid", count: orders.filter(o => o.paymentStatus !== "paid").length },
+              { key: "all",       label: "All",       count: orders.length },
+              { key: "paid",      label: "Paid",      count: orders.filter(o => o.paymentStatus === "paid").length },
+              { key: "unpaid",    label: "Unpaid",    count: orders.filter(o => o.paymentStatus !== "paid").length },
+              { key: "abandoned", label: "Abandoned", count: abandonedGroups.length },
             ].map(({ key, label, count }) => (
               <button
                 key={key}
@@ -135,16 +217,29 @@ export default function AdminOrders() {
               </button>
             ))}
 
-            <div className="ml-auto w-48">
-              <CustomSelect
-                compact
-                value={statusFilter}
-                onChange={(val) => { setStatusFilter(val); setPage(1); setExpandedId(null); }}
-                options={[
-                  { value: "all", label: "All Statuses" },
-                  ...FULFILLMENT_STATUSES.map(s => ({ value: s.value, label: s.label })),
-                ]}
-              />
+            <div className="ml-auto">
+              {isAbandonedView ? (
+                <button
+                  onClick={handleSendReminders}
+                  disabled={sending || selectedEmails.size === 0}
+                  className="flex items-center gap-1.5 h-8 px-4 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  {sending ? "Sending…" : `Send reminder to selected (${selectedEmails.size})`}
+                </button>
+              ) : (
+                <div className="w-48">
+                  <CustomSelect
+                    compact
+                    value={statusFilter}
+                    onChange={(val) => { setStatusFilter(val); setPage(1); setExpandedId(null); }}
+                    options={[
+                      { value: "all", label: "All Statuses" },
+                      ...FULFILLMENT_STATUSES.map(s => ({ value: s.value, label: s.label })),
+                    ]}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -155,6 +250,130 @@ export default function AdminOrders() {
           <div className="text-center py-20 text-gray-400 text-sm">Loading…</div>
         ) : orders.length === 0 ? (
           <div className="text-center py-20 text-gray-400 text-sm">No orders yet.</div>
+        ) : isAbandonedView && abandonedGroups.length === 0 ? (
+          <div className="text-center py-20 text-gray-400 text-sm">No abandoned orders right now.</div>
+        ) : isAbandonedView ? (
+          <div className="space-y-2">
+            {pagedGroups.map((group) => {
+              const isExpanded = expandedId === group.email;
+              const result = sendResults.get(group.email);
+              const order = group.representative;
+              return (
+                <div key={group.email} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="px-5 py-4 flex flex-wrap items-center gap-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedEmails.has(group.email)}
+                      onChange={() => toggleSelected(group.email)}
+                      className="w-4 h-4 rounded accent-gray-900 shrink-0"
+                    />
+
+                    <div className="min-w-35">
+                      <p className="text-xs font-bold text-gray-900 font-mono">{order.orderNumber || order.id.slice(0, 8).toUpperCase()}</p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">{formatDate(order.createdAt)}</p>
+                    </div>
+
+                    <div className="flex-1 min-w-40">
+                      <p className="text-xs font-semibold text-gray-800">
+                        {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
+                      </p>
+                      <p className="text-[11px] text-gray-400 truncate">{group.email}</p>
+                    </div>
+
+                    <div className="hidden sm:block min-w-24 text-right">
+                      <p className="text-xs text-gray-500">{group.orders.length} attempt{group.orders.length !== 1 ? "s" : ""}</p>
+                      <p className="text-xs font-bold text-gray-900 mt-0.5">{displayAmount(order.total, order)}</p>
+                    </div>
+
+                    <div className="hidden md:block">
+                      {order.reminderSentAt ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                          Reminded {formatDate(order.reminderSentAt)}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-50 text-yellow-700">
+                          Not reminded
+                        </span>
+                      )}
+                    </div>
+
+                    {result && (
+                      <div className="hidden lg:flex items-center">
+                        {result.success ? (
+                          <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" /> Sent
+                          </span>
+                        ) : (
+                          <span className="text-xs text-red-500 font-medium">Failed: {result.error}</span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-1 ml-auto">
+                      <button
+                        onClick={() => setExpandedId(isExpanded ? null : group.email)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 px-5 py-5 bg-gray-50 grid sm:grid-cols-2 gap-6">
+                      <div>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Items</p>
+                        <div className="space-y-2">
+                          {(order.items || []).map((item, i) => (
+                            <div key={i} className="flex items-center justify-between text-xs">
+                              <span className="text-gray-700 font-medium">
+                                {item.name}{item.size ? ` — ${item.size}` : ""} <span className="text-gray-400">× {item.quantity}</span>
+                              </span>
+                              <span className="text-gray-900 font-semibold">{displayAmount(item.price * item.quantity, order)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-gray-200 space-y-1">
+                          <div className="flex justify-between text-xs font-bold text-gray-900 pt-1">
+                            <span>Total</span>
+                            <span>{displayAmount(order.total, order)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Customer</p>
+                          <p className="text-xs font-semibold text-gray-700">
+                            {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500">{group.email}</p>
+                          {(order.customer?.phone || order.phone) && (
+                            <p className="text-xs text-gray-500">{order.customer?.phone || order.phone}</p>
+                          )}
+                        </div>
+
+                        {group.orders.length > 1 && (
+                          <div>
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">All abandoned attempts</p>
+                            <div className="space-y-1">
+                              {group.orders.map((o) => (
+                                <div key={o.id} className="flex items-center justify-between text-xs text-gray-500">
+                                  <span className="font-mono">{o.orderNumber || o.id.slice(0, 8).toUpperCase()}</span>
+                                  <span>{formatDate(o.createdAt)}</span>
+                                  <span>{o.reminderSentAt ? "Reminded" : "—"}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         ) : (
           <div className="space-y-2">
             {pagedOrders.map((order) => {
@@ -342,7 +561,9 @@ export default function AdminOrders() {
         {!fetching && totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-xs text-gray-400">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredOrders.length)} of {filteredOrders.length} orders
+              {isAbandonedView
+                ? `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, abandonedGroups.length)} of ${abandonedGroups.length} customers`
+                : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filteredOrders.length)} of ${filteredOrders.length} orders`}
             </p>
             <div className="flex items-center gap-1">
               <button
