@@ -9,7 +9,6 @@ import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib
 import { sendAbandonedOrderReminders } from "@/lib/services/order-reminder-service";
 import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText, Send, Check } from "lucide-react";
-import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 const PAGE_SIZE = 20;
 
@@ -158,9 +157,7 @@ export default function AdminOrders() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader backHref="/admin/dashboard" />
-
+    <>
       {/* Sticky sub-header — title + filters pinned right below AdminHeader;
           only the order list below scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -622,6 +619,6 @@ export default function AdminOrders() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

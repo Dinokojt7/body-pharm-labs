@@ -9,7 +9,6 @@ import { isAdmin } from "@/lib/utils/admin";
 import { getProducts, adminDeleteProduct } from "@/lib/firebase/firestore";
 import { deleteProductImage } from "@/lib/firebase/storage";
 import { Plus, Pencil, Trash2, AlertTriangle } from "lucide-react";
-import AdminHeader from "@/components/layout/AdminHeader";
 
 export default function AdminStore() {
   const router = useRouter();
@@ -48,9 +47,7 @@ export default function AdminStore() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader backHref="/admin/dashboard" />
-
+    <>
       {/* Sticky sub-header — pinned right below AdminHeader; only the product
           table below scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -194,6 +191,6 @@ export default function AdminStore() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

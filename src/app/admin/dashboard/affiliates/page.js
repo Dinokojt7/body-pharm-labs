@@ -13,7 +13,6 @@ import {
   adminGetAllOrders,
 } from "@/lib/firebase/firestore";
 import { createAffiliate, deleteAffiliate } from "@/lib/services/affiliate-service";
-import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 import { ArrowLeft, Plus, Trash2, ToggleLeft, ToggleRight, X, Copy, Check } from "lucide-react";
 
@@ -177,9 +176,7 @@ export default function AffiliatesPage() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-
+    <>
       {/* Sticky sub-header — pinned right below AdminHeader; only the content
           below (forms, table) scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -483,6 +480,6 @@ export default function AffiliatesPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "@firebase/auth";
 import { auth } from "@/lib/firebase/config";
-import { LogOut, ArrowLeft } from "lucide-react";
+import { LogOut, ArrowLeft, Menu } from "lucide-react";
 
-export default function AdminHeader({ backHref = null }) {
+export default function AdminHeader({ backHref = null, onMenuClick = null }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -37,8 +37,17 @@ export default function AdminHeader({ backHref = null }) {
           }}
         />
 
-        {/* Left — logo (+ back arrow on sub-pages) */}
+        {/* Left — logo (+ hamburger on mobile, back arrow on sub-pages) */}
         <div className="relative z-10 flex items-center gap-3">
+          {onMenuClick && (
+            <button
+              onClick={onMenuClick}
+              className="p-1.5 rounded-lg hover:bg-black/5 transition-colors inline-flex shrink-0 md:hidden"
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5 text-gray-700" />
+            </button>
+          )}
           {backHref && (
             <Link href={backHref} className="p-1 rounded hover:bg-gray-100 transition-colors inline-flex shrink-0">
               <ArrowLeft className="w-4 h-4 text-gray-400" />

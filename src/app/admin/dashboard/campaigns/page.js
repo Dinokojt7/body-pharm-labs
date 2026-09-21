@@ -9,7 +9,6 @@ import { isAdmin } from "@/lib/utils/admin";
 import { adminGetMembers, adminGetAllOrders } from "@/lib/firebase/firestore";
 import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
 import { sendCampaignEmail } from "@/lib/services/campaign-service";
-import AdminHeader from "@/components/layout/AdminHeader";
 import { ArrowLeft, Send } from "lucide-react";
 
 const AUDIENCES = [
@@ -99,9 +98,7 @@ export default function CampaignsPage() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-
+    <>
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
           <Link href="/admin/dashboard" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
@@ -239,6 +236,6 @@ export default function CampaignsPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

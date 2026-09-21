@@ -11,7 +11,6 @@ import {
   adminUpdateCategory,
   adminDeleteCategory,
 } from "@/lib/firebase/firestore";
-import AdminHeader from "@/components/layout/AdminHeader";
 import { Plus, Pencil, Trash2, AlertTriangle, Check, X } from "lucide-react";
 
 export default function CategoriesPage() {
@@ -100,9 +99,7 @@ export default function CategoriesPage() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader backHref="/admin/dashboard" />
-
+    <>
       {/* Sticky sub-header — pinned right below AdminHeader; only the content
           below (form, list) scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -281,6 +278,6 @@ export default function CategoriesPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

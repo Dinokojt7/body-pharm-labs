@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
 import { adminGetMembers } from "@/lib/firebase/firestore";
-import AdminHeader from "@/components/layout/AdminHeader";
 import { ArrowLeft } from "lucide-react";
 
 function formatDate(iso) {
@@ -39,9 +38,7 @@ export default function MembersPage() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-
+    <>
       {/* Sticky sub-header — pinned right below AdminHeader; only the member
           list below scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -92,6 +89,6 @@ export default function MembersPage() {
           )}
         </motion.div>
       </div>
-    </div>
+    </>
   );
 }

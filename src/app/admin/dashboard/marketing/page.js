@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
 import { adminGetAllOrders } from "@/lib/firebase/firestore";
-import AdminHeader from "@/components/layout/AdminHeader";
 import CustomDatePicker from "@/components/ui/CustomDatePicker";
 import { ArrowLeft } from "lucide-react";
 
@@ -75,9 +74,7 @@ export default function MarketingPage() {
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminHeader />
-
+    <>
       {/* Sticky sub-header — title + date filters pinned right below AdminHeader;
           only the report table below scrolls underneath it. */}
       <div className="sticky top-20 md:top-24 z-20 bg-gray-50 border-b border-gray-200">
@@ -149,6 +146,6 @@ export default function MarketingPage() {
           )}
         </motion.div>
       </div>
-    </div>
+    </>
   );
 }
