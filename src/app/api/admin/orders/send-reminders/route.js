@@ -19,13 +19,20 @@ function buildTransporter() {
   });
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function formatAmount(amount, order) {
   const rate = order.exchangeRate || 1;
   const currency = order.currency || "ZAR";
   return new Intl.NumberFormat("en-ZA", { style: "currency", currency }).format((amount ?? 0) * rate);
 }
 
-async function sendReminderEmail(transporter, order, siteUrl) {
+async function sendReminderEmail(transporter, order, siteUrl, note) {
   const firstName = order.customer?.firstName || order.firstName || "there";
   const itemRows = (order.items || []).map((item) => `
     <tr>
@@ -62,6 +69,10 @@ async function sendReminderEmail(transporter, order, siteUrl) {
             <p style="margin:0 0 24px;color:#6b7280;font-size:13px;line-height:1.6;">
               Looks like your order wasn't completed — no charge was made. Here's what you were looking at, in case you'd like to pick it back up.
             </p>
+            ${note ? `
+            <div style="margin:0 0 24px;padding:14px 16px;background:#fdf6e3;border:1px solid #f0e0b0;border-radius:6px;">
+              <p style="margin:0;color:#7a5508;font-size:13px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(note)}</p>
+            </div>` : ""}
             <table width="100%" cellpadding="0" cellspacing="0">
               <thead>
                 <tr>
@@ -114,7 +125,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: "Service unavailable" }, { status: 503 });
     }
 
-    const { idToken, orderIds } = await request.json();
+    const { idToken, orderIds, note } = await request.json();
     if (!idToken) {
       return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
     }
@@ -162,7 +173,7 @@ export async function POST(request) {
         }
 
         try {
-          await sendReminderEmail(transporter, order, siteUrl);
+          await sendReminderEmail(transporter, order, siteUrl, note);
         } catch (err) {
           return { orderId, success: false, error: err.message || "Failed to send" };
         }

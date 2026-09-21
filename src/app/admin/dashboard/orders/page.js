@@ -7,11 +7,11 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
 import { adminSubscribeToAllOrders, updateOrderStatus, deleteOrder } from "@/lib/firebase/firestore";
 import { sendAbandonedOrderReminders } from "@/lib/services/order-reminder-service";
+import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Trash2, AlertTriangle, Printer, FileText, Send, Check } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import CustomSelect from "@/components/ui/CustomSelect";
 const PAGE_SIZE = 20;
-const ABANDONED_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 const FULFILLMENT_STATUSES = [
   { value: "pending",          label: "Pending",           color: "bg-yellow-50 text-yellow-700" },
@@ -67,6 +67,7 @@ export default function AdminOrders() {
   const [selectedEmails, setSelectedEmails] = useState(new Set());
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState(new Map());
+  const [reminderNote, setReminderNote] = useState("");
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
@@ -99,35 +100,7 @@ export default function AdminOrders() {
     setDeletingId(null);
   };
 
-  // Abandoned = never paid AND old enough that they're not just mid-payment
-  // right now. Grouped by customer email since a repeat-abandoner creates a
-  // fresh order doc every attempt — the most recent one per customer is the
-  // representative (drives display, reminder status, and what gets emailed).
-  const abandonedGroups = useMemo(() => {
-    const cutoff = Date.now() - ABANDONED_THRESHOLD_MS;
-    const candidates = orders.filter((o) => {
-      if (o.paymentStatus === "paid") return false;
-      const createdMs = o.createdAt?.toMillis?.() ?? new Date(o.createdAt ?? 0).getTime();
-      return createdMs > 0 && createdMs < cutoff;
-    });
-
-    const byEmail = new Map();
-    for (const o of candidates) {
-      const email = (o.customer?.email || o.email || "").toLowerCase();
-      if (!email) continue;
-      if (!byEmail.has(email)) byEmail.set(email, []);
-      byEmail.get(email).push(o);
-    }
-
-    return Array.from(byEmail.entries())
-      .map(([email, ordersForEmail]) => {
-        const sorted = ordersForEmail
-          .slice()
-          .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0));
-        return { email, representative: sorted[0], orders: sorted };
-      })
-      .sort((a, b) => (b.representative.createdAt?.toMillis?.() ?? 0) - (a.representative.createdAt?.toMillis?.() ?? 0));
-  }, [orders]);
+  const abandonedGroups = useMemo(() => groupAbandonedOrders(orders), [orders]);
 
   const isAbandonedView = paymentFilter === "abandoned";
 
@@ -153,7 +126,7 @@ export default function AdminOrders() {
     if (targets.length === 0) return;
 
     setSending(true);
-    const { success, results, error } = await sendAbandonedOrderReminders(targets.map((g) => g.representative.id));
+    const { success, results, error } = await sendAbandonedOrderReminders(targets.map((g) => g.representative.id), reminderNote.trim());
     setSending(false);
 
     // Never assume success — map real per-order results back onto rows, and
@@ -169,6 +142,7 @@ export default function AdminOrders() {
     }
     setSendResults(newResults);
     setSelectedEmails(stillSelected);
+    setReminderNote("");
   };
 
   const filteredOrders = orders
@@ -246,6 +220,21 @@ export default function AdminOrders() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-6">
+        {isAbandonedView && (
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-500 mb-1.5">
+              Add a note (optional) — included in the reminder email for everyone selected
+            </label>
+            <textarea
+              value={reminderNote}
+              onChange={(e) => setReminderNote(e.target.value)}
+              placeholder="e.g. Use code SAVE15 for 15% off if you complete your order this week."
+              rows={2}
+              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-gray-400 bg-white resize-y"
+            />
+          </div>
+        )}
+
         {fetching ? (
           <div className="text-center py-20 text-gray-400 text-sm">Loading…</div>
         ) : orders.length === 0 ? (
@@ -277,7 +266,7 @@ export default function AdminOrders() {
                       <p className="text-xs font-semibold text-gray-800">
                         {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
                       </p>
-                      <p className="text-[11px] text-gray-400 truncate">{group.email}</p>
+                      <p className="text-[11px] text-gray-400 break-all">{group.email}</p>
                     </div>
 
                     <div className="hidden sm:block min-w-24 text-right">
@@ -393,7 +382,7 @@ export default function AdminOrders() {
                       <p className="text-xs font-semibold text-gray-800">
                         {order.customer?.firstName || order.firstName} {order.customer?.lastName || order.lastName}
                       </p>
-                      <p className="text-[11px] text-gray-400 truncate">{order.customer?.email || order.email}</p>
+                      <p className="text-[11px] text-gray-400 break-all">{order.customer?.email || order.email}</p>
                     </div>
 
                     {/* Items count + total */}
