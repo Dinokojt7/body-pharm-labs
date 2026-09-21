@@ -6,7 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { Package, ShoppingBag, Tag, Layers, Info, Users, TrendingUp, IdCard } from "lucide-react";
+import { Package, ShoppingBag, Tag, Layers, Info, Users, TrendingUp, IdCard, Mail } from "lucide-react";
 import AdminHeader from "@/components/layout/AdminHeader";
 import { getMaintenanceMode, setMaintenanceMode, adminGetAffiliates, adminGetMembers } from "@/lib/firebase/firestore";
 
@@ -246,6 +246,17 @@ export default function AdminDashboard() {
             </div>
             <h2 className="text-base font-bold text-gray-900 mb-1">Marketing</h2>
             <p className="text-xs text-gray-400">UTM source &amp; campaign performance</p>
+          </Link>
+
+          <Link
+            href="/admin/dashboard/campaigns"
+            className="group bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm hover:shadow-md hover:border-gray-300 transition-all"
+          >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-5 group-hover:bg-gray-200 transition-colors">
+              <Mail className="w-6 h-6 text-gray-600" />
+            </div>
+            <h2 className="text-base font-bold text-gray-900 mb-1">Campaigns</h2>
+            <p className="text-xs text-gray-400">Email members, customers &amp; more</p>
           </Link>
         </div>
       </div>
