@@ -23,6 +23,26 @@ export const uploadProductImage = async (file, productId) => {
   }
 };
 
+export const uploadCampaignImage = async (file) => {
+  try {
+    const ext = file.name.split(".").pop().toLowerCase();
+    const key = `campaigns/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("key", key);
+
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    return { url, error: null };
+  } catch (err) {
+    return { url: null, error: err.message };
+  }
+};
+
 export const deleteProductImage = async (downloadUrl) => {
   if (!downloadUrl) return;
   try {

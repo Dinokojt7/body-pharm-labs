@@ -4,6 +4,7 @@ import { getAdminAuth } from "@/lib/firebase/admin";
 import { isAdmin } from "@/lib/utils/admin";
 
 const MAX_RECIPIENTS = 500;
+const MAX_IMAGES = 6;
 
 function buildTransporter() {
   const port = Number(process.env.SMTP_PORT) || 587;
@@ -26,8 +27,13 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
-async function sendCampaignEmail(transporter, { name, email }, subject, message) {
+async function sendCampaignEmail(transporter, { name, email }, subject, message, images = []) {
   const firstName = name?.split(" ")[0] || "there";
+  const imageBlocks = images.map((url) => `
+            <div style="margin:0 0 16px;">
+              <img src="${url}" alt="" width="456" style="display:block;width:100%;max-width:456px;height:auto;border-radius:6px;" />
+            </div>`).join("");
+
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +50,8 @@ async function sendCampaignEmail(transporter, { name, email }, subject, message)
         <tr>
           <td style="padding:32px;">
             <p style="margin:0 0 20px;color:#111;font-size:14px;">Hi ${escapeHtml(firstName)},</p>
-            <p style="margin:0;color:#374151;font-size:13px;line-height:1.7;white-space:pre-wrap;">${escapeHtml(message)}</p>
+            <p style="margin:0 0 ${images.length ? "20" : "0"}px;color:#374151;font-size:13px;line-height:1.7;white-space:pre-wrap;">${escapeHtml(message)}</p>
+            ${imageBlocks}
             <p style="margin:32px 0 0;color:#9ca3af;font-size:11px;text-align:center;line-height:1.5;">
               Questions? <a href="mailto:info@bodypharmlabs.com" style="color:#000;text-decoration:underline;">info@bodypharmlabs.com</a>
             </p>
@@ -71,7 +78,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: "Service unavailable" }, { status: 503 });
     }
 
-    const { idToken, subject, message, recipients } = await request.json();
+    const { idToken, subject, message, recipients, images } = await request.json();
     if (!idToken) {
       return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
     }
@@ -97,6 +104,10 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: `Too many recipients in one send (max ${MAX_RECIPIENTS})` }, { status: 400 });
     }
 
+    const safeImages = Array.isArray(images)
+      ? images.filter((url) => typeof url === "string" && /^https?:\/\//.test(url)).slice(0, MAX_IMAGES)
+      : [];
+
     if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
       return NextResponse.json({ success: false, error: "Email not configured" }, { status: 503 });
     }
@@ -109,7 +120,7 @@ export async function POST(request) {
           return { email: recipient?.email || "", success: false, error: "Missing email" };
         }
         try {
-          await sendCampaignEmail(transporter, recipient, subject.trim(), message.trim());
+          await sendCampaignEmail(transporter, recipient, subject.trim(), message.trim(), safeImages);
           return { email: recipient.email, success: true };
         } catch (err) {
           return { email: recipient.email, success: false, error: err.message || "Failed to send" };

@@ -1,15 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
 import { adminGetMembers, adminGetAllOrders } from "@/lib/firebase/firestore";
 import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
 import { sendCampaignEmail, getAllRegisteredUsers } from "@/lib/services/campaign-service";
-import { ArrowLeft, Send } from "lucide-react";
+import { uploadCampaignImage } from "@/lib/firebase/storage";
+import { ArrowLeft, Send, Image as ImageIcon, X, Loader2 } from "lucide-react";
+
+const MAX_IMAGES = 6;
 
 const AUDIENCES = [
   { key: "members", label: "Members" },
@@ -30,9 +34,13 @@ export default function CampaignsPage() {
   const [audience, setAudience] = useState("members");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [images, setImages] = useState([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [sending, setSending] = useState(false);
   const [results, setResults] = useState(null); // { sent, failed: [{email, error}] } | null
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
@@ -87,6 +95,32 @@ export default function CampaignsPage() {
     return allUsers.filter((u) => u.email);
   }, [audience, members, orders, allUsers]);
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (images.length >= MAX_IMAGES) {
+      setUploadError(`You can attach up to ${MAX_IMAGES} images.`);
+      return;
+    }
+
+    setUploadingImage(true);
+    setUploadError("");
+    const { url, error } = await uploadCampaignImage(file);
+    setUploadingImage(false);
+
+    if (error) {
+      setUploadError(error);
+      return;
+    }
+    setImages((prev) => [...prev, url]);
+  };
+
+  const removeImage = (url) => {
+    setImages((prev) => prev.filter((u) => u !== url));
+  };
+
   const handleSend = async () => {
     setConfirming(false);
     setSending(true);
@@ -95,6 +129,7 @@ export default function CampaignsPage() {
       subject: subject.trim(),
       message: message.trim(),
       recipients,
+      images,
     });
     setSending(false);
 
@@ -194,6 +229,41 @@ export default function CampaignsPage() {
                   rows={8}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-gray-400 bg-white resize-y"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1.5">
+                  Images (optional) — {images.length}/{MAX_IMAGES}
+                </label>
+
+                {images.length > 0 && (
+                  <div className="flex flex-wrap gap-3 mb-3">
+                    {images.map((url) => (
+                      <div key={url} className="relative w-20 h-20 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden shrink-0">
+                        <Image src={url} alt="" fill className="object-cover" unoptimized />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(url)}
+                          className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm hover:bg-red-50 z-10"
+                        >
+                          <X className="w-3 h-3 text-gray-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage || images.length >= MAX_IMAGES}
+                  className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {uploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
+                  {uploadingImage ? "Uploading…" : "Add image"}
+                </button>
+                {uploadError && <p className="text-xs text-red-500 mt-2">{uploadError}</p>}
               </div>
 
               <div className="flex justify-end">

@@ -19,7 +19,7 @@ export const getAllRegisteredUsers = async () => {
   }
 };
 
-export const sendCampaignEmail = async ({ subject, message, recipients }) => {
+export const sendCampaignEmail = async ({ subject, message, recipients, images = [] }) => {
   try {
     const idToken = await auth.currentUser?.getIdToken();
     if (!idToken) return { success: false, error: "Not authenticated" };
@@ -27,7 +27,7 @@ export const sendCampaignEmail = async ({ subject, message, recipients }) => {
     const res = await fetch("/api/admin/campaigns/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken, subject, message, recipients }),
+      body: JSON.stringify({ idToken, subject, message, recipients, images }),
     });
     return await res.json();
   } catch (error) {
