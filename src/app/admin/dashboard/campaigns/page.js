@@ -6,9 +6,9 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { adminGetMembers, adminGetAllOrders, adminGetAllUsers } from "@/lib/firebase/firestore";
+import { adminGetMembers, adminGetAllOrders } from "@/lib/firebase/firestore";
 import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
-import { sendCampaignEmail } from "@/lib/services/campaign-service";
+import { sendCampaignEmail, getAllRegisteredUsers } from "@/lib/services/campaign-service";
 import { ArrowLeft, Send } from "lucide-react";
 
 const AUDIENCES = [
@@ -40,14 +40,14 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     if (loading || !isAdmin(user?.uid)) return;
-    Promise.all([adminGetMembers(), adminGetAllOrders(), adminGetAllUsers()]).then(([m, o, u]) => {
+    Promise.all([adminGetMembers(), adminGetAllOrders(), getAllRegisteredUsers()]).then(([m, o, u]) => {
       setMembers(m.members);
       setOrders(o.orders);
-      setAllUsers(u.users);
+      setAllUsers(u.users || []);
       // Never assume success — a permission error comes back as an empty
       // array with an error message, not a thrown exception, so surface it
       // instead of silently showing "no recipients."
-      setFetchErrors({ members: m.error, orders: o.error, allUsers: u.error });
+      setFetchErrors({ members: m.error, orders: o.error, allUsers: u.success ? null : u.error });
       setFetching(false);
     });
   }, [user, loading]);
@@ -83,10 +83,8 @@ export default function CampaignsPage() {
       });
     }
 
-    // all_users
-    return allUsers
-      .filter((u) => u.email)
-      .map((u) => ({ name: u.displayName || "", email: u.email }));
+    // all_users — already {uid, email, name} from the Auth-listing route
+    return allUsers.filter((u) => u.email);
   }, [audience, members, orders, allUsers]);
 
   const handleSend = async () => {
