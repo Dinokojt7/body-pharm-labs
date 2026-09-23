@@ -25,6 +25,7 @@ export default function CampaignsPage() {
   const [members, setMembers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [fetchErrors, setFetchErrors] = useState({});
   const [fetching, setFetching] = useState(true);
   const [audience, setAudience] = useState("members");
   const [subject, setSubject] = useState("");
@@ -43,6 +44,10 @@ export default function CampaignsPage() {
       setMembers(m.members);
       setOrders(o.orders);
       setAllUsers(u.users);
+      // Never assume success — a permission error comes back as an empty
+      // array with an error message, not a thrown exception, so surface it
+      // instead of silently showing "no recipients."
+      setFetchErrors({ members: m.error, orders: o.error, allUsers: u.error });
       setFetching(false);
     });
   }, [user, loading]);
@@ -142,6 +147,20 @@ export default function CampaignsPage() {
               </div>
 
               <p className="text-xs text-gray-500 mb-2">{recipients.length} recipient{recipients.length !== 1 ? "s" : ""}</p>
+
+              {(() => {
+                const relevantError =
+                  audience === "members" ? fetchErrors.members :
+                  audience === "all_users" ? fetchErrors.allUsers :
+                  fetchErrors.orders;
+                if (!relevantError) return null;
+                return (
+                  <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-2">
+                    Couldn't load this audience: {relevantError}. This is usually a Firestore permissions issue, not empty data — check the deployed rules.
+                  </p>
+                );
+              })()}
+
               <div className="max-h-40 overflow-y-auto rounded-lg border border-gray-100 bg-gray-50 divide-y divide-gray-100">
                 {recipients.length === 0 ? (
                   <p className="text-xs text-gray-400 px-3 py-3">No recipients in this audience right now.</p>
