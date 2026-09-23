@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { isAdmin } from "@/lib/utils/admin";
-import { adminGetMembers, adminGetAllOrders } from "@/lib/firebase/firestore";
+import { adminGetMembers, adminGetAllOrders, adminGetAllUsers } from "@/lib/firebase/firestore";
 import { groupAbandonedOrders } from "@/lib/utils/abandoned-orders";
 import { sendCampaignEmail } from "@/lib/services/campaign-service";
 import { ArrowLeft, Send } from "lucide-react";
@@ -15,6 +15,7 @@ const AUDIENCES = [
   { key: "members", label: "Members" },
   { key: "paid", label: "Paid Orders" },
   { key: "abandoned", label: "Abandoned Orders" },
+  { key: "all_users", label: "All Registered Users" },
 ];
 
 export default function CampaignsPage() {
@@ -23,6 +24,7 @@ export default function CampaignsPage() {
 
   const [members, setMembers] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [audience, setAudience] = useState("members");
   const [subject, setSubject] = useState("");
@@ -37,9 +39,10 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     if (loading || !isAdmin(user?.uid)) return;
-    Promise.all([adminGetMembers(), adminGetAllOrders()]).then(([m, o]) => {
+    Promise.all([adminGetMembers(), adminGetAllOrders(), adminGetAllUsers()]).then(([m, o, u]) => {
       setMembers(m.members);
       setOrders(o.orders);
+      setAllUsers(u.users);
       setFetching(false);
     });
   }, [user, loading]);
@@ -67,13 +70,19 @@ export default function CampaignsPage() {
       return Array.from(byEmail.values());
     }
 
-    // abandoned
-    return groupAbandonedOrders(orders).map((g) => {
-      const o = g.representative;
-      const name = `${o.customer?.firstName || o.firstName || ""} ${o.customer?.lastName || o.lastName || ""}`.trim();
-      return { name, email: g.email };
-    });
-  }, [audience, members, orders]);
+    if (audience === "abandoned") {
+      return groupAbandonedOrders(orders).map((g) => {
+        const o = g.representative;
+        const name = `${o.customer?.firstName || o.firstName || ""} ${o.customer?.lastName || o.lastName || ""}`.trim();
+        return { name, email: g.email };
+      });
+    }
+
+    // all_users
+    return allUsers
+      .filter((u) => u.email)
+      .map((u) => ({ name: u.displayName || "", email: u.email }));
+  }, [audience, members, orders, allUsers]);
 
   const handleSend = async () => {
     setConfirming(false);

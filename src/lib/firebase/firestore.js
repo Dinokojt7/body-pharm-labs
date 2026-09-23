@@ -168,6 +168,19 @@ export const adminGetMembers = async () => {
   }
 };
 
+// Every registered user, regardless of membership status — used for the
+// "All Registered Users" campaign audience.
+export const adminGetAllUsers = async () => {
+  if (!db) return { users: [], error: "Not available" };
+  try {
+    const snapshot = await getDocs(collection(db, "users"));
+    const users = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    return { users, error: null };
+  } catch (error) {
+    return { users: [], error: error.message };
+  }
+};
+
 export const saveUserProfile = async (uid, data) => {
   if (!db) return { success: false, error: "Not available server-side" };
   try {
