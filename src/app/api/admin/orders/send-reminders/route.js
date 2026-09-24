@@ -4,6 +4,11 @@ import { getAdminAuth, getAdminDb } from "@/lib/firebase/admin";
 import { isAdmin } from "@/lib/utils/admin";
 
 const MAX_BATCH = 200;
+const SEND_DELAY_MS = 300;
+
+// Give this route room to finish a large sequential batch instead of
+// getting cut off mid-send.
+export const maxDuration = 300;
 
 function buildTransporter() {
   const port = Number(process.env.SMTP_PORT) || 587;
@@ -17,6 +22,22 @@ function buildTransporter() {
       pass: process.env.SMTP_PASS,
     },
   });
+}
+
+function isTransient(err) {
+  const code = err?.responseCode;
+  return (code && code >= 400 && code < 500) || /temporary|try again|421|450|451|452/i.test(err?.message || "");
+}
+
+async function sendWithRetry(fn, retries = 2, backoffMs = 2000) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt >= retries || !isTransient(err)) throw err;
+      await new Promise((resolve) => setTimeout(resolve, backoffMs * (attempt + 1)));
+    }
+  }
 }
 
 function escapeHtml(str) {
@@ -156,36 +177,39 @@ export async function POST(request) {
     const transporter = buildTransporter();
     const { Timestamp } = await import("firebase-admin/firestore");
 
-    const settled = await Promise.allSettled(
-      orderIds.map(async (orderId) => {
-        const snap = await adminDb.collection("orders").doc(orderId).get();
-        if (!snap.exists) {
-          return { orderId, success: false, error: "Order not found" };
-        }
-        const order = snap.data();
+    // Sequential, paced sends — Gmail's SMTP relay throttles/rejects a burst
+    // of near-simultaneous connections (421 4.3.0 "Temporary System Problem")
+    // well before any documented daily quota is hit. One at a time with a
+    // small gap keeps this under Gmail's radar.
+    const results = [];
+    for (const orderId of orderIds) {
+      const snap = await adminDb.collection("orders").doc(orderId).get();
+      if (!snap.exists) {
+        results.push({ orderId, success: false, error: "Order not found" });
+        continue;
+      }
+      const order = snap.data();
 
-        if (order.paymentStatus === "paid") {
-          return { orderId, success: false, error: "Already paid" };
-        }
-        const email = order.customer?.email || order.email;
-        if (!email) {
-          return { orderId, success: false, error: "No email on file" };
-        }
+      if (order.paymentStatus === "paid") {
+        results.push({ orderId, success: false, error: "Already paid" });
+        continue;
+      }
+      const email = order.customer?.email || order.email;
+      if (!email) {
+        results.push({ orderId, success: false, error: "No email on file" });
+        continue;
+      }
 
-        try {
-          await sendReminderEmail(transporter, order, siteUrl, note);
-        } catch (err) {
-          return { orderId, success: false, error: err.message || "Failed to send" };
-        }
-
+      try {
+        await sendWithRetry(() => sendReminderEmail(transporter, order, siteUrl, note));
         await snap.ref.update({ reminderSentAt: Timestamp.now() });
-        return { orderId, success: true };
-      })
-    );
+        results.push({ orderId, success: true });
+      } catch (err) {
+        results.push({ orderId, success: false, error: err.message || "Failed to send" });
+      }
 
-    const results = settled.map((r, i) =>
-      r.status === "fulfilled" ? r.value : { orderId: orderIds[i], success: false, error: r.reason?.message || "Unknown error" }
-    );
+      await new Promise((resolve) => setTimeout(resolve, SEND_DELAY_MS));
+    }
 
     return NextResponse.json({ success: true, results });
   } catch (error) {

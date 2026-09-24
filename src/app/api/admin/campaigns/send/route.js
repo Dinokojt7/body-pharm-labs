@@ -5,6 +5,11 @@ import { isAdmin } from "@/lib/utils/admin";
 
 const MAX_RECIPIENTS = 500;
 const MAX_IMAGES = 6;
+const SEND_DELAY_MS = 300;
+
+// Give this route room to finish a large sequential batch instead of
+// getting cut off mid-send (500 recipients × ~0.3-1s each can take minutes).
+export const maxDuration = 300;
 
 function buildTransporter() {
   const port = Number(process.env.SMTP_PORT) || 587;
@@ -18,6 +23,22 @@ function buildTransporter() {
       pass: process.env.SMTP_PASS,
     },
   });
+}
+
+function isTransient(err) {
+  const code = err?.responseCode;
+  return (code && code >= 400 && code < 500) || /temporary|try again|421|450|451|452/i.test(err?.message || "");
+}
+
+async function sendWithRetry(fn, retries = 2, backoffMs = 2000) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt >= retries || !isTransient(err)) throw err;
+      await new Promise((resolve) => setTimeout(resolve, backoffMs * (attempt + 1)));
+    }
+  }
 }
 
 function escapeHtml(str) {
@@ -114,23 +135,24 @@ export async function POST(request) {
 
     const transporter = buildTransporter();
 
-    const settled = await Promise.allSettled(
-      recipients.map(async (recipient) => {
-        if (!recipient?.email) {
-          return { email: recipient?.email || "", success: false, error: "Missing email" };
-        }
-        try {
-          await sendCampaignEmail(transporter, recipient, subject.trim(), message.trim(), safeImages);
-          return { email: recipient.email, success: true };
-        } catch (err) {
-          return { email: recipient.email, success: false, error: err.message || "Failed to send" };
-        }
-      })
-    );
-
-    const results = settled.map((r, i) =>
-      r.status === "fulfilled" ? r.value : { email: recipients[i]?.email || "", success: false, error: r.reason?.message || "Unknown error" }
-    );
+    // Sequential, paced sends — Gmail's SMTP relay throttles/rejects a burst
+    // of near-simultaneous connections (421 4.3.0 "Temporary System Problem")
+    // well before any documented daily quota is hit. One at a time with a
+    // small gap keeps this under Gmail's radar.
+    const results = [];
+    for (const recipient of recipients) {
+      if (!recipient?.email) {
+        results.push({ email: recipient?.email || "", success: false, error: "Missing email" });
+        continue;
+      }
+      try {
+        await sendWithRetry(() => sendCampaignEmail(transporter, recipient, subject.trim(), message.trim(), safeImages));
+        results.push({ email: recipient.email, success: true });
+      } catch (err) {
+        results.push({ email: recipient.email, success: false, error: err.message || "Failed to send" });
+      }
+      await new Promise((resolve) => setTimeout(resolve, SEND_DELAY_MS));
+    }
 
     return NextResponse.json({ success: true, results });
   } catch (error) {
