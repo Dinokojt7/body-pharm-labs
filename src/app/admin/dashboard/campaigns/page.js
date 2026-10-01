@@ -15,6 +15,13 @@ import { ArrowLeft, Send, Image as ImageIcon, X, Loader2 } from "lucide-react";
 
 const MAX_IMAGES = 6;
 
+// One specific admin gets an extra debug affordance on this page: a button
+// to send the current draft to a single known test address and see the
+// complete raw API response, for diagnosing delivery issues without
+// touching real recipients. Gated by identity, not a separate route.
+const DEBUG_UID = "OuYlRbBeHqZYzuALwJ7qyfTYy8j1";
+const DEBUG_EMAIL = "jacobdinoko@gmail.com";
+
 const AUDIENCES = [
   { key: "members", label: "Members" },
   { key: "paid", label: "Paid Orders" },
@@ -40,7 +47,11 @@ export default function CampaignsPage() {
   const [confirming, setConfirming] = useState(false);
   const [sending, setSending] = useState(false);
   const [results, setResults] = useState(null); // { sent, failed: [{email, error}] } | null
+  const [testSending, setTestSending] = useState(false);
+  const [testRawResponse, setTestRawResponse] = useState(null);
   const fileInputRef = useRef(null);
+
+  const isDebugUser = user?.uid === DEBUG_UID || user?.email === DEBUG_EMAIL;
 
   useEffect(() => {
     if (!loading && !isAdmin(user?.uid)) router.replace("/admin");
@@ -140,6 +151,19 @@ export default function CampaignsPage() {
     const sent = apiResults.filter((r) => r.success).length;
     const failed = apiResults.filter((r) => !r.success);
     setResults({ sent, failed });
+  };
+
+  const handleTestSend = async () => {
+    setTestSending(true);
+    setTestRawResponse(null);
+    const response = await sendCampaignEmail({
+      subject: subject.trim() || "(test) no subject entered",
+      message: message.trim() || "(test) no message entered",
+      recipients: [{ name: "Jacob", email: DEBUG_EMAIL }],
+      images,
+    });
+    setTestSending(false);
+    setTestRawResponse(response);
   };
 
   if (loading || (!loading && !isAdmin(user?.uid))) return null;
@@ -266,17 +290,43 @@ export default function CampaignsPage() {
                 {uploadError && <p className="text-xs text-red-500 mt-2">{uploadError}</p>}
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                {isDebugUser && (
+                  <button
+                    onClick={handleTestSend}
+                    disabled={testSending}
+                    title={`Send the current draft to ${DEBUG_EMAIL} only, and show the full raw API response`}
+                    className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {testSending ? "Sending test…" : `Debug: test send to ${DEBUG_EMAIL}`}
+                  </button>
+                )}
                 <button
                   onClick={() => setConfirming(true)}
-                  disabled={sending || !subject.trim() || !message.trim() || recipients.length === 0}
+                  disabled={isDebugUser || sending || !subject.trim() || !message.trim() || recipients.length === 0}
+                  title={isDebugUser ? "This account is locked to test sends only — see the debug button" : undefined}
                   className="flex items-center gap-1.5 h-9 px-5 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Send className="w-3.5 h-3.5" />
                   {sending ? "Sending…" : `Send to ${recipients.length} recipient${recipients.length !== 1 ? "s" : ""}`}
                 </button>
               </div>
+              {isDebugUser && (
+                <p className="text-[11px] text-amber-600 text-right mt-1.5">
+                  This account can only send test emails to {DEBUG_EMAIL} — real audience sending is disabled here.
+                </p>
+              )}
             </div>
+
+            {/* Debug: raw response for the one test send */}
+            {isDebugUser && testRawResponse && (
+              <div className="bg-white rounded-xl border border-gray-200 p-5">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Raw API response (test send)</p>
+                <pre className="text-[11px] text-gray-700 bg-gray-50 border border-gray-100 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all">
+{JSON.stringify(testRawResponse, null, 2)}
+                </pre>
+              </div>
+            )}
 
             {/* Results */}
             {results && (

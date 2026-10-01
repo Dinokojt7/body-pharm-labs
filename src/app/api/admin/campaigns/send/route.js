@@ -7,6 +7,12 @@ const MAX_RECIPIENTS = 500;
 const MAX_IMAGES = 6;
 const SEND_DELAY_MS = 300;
 
+// This one admin account is locked to test sends only — enforced here, not
+// just hidden in the UI, so it's a real boundary even if someone calls this
+// route directly while signed in as this account.
+const DEBUG_UID = "OuYlRbBeHqZYzuALwJ7qyfTYy8j1";
+const DEBUG_EMAIL = "jacobdinoko@gmail.com";
+
 // Give this route room to finish a large sequential batch instead of
 // getting cut off mid-send (500 recipients × ~0.3-1s each can take minutes).
 export const maxDuration = 300;
@@ -123,6 +129,11 @@ export async function POST(request) {
     }
     if (recipients.length > MAX_RECIPIENTS) {
       return NextResponse.json({ success: false, error: `Too many recipients in one send (max ${MAX_RECIPIENTS})` }, { status: 400 });
+    }
+
+    const isDebugUser = decoded.uid === DEBUG_UID || decoded.email === DEBUG_EMAIL;
+    if (isDebugUser && recipients.some((r) => r?.email !== DEBUG_EMAIL)) {
+      return NextResponse.json({ success: false, error: `This account can only send test emails to ${DEBUG_EMAIL}` }, { status: 403 });
     }
 
     const safeImages = Array.isArray(images)
