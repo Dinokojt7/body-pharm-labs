@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import CheckoutHeader from "./CheckoutHeader";
 import OrderHeader from "./OrderHeader";
 import MembershipModal from "@/components/ui/MembershipModal";
+import BlackFridayModal, { isBlackFridayLive } from "@/components/ui/BlackFridayModal";
 import AuthModal from "@/components/layout/AuthModal";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
@@ -49,7 +50,7 @@ export default function SiteChrome({ children }) {
       <Header />
       <main className="min-h-screen pt-28 md:pt-32">{children}</main>
       <Footer />
-      <MembershipModal />
+      {isBlackFridayLive() ? <BlackFridayModal /> : <MembershipModal />}
       <WhatsAppFloat />
     </>
   );
