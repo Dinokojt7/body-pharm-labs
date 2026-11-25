@@ -35,9 +35,16 @@ service cloud.firestore {
         isAdmin() ||
         (isAffiliate() && resource.data.discountCode == affiliateCode())
       );
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow update: if request.auth != null &&
-        (resource.data.userId == request.auth.uid || isAdmin());
+      // Customers may only create an unpaid order. Payment status is set
+      // exclusively by the server (Admin SDK, which bypasses these rules)
+      // after Paystack confirms the charge.
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == "pending"
+        && request.resource.data.get("paymentStatus", null) == null
+        && request.resource.data.get("paystackReference", null) == null
+        && request.resource.data.get("paidAt", null) == null;
+      allow update: if isAdmin();
       allow delete: if request.auth != null &&
         (request.auth.uid == resource.data.userId || isAdmin());
     }

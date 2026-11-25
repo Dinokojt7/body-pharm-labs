@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Loader2, XCircle } from "lucide-react";
 
 import { useCartStore } from "@/lib/stores/cart-store";
-import { updateOrderPayment, getOrderById, incrementDiscountUses } from "@/lib/firebase/firestore";
+import { getOrderById } from "@/lib/firebase/firestore";
 
 export default function VerifyPage() {
   return (
@@ -46,17 +46,8 @@ function VerifyPageInner() {
         }
 
         if (data.success) {
-          // Mark order paid
-          await updateOrderPayment(orderId, {
-            status: "paid",
-            paystackReference: reference,
-            paidAt: new Date().toISOString(),
-          });
-
-          // Increment discount uses if a promo code was applied (fire-and-forget)
-          getOrderById(orderId).then(({ order }) => {
-            if (order?.discountCode) incrementDiscountUses(order.discountCode).catch(() => {});
-          });
+          // The server has already marked the order paid and counted the
+          // discount use (see /api/paystack GET).
 
           // Send confirmation email + owner WhatsApp notify (fire-and-forget)
           getOrderById(orderId).then(({ order }) => {
@@ -109,8 +100,7 @@ function VerifyPageInner() {
           clearCart();
           router.replace(`/orders/${orderNumber}`);
         } else {
-          // Payment not successful — mark failed
-          await updateOrderPayment(orderId, { status: "payment_failed" }).catch(() => {});
+          // Payment not successful — the server has marked the order failed.
           setError("Payment was not completed. You can try again from your account.");
         }
       } catch {

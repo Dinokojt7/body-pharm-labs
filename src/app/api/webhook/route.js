@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { verifyWithPaystack, applyPaymentToOrder } from "@/lib/services/payment-confirmation";
 
 export async function POST(request) {
   const signature = request.headers.get("x-paystack-signature");
@@ -33,23 +34,14 @@ export async function POST(request) {
 
     if (orderId) {
       try {
-        // Dynamic import to avoid server-side Firebase client-SDK issues
-        // Use REST API to update Firestore since this is server-side
-        // We use the Paystack verification as the source of truth
-        // The client already updates on success — this webhook acts as backup
-        const verifyRes = await fetch(
-          `https://api.paystack.co/transaction/verify/${reference}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-            },
-          },
-        );
-        const verifyData = await verifyRes.json();
-
-        if (verifyData.status && verifyData.data.status === "success") {
-          // Log confirmed payment — client-side already updated Firestore
-          console.log(`Webhook: Payment confirmed for order ${orderId}, ref ${reference}`);
+        // Re-verify with Paystack as the source of truth, then mark the order
+        // paid. Safe to run alongside the verify page: it's idempotent.
+        const verifyData = await verifyWithPaystack(reference);
+        if (verifyData.status && verifyData.data?.status === "success") {
+          const result = await applyPaymentToOrder(verifyData.data);
+          console.log(
+            `Webhook: order ${orderId}, ref ${reference}: ${result.paid ? "paid" : result.error}`,
+          );
         }
       } catch (err) {
         console.error("Webhook processing error:", err);

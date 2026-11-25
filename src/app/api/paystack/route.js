@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase/admin";
 import { priceOrder } from "@/lib/services/order-pricing";
+import { applyPaymentToOrder } from "@/lib/services/payment-confirmation";
 
 export async function POST(request) {
   try {
@@ -26,7 +27,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
     }
     const order = orderSnap.data();
-    if (order.status !== "pending_payment") {
+    if (!["pending", "pending_payment", "payment_failed"].includes(order.status) || order.paymentStatus === "paid") {
       return NextResponse.json(
         { success: false, error: "Order is not awaiting payment" },
         { status: 409 },
@@ -117,11 +118,32 @@ export async function GET(request) {
     );
 
     const data = await response.json();
+    const tx = data.status ? data.data : null;
 
-    if (data.status && data.data.status === "success") {
+    // Order payments are marked paid/failed here on the server, never by the
+    // browser. Membership payments (no orderId) just get verified as before.
+    if (tx?.metadata?.orderId) {
+      const result = await applyPaymentToOrder(tx);
+      return NextResponse.json(
+        {
+          success: result.paid,
+          error: result.error,
+          data: {
+            reference: tx.reference,
+            metadata: {
+              orderId: tx.metadata.orderId,
+              orderNumber: tx.metadata.orderNumber,
+            },
+          },
+        },
+        { status: result.paid ? 200 : 400 },
+      );
+    }
+
+    if (tx?.status === "success") {
       return NextResponse.json({
         success: true,
-        data: data.data,
+        data: tx,
       });
     } else {
       return NextResponse.json(
