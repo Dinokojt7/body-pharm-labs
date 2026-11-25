@@ -176,13 +176,17 @@ const CheckoutForm = ({
       });
 
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Payment initialization failed");
+      if (!data.success) {
+        const e = new Error(data.error || "Payment initialization failed");
+        if (res.status === 409) e.userMessage = data.error;
+        throw e;
+      }
 
       // Redirect to Paystack hosted checkout — callback_url handles the rest
       window.location.href = data.authorization_url;
     } catch (err) {
       console.error("Checkout error:", err);
-      setValidationError("Something went wrong. Please try again.");
+      setValidationError(err.userMessage || "Something went wrong. Please try again.");
       setLoading(false);
     }
   };
